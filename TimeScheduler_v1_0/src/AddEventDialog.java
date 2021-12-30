@@ -93,6 +93,11 @@ class EventMainPanel extends JPanel
         gbc.fill = GridBagConstraints.HORIZONTAL; 
         gbc.weightx = 0.5;
         this.add(locationField, gbc);
+        
+        Reminder reminder = new Reminder();
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        this.add(reminder, gbc);
     }
 }
 
@@ -186,6 +191,20 @@ class LocationField extends JPanel
     }
 }
 
+class Reminder extends JPanel 
+
+    {
+    JLabel reminderLabel = new JLabel("Remind before: ");
+    String[] arr = {"No remind", "1 minute", "3 hour", "3 days", "1 week"};
+    JComboBox<String> reminderComboBox = new JComboBox<String>(arr);
+
+    Reminder() 
+    {
+        this.add(reminderLabel);
+        this.add(reminderComboBox);
+    }
+}
+
 // Combobox display time
 class TestPane extends JPanel {
 
@@ -266,5 +285,6 @@ class DateLabelFormatter extends AbstractFormatter {
     }
 
 }
+
 
 
