@@ -91,7 +91,6 @@ public class SwingCalendar extends JPanel {
         panel.add(label, BorderLayout.CENTER);
         panel.add(rightPanel, BorderLayout.EAST);
 
-        columns = new String[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
         model = new DefaultTableModel(null, columns);
         table = new JTable(model);
         table.setRowHeight(100);
@@ -156,9 +155,7 @@ public class SwingCalendar extends JPanel {
                 i = i + 1;
             }
         } else if (view == "Week") {
-            System.out.println("Model: " + model.getColumnCount());
-            System.out.println("Table: " + table.getColumnCount());
-            // set initial data
+            // set initial data, add the time slot
             if (model.getColumnCount() < 8) {
                 model.addColumn("Time");
                 table.moveColumn(table.getColumnCount() - 1, 0);
@@ -178,7 +175,7 @@ public class SwingCalendar extends JPanel {
             int week = cal.get(Calendar.WEEK_OF_MONTH);
             label.setText(week + "/" + month + " " + year);
 
-            int numberOfTimeSlot = 25;
+            int numberOfTimeSlot = 25; // number of time slot 0:00 - 24:00
             model.setRowCount(0);
             model.setRowCount(numberOfTimeSlot);
 
@@ -188,7 +185,6 @@ public class SwingCalendar extends JPanel {
                 TableColumn tc = tcm.getColumn(day);
                 cal.set(Calendar.DAY_OF_WEEK, day);
                 int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
-                // model.setValueAt(dayOfMonth, j / 7, j % 7);
                 weekDate[day - 1] = String.valueOf(dayOfMonth);
                 tc.setHeaderValue(columns[day - 1] + " " + weekDate[day - 1]);
                 th.repaint();
@@ -199,9 +195,6 @@ public class SwingCalendar extends JPanel {
             int timeSlot = 0;
             for (int i = 0; i <= numberOfTimeSlot * 8; i += 8) {
                 if (timeSlot < 25) {
-                    System.out.println("Time Slot: " + timeSlot);
-                    System.out.println("Model: " + model.getColumnCount());
-                    System.out.println("Table: " + table.getColumnCount());
                     model.setValueAt(timeSlot + ":00", i / 8, i % 8 + 7);
                     // model.setValueAt(i, i / 8, i % 8 + 7);
                     timeSlot = timeSlot + 1;
