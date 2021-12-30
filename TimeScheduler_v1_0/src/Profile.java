@@ -7,23 +7,28 @@ import javax.swing.*;
 
 public class Profile extends JPanel {
     JPanel panel = new JPanel();
+    JLabel nameLabel = new JLabel("Name: ");
+    JLabel emailLabel = new JLabel("Email: ");
+    JLabel phoneLabel = new JLabel("Phone: ");
 
-    Profile() {
+    Profile(User user) {
         this.setLayout(new BorderLayout());
         this.setSize(300, 200);
         this.setVisible(true);
+        this.setLayout(new BorderLayout());
         JLabel label = new JLabel("Profile");
         label.setHorizontalAlignment(SwingConstants.CENTER);
-        JButton b1 = new JButton("<-");
-        JButton b2 = new JButton("->");
-        setLayout(new BorderLayout());
-        add(b1, BorderLayout.WEST);
-        add(label, BorderLayout.CENTER);
-        add(b2, BorderLayout.EAST);
-        panel.setLayout(new BorderLayout());
-        panel.add(b1, BorderLayout.WEST);
-        panel.add(label, BorderLayout.CENTER);
-        panel.add(b2, BorderLayout.EAST);
-        add(panel, BorderLayout.NORTH);
+        this.add(label, BorderLayout.NORTH);
+        JLabel name = new JLabel(user.getName());
+        JLabel email = new JLabel(user.getEmail());
+        JLabel phone = new JLabel(user.getPhone());
+        panel.setLayout(new GridLayout(5, 2));
+        panel.add(nameLabel);
+        panel.add(name);
+        panel.add(emailLabel);
+        panel.add(email);
+        panel.add(phoneLabel);
+        panel.add(phone);
+        this.add(panel, BorderLayout.CENTER);
     }
 }
