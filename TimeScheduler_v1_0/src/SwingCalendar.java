@@ -8,31 +8,53 @@ import javax.swing.table.*;
 
 public class SwingCalendar extends JPanel {
 
-    DefaultTableModel model;
-    JTable table;
+    JPanel panel; // panel to display the calendar month, year and buttons
+    JLabel label; // label to display the selected month, year
+    JPanel pane; // panel to display the calendar ScrollPane
+    DefaultTableModel model; // table model
+    JTable table; // table to display the calendar
     Calendar cal = new GregorianCalendar();
-    JLabel label;
-    String viewList[] = { "Month", "Week" };
-    JComboBox<String> viewComboBox = new JComboBox<>(viewList);
-    static String view = "Month";
-    JPanel panel;
-    JPanel pane;
-    static boolean isUsed = false;
+    String viewList[] = { "Month", "Week" }; // list of views
+    JComboBox<String> viewComboBox = new JComboBox<>(viewList); // combo box to select the view
+    static String view = "Month"; // default view
+    String[] weekDate = { "1", "2", "3", "4", "5", "6", "7" };
+    String[] columns = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+    static boolean isUsed = false; // flag to check if the view is used
 
     SwingCalendar() {
+
+        // function for the drop down menu to change view
         viewComboBox.addActionListener(ae -> {
             if (viewComboBox.getSelectedItem().equals("Month")) {
                 view = "Month";
+                if (table.getColumnCount() > 7) {
+                    table.removeColumn(table.getColumnModel().getColumn(0));
+                    isUsed = false;
+                }
                 update();
-                // System.out.println("Month view");
             } else if (viewComboBox.getSelectedItem().equals("Week")) {
+                if (model.getColumnCount() < 8) {
+                    model.addColumn("Time");
+                    table.moveColumn(table.getColumnCount() - 1, 0);
+                    cal.set(Calendar.DAY_OF_MONTH, 1);
+                    isUsed = true;
+                } else if (table.getColumnCount() < 8) {
+                    TableColumn time = new TableColumn();
+                    time.setHeaderValue("Time");
+                    time.setModelIndex(7);
+                    table.addColumn(time);
+                    table.moveColumn(table.getColumnCount() - 1, 0);
+                    cal.set(Calendar.DAY_OF_MONTH, 1);
+                    isUsed = true;
+                }
                 view = "Week";
                 update();
-                // System.out.println("Week view");
             } else {
-                view = "Month";
+                System.out.println("Error");
             }
         });
+
+        //
         this.setSize(300, 200);
         this.setLayout(new BorderLayout());
         this.setVisible(true);
@@ -63,18 +85,19 @@ public class SwingCalendar extends JPanel {
         rightPanel.add(viewComboBox);
         rightPanel.add(b2);
 
-        JPanel panel = new JPanel();
+        panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.add(b1, BorderLayout.WEST);
         panel.add(label, BorderLayout.CENTER);
         panel.add(rightPanel, BorderLayout.EAST);
 
-        String[] columns = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+        columns = new String[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
         model = new DefaultTableModel(null, columns);
         table = new JTable(model);
         table.setRowHeight(100);
         table.setFillsViewportHeight(true);
         table.setEnabled(false);
+        table.getTableHeader().setReorderingAllowed(false);
         JScrollPane pane = new JScrollPane(table);
 
         // panel is the part with week/month and year
@@ -103,6 +126,9 @@ public class SwingCalendar extends JPanel {
 
     // update the date table
     void update() {
+        JTableHeader th = table.getTableHeader();
+        TableColumnModel tcm = th.getColumnModel();
+
         if (view == "Month") {
             cal.set(Calendar.DAY_OF_MONTH, 1);
             String month = cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
@@ -116,18 +142,33 @@ public class SwingCalendar extends JPanel {
             model.setRowCount(0);
             model.setRowCount(weeks);
 
+            for (int i = 0; i < 7; i++) {
+                TableColumn tc = tcm.getColumn(i);
+                tc.setHeaderValue(columns[i]);
+                th.repaint();
+            }
+
             // print the date
             int i = startDay - 1;
             for (int day = 1; day <= numberOfDays; day++) {
+
                 model.setValueAt(day, i / 7, i % 7);
                 i = i + 1;
             }
         } else if (view == "Week") {
-
+            System.out.println("Model: " + model.getColumnCount());
+            System.out.println("Table: " + table.getColumnCount());
             // set initial data
-            if (isUsed == false) {
+            if (model.getColumnCount() < 8) {
                 model.addColumn("Time");
                 table.moveColumn(table.getColumnCount() - 1, 0);
+                cal.set(Calendar.DAY_OF_MONTH, 1);
+                isUsed = true;
+            } else if (table.getColumnCount() < 8) {
+                TableColumn time = new TableColumn();
+                time.setHeaderValue("Time");
+                table.addColumn(time);
+                table.moveColumn(time.getModelIndex(), 0);
                 cal.set(Calendar.DAY_OF_MONTH, 1);
                 isUsed = true;
             }
@@ -137,29 +178,34 @@ public class SwingCalendar extends JPanel {
             int week = cal.get(Calendar.WEEK_OF_MONTH);
             label.setText(week + "/" + month + " " + year);
 
-            int numberOfTimeSlot = 25 + 1;
+            int numberOfTimeSlot = 25;
             model.setRowCount(0);
             model.setRowCount(numberOfTimeSlot);
-
-            // print the time slot
-            int i = 0;
-            for (int timeSlot = 8; timeSlot <= numberOfTimeSlot * 8; timeSlot += 8) {
-                if (i < 25) {
-                    // System.out.println(timeSlot + " " + timeSlot / 8 + " " + timeSlot % 8 + " " +
-                    // i);
-                    // System.out.println(i);
-                    model.setValueAt(i, timeSlot / 8, timeSlot % 8 + 7);
-                    i = i + 1;
-                }
-            }
 
             // print the date
             int j = 0;
             for (int day = 1; day <= 7; day++) {
+                TableColumn tc = tcm.getColumn(day);
                 cal.set(Calendar.DAY_OF_WEEK, day);
                 int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
-                model.setValueAt(dayOfMonth, j / 7, j % 7);
+                // model.setValueAt(dayOfMonth, j / 7, j % 7);
+                weekDate[day - 1] = String.valueOf(dayOfMonth);
+                tc.setHeaderValue(columns[day - 1] + " " + weekDate[day - 1]);
+                th.repaint();
                 j = j + 1;
+            }
+
+            // print the time slot
+            int timeSlot = 0;
+            for (int i = 0; i <= numberOfTimeSlot * 8; i += 8) {
+                if (timeSlot < 25) {
+                    System.out.println("Time Slot: " + timeSlot);
+                    System.out.println("Model: " + model.getColumnCount());
+                    System.out.println("Table: " + table.getColumnCount());
+                    model.setValueAt(timeSlot + ":00", i / 8, i % 8 + 7);
+                    // model.setValueAt(i, i / 8, i % 8 + 7);
+                    timeSlot = timeSlot + 1;
+                }
             }
         }
     }
