@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 public class MainFrame extends JFrame {
-    ImageIcon icon = new ImageIcon("ProgramJava/Project/TimeScheduler_v1_0/libTimeSchedulerIcon.png");
+    ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
 
     MainFrame(User user) {
         this.setIconImage(icon.getImage());
