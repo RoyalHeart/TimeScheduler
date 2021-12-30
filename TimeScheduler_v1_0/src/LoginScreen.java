@@ -7,7 +7,7 @@ import java.awt.FlowLayout;
 
 // login JFrame as the application's login frame
 public class LoginScreen extends JFrame {
-    ImageIcon icon = new ImageIcon("ProgramJava/Project/TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
+    ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
 
     LoginScreen() {
         setTitle("Login");
@@ -88,7 +88,7 @@ class Password extends JPanel {
 
 // register JFrame as the application's main frame
 class Register extends JFrame {
-    ImageIcon icon = new ImageIcon("ProgramJava/Project/TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
+    ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
     private static JTextField usernameTextField = new JTextField(10);
     private static JPasswordField passwordField = new JPasswordField(10);
 
@@ -124,6 +124,9 @@ class Register extends JFrame {
         confirmPasswordPanel.add(confirmPasswordLabel);
         confirmPasswordPanel.add(confirmPasswordField);
 
+        // button panel
+        JPanel buttonPanel = new JPanel();
+
         // register next button
         JButton registerNextButton = new JButton("Next");
         JPanel registerNextButtonPanel = new JPanel();
@@ -144,10 +147,21 @@ class Register extends JFrame {
             }
         });
 
+        // back button
+        JButton registerBackButton = new JButton("Back");
+        JPanel registerBackButtonPanel = new JPanel();
+        registerBackButtonPanel.add(registerBackButton);
+        registerBackButton.addActionListener(e -> {
+            dispose();
+            new LoginScreen();
+        });
+        buttonPanel.add(registerBackButtonPanel);
+        buttonPanel.add(registerNextButtonPanel);
+
         add(usernamePanel);
         add(passwordPanel);
         add(confirmPasswordPanel);
-        add(registerNextButtonPanel);
+        add(buttonPanel);
         setVisible(true);
     }
 
@@ -167,7 +181,7 @@ class Register extends JFrame {
 
 // register JFrame as the application's next register frame
 class Register2 extends JFrame {
-    ImageIcon icon = new ImageIcon("D:/Bon/VSCode/ProgramJava/Project/TimeSchedulerIcon.png");
+    ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
 
     Register2() {
         setTitle("Register");
@@ -205,9 +219,22 @@ class Register2 extends JFrame {
         phonePanel.add(phoneTextField);
         phonePanel.add(phoneDescriptionLabel);
 
+        // button panel
+        JPanel buttonPanel = new JPanel();
+
+        // back button
+        JPanel backButtonPanel = new JPanel();
+        JButton backButton = new JButton("Back");
+        backButtonPanel.add(backButton);
+        backButton.addActionListener(e -> {
+            dispose();
+            new Register();
+        });
+
         // register button
         JPanel registerButtonPanel = new JPanel();
         JButton registerButton = new JButton("Register");
+        registerButtonPanel.add(registerButton);
 
         // check validitiy of the inputs
         registerButton.addActionListener(e -> {
@@ -225,7 +252,6 @@ class Register2 extends JFrame {
                 } else {
                     System.out.println("Register Failed");
                 }
-                ;
                 dispose();
                 new LoginScreen();
             } else if (!RegisterValidator.isValidName(nameTextField.getText())) {
@@ -239,11 +265,13 @@ class Register2 extends JFrame {
                 JOptionPane.showMessageDialog(null, "Phone is invalid");
             }
         });
-        registerButtonPanel.add(registerButton);
+
+        buttonPanel.add(backButtonPanel);
+        buttonPanel.add(registerButtonPanel);
         add(namePanel);
         add(emailPanel);
         add(phonePanel);
-        add(registerButtonPanel);
+        add(buttonPanel);
         setVisible(true);
     }
 }
