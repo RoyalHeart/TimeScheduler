@@ -24,13 +24,15 @@ public class LoginScreen extends JFrame {
         try {
             loginButton.addActionListener(e -> {
                 if (Database.existAdmin(usernamePanel.getUsername(), passwordPanel.getHashPassword())) {
+                    User admin = Database.getAdmin(usernamePanel.getUsername(), passwordPanel.getHashPassword());
                     System.out.println("Login Success as Administrator");
                     dispose();
-                    new MainFrame();
+                    new MainFrame(admin);
                 } else if (Database.existUser(usernamePanel.getUsername(), passwordPanel.getHashPassword())) {
+                    User user = Database.getUser(usernamePanel.getUsername(), passwordPanel.getHashPassword());
                     System.out.println("Login Success");
                     dispose();
-                    new MainFrame();
+                    new MainFrame(user);
                 } else {
                     JOptionPane.showMessageDialog(null, "Username or Password is incorrect");
                 }
@@ -213,10 +215,12 @@ class Register2 extends JFrame {
             if (RegisterValidator.isValidName(nameTextField.getText())
                     && RegisterValidator.isValidEmail(emailTextField.getText())
                     && RegisterValidator.isValidPhone(phoneTextField.getText())) {
+                User user = new User(Register.getUsername(), nameTextField.getText(),
+                        emailTextField.getText(), phoneTextField.getText());
                 System.out.println("Everything is valid");
                 JOptionPane.showMessageDialog(null, "Register Success, close this window to login");
-                if (Database.addTischUser(Register.getUsername(), Register.getPassword(), nameTextField.getText(),
-                        emailTextField.getText(), phoneTextField.getText())) {
+                if (Database.addTischUser(user.getUsername(), Register.getPassword(), user.getName(),
+                        user.getEmail(), user.getPhone())) {
                     System.out.println("Register Success");
                 } else {
                     System.out.println("Register Failed");
