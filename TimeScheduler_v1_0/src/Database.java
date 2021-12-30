@@ -33,7 +33,7 @@ public class Database {
 
     // read password from file
     private static String getDatabasePassword() {
-        File myObj = new File("ProgramJava/Project/TimeScheduler_v1_0/lib/DatabaseLoginInfo.txt");
+        File myObj = new File("TimeScheduler_v1_0/lib/DatabaseLoginInfo.txt");
         try {
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
