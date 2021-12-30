@@ -6,23 +6,36 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Navigation extends JPanel {
-    Navigation(JPanel panel, JFrame frame) {
+
+    Navigation(JFrame frame, User user) {
+        // panel in navigation
+        SwingCalendar calendar = new SwingCalendar();
+        Profile profilePanel = new Profile(user);
+
+        // default panel
+        frame.add(calendar, BorderLayout.CENTER);
         setLayout(new GridLayout(6, 1));
 
         JButton home = new JButton("Home");
         home.setPreferredSize(new Dimension(70, 20));
         home.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                panel.setVisible(true);
+                profilePanel.setVisible(false);
+                frame.remove(profilePanel);
+                frame.add(calendar, BorderLayout.CENTER);
+                calendar.setVisible(true);
             }
         });
 
-        JButton profile = new JButton("Profile");
-        profile.setPreferredSize(new Dimension(70, 20));
-        profile.addActionListener(new ActionListener() {
+        JButton profileButton = new JButton("Profile");
+        profileButton.setPreferredSize(new Dimension(70, 20));
+
+        profileButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                panel.setVisible(false);
-                frame.add(new Profile());
+                calendar.setVisible(false);
+                frame.remove(calendar);
+                frame.add(profilePanel, BorderLayout.CENTER);
+                profilePanel.setVisible(true);
             }
         });
 
@@ -44,7 +57,7 @@ public class Navigation extends JPanel {
         });
 
         this.add(home);
-        this.add(profile);
+        this.add(profileButton);
         this.add(logout);
         this.setVisible(true);
         this.setVisible(true);
