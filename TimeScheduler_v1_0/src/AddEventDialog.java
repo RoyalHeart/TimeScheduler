@@ -98,6 +98,11 @@ class EventMainPanel extends JPanel
         gbc.gridx = 0;
         gbc.gridy = 4;
         this.add(reminder, gbc);
+        
+        Priority priority = new Priority();
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        this.add(priority, gbc);
     }
 }
 
@@ -205,6 +210,17 @@ class Reminder extends JPanel
     }
 }
 
+class Priority extends JPanel 
+{
+    JLabel priorityLabel = new JLabel("Priority");
+    String[] arr = {"High", "Medium", "Low"};
+    JComboBox<String> priorityComboBox = new JComboBox<String>(arr);
+    Priority() 
+    {
+        this.add(priorityLabel);
+        this.add(priorityComboBox);
+    }
+}
 // Combobox display time
 class TestPane extends JPanel {
 
@@ -285,6 +301,8 @@ class DateLabelFormatter extends AbstractFormatter {
     }
 
 }
+
+
 
 
 
