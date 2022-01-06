@@ -24,7 +24,7 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // TODO Auto-generated method stub
-                new AddEventDialog();
+                new AddEventDialog(user);
             }
 
         });
