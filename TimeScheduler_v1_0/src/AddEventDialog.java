@@ -9,17 +9,23 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+// import oracle.jdbc.proxy.annotation.OnError;
+
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.text.ParseException;
 // import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import java.awt.event.ActionEvent;
+// import java.awt.event.ActionListener;
 
 public class AddEventDialog extends JDialog {
 
-    AddEventDialog() 
+    AddEventDialog(User user) 
     {
         this.setTitle("Event");
         this.setSize(800, 500);
@@ -28,25 +34,24 @@ public class AddEventDialog extends JDialog {
         this.setLocationRelativeTo(null);
         this.add(new TitlePanel(), BorderLayout.NORTH);
         this.add(new EventMainPanel(), BorderLayout.CENTER);
-        JButton btnSetEvent = new JButton("Set");
-        this.add(btnSetEvent, BorderLayout.SOUTH);
+        this.add(new SetBtn(user.getId()), BorderLayout.SOUTH);
         this.setResizable(false);
         this.setVisible(true);
     }
 
     public static void main(String[] args) 
     {
-        new AddEventDialog();
+        // new AddEventDialog(user);
     }
 
 }
 
 class TitlePanel extends JPanel 
 {
+    static JTextField titleField = new JTextField(50);
     TitlePanel() 
     {
         this.setLayout(new FlowLayout());
-        JTextField titleField = new JTextField(50);
         JLabel titleLabel = new JLabel("Title");
         titleField.setText("Title");
         titleField.selectAll();
@@ -64,6 +69,11 @@ class TitlePanel extends JPanel
         });
         this.add(titleLabel);
         this.add(titleField);
+    }
+
+    static String getTitle() 
+    {
+        return titleField.getText();
     }
 }
 
@@ -94,15 +104,23 @@ class EventMainPanel extends JPanel
         gbc.weightx = 0.5;
         this.add(locationField, gbc);
         
-        Reminder reminder = new Reminder();
+        Description description = new Description();
         gbc.gridx = 0;
         gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL; 
+        gbc.weightx = 0.5;
+        this.add(description, gbc);
+
+        Reminder reminder = new Reminder();
+        gbc.gridx = 0;
+        gbc.gridy = 5;
         this.add(reminder, gbc);
         
         Priority priority = new Priority();
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         this.add(priority, gbc);
+
     }
 }
 
@@ -113,11 +131,16 @@ class DateTime extends JPanel
     JTextField timeToField = new JTextField(6);
     JLabel dateLabel = new JLabel();
     JLabel timeLabel = new JLabel();
+    static TestPane beforeTime = new TestPane();
+    static TestPane afterTime = new TestPane();
     JLabel iconLabel;
     ImageIcon icon;
     UtilDateModel model = new UtilDateModel();
     // Properties for JDateTimePicker
     Properties p = new Properties();
+    // Variable to store return value from jdatepicker
+    static Date date;
+    static JDatePickerImpl datePicker;
 
     DateTime()
     {
@@ -139,18 +162,45 @@ class DateTime extends JPanel
         p.put("text.today", "Today");
         p.put("text.year", "Year");
         JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
-        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        // return value from datePicker
+        date = (Date)datePicker.getModel().getValue();
         this.add(datePicker);
         timeLabel.setText("Time");
         this.add(timeLabel);
-        this.add(new TestPane());
-        this.add(new TestPane());
+        this.add(beforeTime);
+        this.add(afterTime);
+    }
+
+    static Date getDateTime() 
+    {
+        // return selected date
+        return (Date)datePicker.getModel().getValue();
+    }
+
+    // return diff between from and to time
+    static int getDuration()
+    {
+         // SimpleDateFormat format = new SimpleDateFormat("HH:mm");  
+        Date before = beforeTime.getPickedTime();
+        Date after = afterTime.getPickedTime();
+        /* try {
+            before = format.parse(before);
+            after = format.parse(after);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } */   
+        long diff = after.getTime() - before.getTime();
+        // convert diff time to minutes
+        int minutes = (int)TimeUnit.MILLISECONDS.toMinutes(diff); 
+
+        return minutes;
     }
 }
 
 class FriendField extends JPanel 
 {
-    JTextField friendField = new JTextField(50);
+    static JTextField friendField = new JTextField(50);
     ImageIcon icon;
     JLabel iconLabel;
 
@@ -170,11 +220,16 @@ class FriendField extends JPanel
 
         this.add(friendField);
     }
+
+    static String getFriend()
+    {
+        return friendField.getText();
+    }
 }
 
 class LocationField extends JPanel
 {
-    JTextField locationField = new JTextField(50);
+    static JTextField locationField = new JTextField(50);
     ImageIcon icon;
     JLabel iconLabel;
 
@@ -194,35 +249,111 @@ class LocationField extends JPanel
 
         this.add(locationField);
     }
+
+    static String getLoc()
+    {
+        return locationField.getText();
+    }
 }
 
 class Reminder extends JPanel 
 
     {
     JLabel reminderLabel = new JLabel("Remind before: ");
-    String[] arr = {"No remind", "1 minute", "3 hour", "3 days", "1 week"};
-    JComboBox<String> reminderComboBox = new JComboBox<String>(arr);
+    static String[] arr = {"No remind", "1 minute", "3 hour", "3 days", "1 week"};
+    static JComboBox<String> reminderComboBox = new JComboBox<String>(arr);
 
     Reminder() 
     {
         this.add(reminderLabel);
         this.add(reminderComboBox);
     }
+
+    static int getRemind() 
+    {
+        return reminderComboBox.getSelectedIndex();
+    }
 }
 
 class Priority extends JPanel 
 {
     JLabel priorityLabel = new JLabel("Priority");
-    String[] arr = {"High", "Medium", "Low"};
-    JComboBox<String> priorityComboBox = new JComboBox<String>(arr);
+    static String[] arr = {"High", "Medium", "Low"};
+    static JComboBox<String> priorityComboBox = new JComboBox<String>(arr);
     Priority() 
     {
         this.add(priorityLabel);
         this.add(priorityComboBox);
     }
+
+    static int getPriority()
+    {
+        return priorityComboBox.getSelectedIndex();
+    }
 }
+
+class Description extends JPanel
+{
+    static JTextField descripField = new JTextField(50);
+    ImageIcon icon;
+    JLabel iconLabel;
+    Description() 
+    {
+        this.setLayout(new FlowLayout());
+        try {
+            icon = new ImageIcon(getClass().getResource("Images/descriptionicon.png"));
+            Image image = icon.getImage();
+            Image newing = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+            icon = new ImageIcon(newing);
+            iconLabel = new JLabel(icon);
+            this.add(iconLabel);
+        } catch(Exception e) {
+            System.out.println("Image can not be found.");
+        }
+        this.add(descripField);
+    }
+
+    static String getDescription() 
+    {
+        return descripField.getText();
+    }
+}
+
+class SetBtn extends JPanel
+{
+    JButton setBtn = new JButton("Set");
+    String userID;
+    SetBtn(String userID) 
+    {
+        this.add(setBtn);
+        this.userID = userID;
+        setBtn.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // setEvent(TitlePanel.getTitle(), DateTime.getDateTime(), LocationField.getLoc(), DateTime.getDuration(), Priority.getPriority(), Reminder.getRemind());
+                System.out.println(TitlePanel.getTitle());
+                System.out.println(DateTime.getDateTime());
+                System.out.println(LocationField.getLoc());
+                System.out.println(DateTime.getDuration());
+                System.out.println(Priority.getPriority());
+                System.out.println(Reminder.getRemind());
+                System.out.println(Description.getDescription());
+            }
+
+        });
+    }
+
+    void setEvent(String userID, String title, String description, Date date, String location, int duration, int priority, int reminder)
+    {
+        // Event event = new Event(userID, title, description, date, location, duration, priority, reminder);
+    }
+
+}
+
 // Combobox display time
 class TestPane extends JPanel {
+    JComboBox<Date> cb;
 
     public TestPane() {
         setLayout(new GridBagLayout());
@@ -233,17 +364,21 @@ class TestPane extends JPanel {
         Calendar end = Calendar.getInstance();
         end.set(Calendar.HOUR_OF_DAY, 23);
         end.set(Calendar.MINUTE, 59);
-        DefaultComboBoxModel<Date> model = new DefaultComboBoxModel<>();
+        DefaultComboBoxModel<Date> model = new DefaultComboBoxModel<Date>();
         do {
             model.addElement(calendar.getTime());
             calendar.add(Calendar.MINUTE, 15);
         } while (calendar.getTime().before(end.getTime()));
 
-        JComboBox<Date> cb = new JComboBox<>(model);
+        cb = new JComboBox<Date>(model);
         cb.setRenderer(new DateComboBoxRenderer());
 
         add(cb);
+    }
 
+    Date getPickedTime()
+    {
+        return (Date)cb.getSelectedItem();
     }
 }
         
@@ -301,6 +436,8 @@ class DateLabelFormatter extends AbstractFormatter {
     }
 
 }
+
+
 
 
 
