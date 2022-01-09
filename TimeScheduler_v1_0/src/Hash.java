@@ -11,7 +11,7 @@ public class Hash {
     public static String hashPassword(String password) throws RuntimeException {
         try {
 
-            MessageDigest md = MessageDigest.getInstance("MD5");
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(password.getBytes());
             byte[] digest = md.digest();
             // String myHash64 = Base64.getEncoder().encodeToString(digest);
