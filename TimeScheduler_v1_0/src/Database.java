@@ -4,9 +4,12 @@ import java.sql.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Properties;
 
 public class Database {
     final static String addUser = "INSERT INTO TISCH_USER VALUES (?, ?, ?, ?, ?, ?)";
+    final static String addEvent = "INSERT INTO EVENT VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     final static String databaseUsername = "S1_student2_46";
     static String databasePassword = getDatabasePassword();
     static Connection con;
@@ -14,6 +17,7 @@ public class Database {
     // create database connection to the Oracle database
     static Connection createConnection() {
         try {
+            Properties connectionProps = new Properties();
             // step1 load the driver class
             // Class<?> driverClass = Class.forName("oracle.jdbc.driver.OracleDriver");
             Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -49,8 +53,9 @@ public class Database {
     }
 
     // add user to database
-    public static boolean addTischUser(String username, String password, String name, String phone,
-            String email) {
+    // hash password is hash(password + username) with SHA-256
+    public static boolean addUser(String username, String hashPassword, String name,
+            String email, String phone) {
         try {
             // create the connection object
             // Connection con = createConnection();
@@ -59,10 +64,10 @@ public class Database {
             PreparedStatement ps = con.prepareStatement(addUser);
             ps.setString(1, "");
             ps.setString(2, username);
-            ps.setString(3, password);
+            ps.setString(3, hashPassword);
             ps.setString(4, name);
-            ps.setString(5, phone);
-            ps.setString(6, email);
+            ps.setString(5, email);
+            ps.setString(6, phone);
 
             // execute query
             ps.execute();
@@ -70,10 +75,10 @@ public class Database {
 
             // close the connection object
             // con.close();
-            return true;
+            return true; // user successfully added
         } catch (Exception e) {
             System.out.println(e);
-            return false;
+            return false; // failed to add user
         }
     }
 
@@ -151,9 +156,17 @@ public class Database {
 
             // process the result set
             if (rs.next()) {
-                User user = new User(rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6));
-                // con.close();
-                return user;
+                String userID = rs.getString(1);
+                String userName = rs.getString(3);
+                String name = rs.getString(4);
+                String email = rs.getString(5);
+                String phone = rs.getString(6);
+
+                if (rs.getString(3).equals(hashPassword)) {
+                    return new User(userID, userName, name, email, phone);
+                } else {
+                    return null;
+                }
             }
 
             // close the connection object
@@ -190,4 +203,73 @@ public class Database {
         }
         return null;
     }
+
+    // add event of a user to database
+    static boolean addEvent(Event event) {
+        try {
+            // create the statement object
+            java.sql.Date eventDate = new java.sql.Date(event.getDate().getTime());
+            System.out.println("event Date" + eventDate);
+            java.sql.Date eventStartTime = new java.sql.Date(event.getStartTime().getTime());
+            System.out.println("eventStartTime" + eventStartTime);
+            PreparedStatement ps = con.prepareStatement(addEvent);
+            ps.setString(1, "");
+            ps.setString(2, event.getUserID());
+            ps.setString(3, event.getTitle());
+            ps.setString(4, event.getDescription());
+            ps.setDate(5, eventDate);
+            ps.setDate(6, eventStartTime);
+            ps.setString(7, event.getLocation());
+            ps.setInt(8, event.getDuration());
+            ps.setInt(9, event.getPriority());
+            ps.setInt(10, event.getRemind());
+
+            // execute query
+            ps.execute();
+            ps.close();
+
+            // close the connection object
+            // con.close();
+            return true; // user successfully added
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // get all events from a user from database
+    static ArrayList<Event> getEvents(User user) {
+        ArrayList<Event> events = new ArrayList<>();
+        try {
+            // create the statement object
+            Statement stmt = con.createStatement();
+
+            // execute query
+            ResultSet rs = stmt
+                    .executeQuery("SELECT * FROM EVENT WHERE USERID = '" + user.getId() + "'" + " ORDER BY EventDate");
+
+            // process the result set
+            while (rs.next()) {
+                String id = rs.getString(1);
+                String userid = rs.getString(2);
+                String title = rs.getString(3);
+                String description = rs.getString(4);
+                Date Date = rs.getDate(5);
+                Date startTime = rs.getDate(6);
+                String location = rs.getString(7);
+                int duration = rs.getInt(8);
+                int priority = rs.getInt(9);
+                int remind = rs.getInt(10);
+
+                Event event = new Event(userid, title, description, Date, startTime, location, duration, priority,
+                        remind);
+                events.add(event);
+            }
+            return events;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }
