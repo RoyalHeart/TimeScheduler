@@ -9,27 +9,34 @@ CREATE TABLE TISCH_USER(
     id              CHAR(6), 
     username        VARCHAR2(30) UNIQUE not NULL,
     password        RAW(64) not null,
-    uName           VARCHAR2(64) not null,
-    PhoneNumber     VARCHAR2(20),
-    Email           VARCHAR2(128) not null,
+    userFullName    VARCHAR2(64) not null,
+    userEmail       VARCHAR2(128) not null,
+    userPhoneNumber VARCHAR2(25),
     constraint user_id_username_pk primary key (id)
 );
 
 CREATE TABLE EVENT(
     -- expected to have up to 1 000 000 000 events(each user can have up to 1 000 events)
-    id              CHAR(9), 
-    eventName       VARCHAR2(60) not null,
-    eventContent    VARCHAR2(512),
-    eventDate       DATE not null,
-    constraint event_id_pk primary key (id)
+    id                  CHAR(9), 
+    userId              CHAR(6),
+    eventTitle          VARCHAR2(60) not null,
+    eventDescription    VARCHAR2(512),
+    eventDate           DATE not null,
+    eventStartTime      DATE not null,
+    eventLocation       VARCHAR2(128),
+    eventDuration       INT(3) not null,
+    eventPriority       INT(1),
+    eventReminder       INT(3),
+    constraint event_id_userId_pk primary key (id, userId),
+    constraint event_userId_fk foreign key (userId) references TISCH_USER(id)
 );
 
 CREATE TABLE ADMINISTRATOR(
-    ID CHAR(9) not null,
+    id CHAR(6) not null,
     constraint admin_id_pk primary key (id)
 );
 
-CREATE SEQUENCE USER_SEQUENCE START WITH 1;
+CREATE SEQUENCE USER_SEQUENCE MINVALUE 1 MAXVALUE 999999 INCREMENT BY 1 START WITH 1;
 
 CREATE OR REPLACE TRIGGER user_bir 
 BEFORE INSERT ON TISCH_USER 
