@@ -10,10 +10,20 @@ public class Event {
     private Date date;
     private String location;
     private int duration;
+    private Date startTime;
     private int priority;
     private int remind;
 
-    public Event(String userID, String title, String description, Date date, String location, int duration, int priority, int remind)
+    public Event(String userID, String title, Date date, Date startTime, int duration)
+    {
+        this.userID = userID;
+        this.title = title;
+        this.date = date;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
+    public Event(String userID, String title, String description, Date date, String location, int duration, int priority, int remind, Date startTime)
     {
         this.userID = userID;
         this.title = title;
@@ -23,6 +33,7 @@ public class Event {
         this.duration = duration;
         this.priority = priority;
         this.remind = remind;
+        this.startTime = startTime;
     }
 
     public String getID() {return ID;}
@@ -52,4 +63,8 @@ public class Event {
     public int getRemind() {return remind;}
     public void setRemind(int remind) {this.remind = remind;}
     
+    public Date getStartTime() {return startTime;}
+    public void setStartTime(Date startTime) {this.startTime = startTime;}
+
 }
+
