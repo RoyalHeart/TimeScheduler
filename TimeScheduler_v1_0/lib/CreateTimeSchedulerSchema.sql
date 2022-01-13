@@ -17,7 +17,7 @@ CREATE TABLE TISCH_USER(
     constraint user_id_username_pk primary key (id)
 );
 
-INSERT INTO TISCH_USER VALUES ('0', 'admin', 'd82494f05d6917ba02f7aaa29689ccb444bb73f20380876cb05d1f37537b7892', 'admin', 'notification.tisch@gmail.com', '1744519780'); -- insert admin user
+INSERT INTO TISCH_USER VALUES ('0', 'admin', 'D82494F05D6917BA02F7AAA29689CCB444BB73F20380876CB05D1F37537B7892', 'admin', 'notification.tisch@gmail.com', '1744519780'); -- insert admin user
 
 CREATE TABLE EVENT(
     -- expected to have up to 1 000 000 000 events(each user can have up to 1 000 events)
@@ -26,7 +26,6 @@ CREATE TABLE EVENT(
     eventTitle          VARCHAR2(60) not null,
     eventDescription    VARCHAR2(512),
     eventDate           DATE not null,
-    eventStartTime      DATE not null,
     eventLocation       VARCHAR2(128),
     eventDuration       INT not null,
     eventPriority       INT,
