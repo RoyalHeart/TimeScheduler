@@ -21,7 +21,7 @@ public class Navigation extends JPanel {
 
     Navigation(JFrame frame, User user) {
         // panel in navigation
-        SwingCalendar calendar = new SwingCalendar();
+        SwingCalendar calendar = new SwingCalendar(user);
         Profile profilePanel = new Profile(user);
 
         // default panel
