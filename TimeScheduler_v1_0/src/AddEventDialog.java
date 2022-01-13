@@ -41,7 +41,7 @@ public class AddEventDialog extends JDialog {
 
     public static void main(String[] args) 
     {
-        // new AddEventDialog(user);
+        //new AddEventDialog(user);
     }
 
 }
@@ -131,8 +131,8 @@ class DateTime extends JPanel
     JTextField timeToField = new JTextField(6);
     JLabel dateLabel = new JLabel();
     JLabel timeLabel = new JLabel();
-    static TestPane beforeTime = new TestPane();
-    static TestPane afterTime = new TestPane();
+    static TestPane startTime = new TestPane();
+    static TestPane endTime = new TestPane();
     JLabel iconLabel;
     ImageIcon icon;
     UtilDateModel model = new UtilDateModel();
@@ -164,16 +164,18 @@ class DateTime extends JPanel
         JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
         datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
         // return value from datePicker
-        date = (Date)datePicker.getModel().getValue();
+        // date = (Date)datePicker.getModel().getValue();
         this.add(datePicker);
         timeLabel.setText("Time");
         this.add(timeLabel);
-        this.add(beforeTime);
-        this.add(afterTime);
+        this.add(startTime);
+        this.add(endTime);
     }
 
     static Date getDateTime() 
     {
+        // if Date is not selected will take current date
+        if ((Date)datePicker.getModel().getValue() == null) {return new Date();}
         // return selected date
         return (Date)datePicker.getModel().getValue();
     }
@@ -182,8 +184,8 @@ class DateTime extends JPanel
     static int getDuration()
     {
          // SimpleDateFormat format = new SimpleDateFormat("HH:mm");  
-        Date before = beforeTime.getPickedTime();
-        Date after = afterTime.getPickedTime();
+        Date before = startTime.getPickedTime();
+        Date after = endTime.getPickedTime();
         /* try {
             before = format.parse(before);
             after = format.parse(after);
@@ -195,6 +197,20 @@ class DateTime extends JPanel
         int minutes = (int)TimeUnit.MILLISECONDS.toMinutes(diff); 
 
         return minutes;
+    }
+
+    // combine date and startTime to 1 variable Date
+    static Date getDate() throws ParseException 
+    {
+        int h = startTime.getPickedTime().getHours();
+        int m = startTime.getPickedTime().getMinutes();
+        Date temp = getDateTime();
+        int month = temp.getMonth();
+        int date = temp.getDate();
+        int year = temp.getYear();
+        String string = String.format("%d-%d-%d %d:%d", date, month+1, year+1900, h, m);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        return sdf.parse(string);
     }
 }
 
@@ -339,16 +355,15 @@ class SetBtn extends JPanel
                 System.out.println(Priority.getPriority());
                 System.out.println(Reminder.getRemind());
                 System.out.println(Description.getDescription());
+                try {
+                    System.out.println(DateTime.getDate());
+                } catch (ParseException e2) {
+                    e2.printStackTrace();
+                }
             }
 
         });
     }
-
-    void setEvent(String userID, String title, String description, Date date, String location, int duration, int priority, int reminder)
-    {
-        // Event event = new Event(userID, title, description, date, location, duration, priority, reminder);
-    }
-
 }
 
 // Combobox display time
@@ -436,6 +451,9 @@ class DateLabelFormatter extends AbstractFormatter {
     }
 
 }
+
+
+
 
 
 
