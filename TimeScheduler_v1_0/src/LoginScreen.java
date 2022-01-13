@@ -252,13 +252,35 @@ class RegisterInfo extends JFrame {
         this.addComp(registerInfoPanel, emailTextField, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 0.33);
         this.addComp(registerInfoPanel, emailDescriptionLabel, 2, 1, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
 
+        // verify email
+        JButton verifyButton = new JButton("Send verify code");
+        JLabel verifyEmailLabel = new JLabel("Verify Email");
+        JTextField verifyEmailTextField = new JTextField(10);
+        this.addComp(registerInfoPanel, verifyButton, 2, 2, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
+        this.addComp(registerInfoPanel, verifyEmailLabel, 0, 2, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
+        this.addComp(registerInfoPanel, verifyEmailTextField, 1, 2, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 0.33);
+        verifyButton.addActionListener(e -> {
+            // send verify code to email
+            String email = emailTextField.getText();
+            user.setEmail(email);
+            if (RegisterValidator.isValidEmail(email)) {
+                System.out.println("Email is valid");
+                // send verify code to user email
+                Mail.sendVerifyCode(user);
+                JOptionPane.showMessageDialog(null, "Verify code has been sent to your email");
+            } else {
+                System.out.println("Email is not valid");
+                JOptionPane.showMessageDialog(null, "Email is not valid");
+            }
+        });
+
         // phone
         JLabel phoneLabel = new JLabel("Phone");
         JLabel phoneDescriptionLabel = new JLabel("e.g 0987654321, 10 digits");
         JTextField phoneTextField = new JTextField(10);
-        this.addComp(registerInfoPanel, phoneLabel, 0, 2, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
-        this.addComp(registerInfoPanel, phoneTextField, 1, 2, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 0.33);
-        this.addComp(registerInfoPanel, phoneDescriptionLabel, 2, 2, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
+        this.addComp(registerInfoPanel, phoneLabel, 0, 3, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
+        this.addComp(registerInfoPanel, phoneTextField, 1, 3, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 0.33);
+        this.addComp(registerInfoPanel, phoneDescriptionLabel, 2, 3, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
 
         // button panel
         JPanel buttonPanel = new JPanel();
@@ -283,7 +305,8 @@ class RegisterInfo extends JFrame {
             // check if name, email and phone are valid
             if (RegisterValidator.isValidName(nameTextField.getText())
                     && RegisterValidator.isValidEmail(emailTextField.getText())
-                    && RegisterValidator.isValidPhone(phoneTextField.getText())) {
+                    && RegisterValidator.isValidPhone(phoneTextField.getText())
+                    && Mail.getVerifyCode().equals(verifyEmailTextField.getText())) {
                 user.setName(nameTextField.getText());
                 user.setEmail(emailTextField.getText());
                 user.setPhone(phoneTextField.getText());
@@ -309,12 +332,16 @@ class RegisterInfo extends JFrame {
             } else if (!RegisterValidator.isValidPhone(phoneTextField.getText())) { // phone is not valid
                 System.out.println("Phone is invalid");
                 JOptionPane.showMessageDialog(null, "Phone is invalid");
+            } else if (!Mail.getVerifyCode().equals(verifyEmailTextField.getText())) {
+                System.out.println("Verify code is invalid");
+                JOptionPane.showMessageDialog(null, "Verify code is invalid");
+                Mail.setVerifyCode(Mail.generateVerifyCode());
             }
         });
 
         buttonPanel.add(backButtonPanel);
         buttonPanel.add(registerButtonPanel);
-        this.addComp(registerInfoPanel, buttonPanel, 1, 3, 1, 1, GridBagConstraints.HORIZONTAL, 1, 1);
+        this.addComp(registerInfoPanel, buttonPanel, 1, 4, 1, 1, GridBagConstraints.HORIZONTAL, 1, 1);
         this.setContentPane(registerInfoPanel);
         this.setVisible(true);
     }
