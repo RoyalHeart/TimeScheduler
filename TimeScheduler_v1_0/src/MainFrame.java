@@ -34,6 +34,6 @@ public class MainFrame extends JFrame {
 
     public static void main(String[] args) {
         Database.createConnection();
-        new MainFrame(Database.getUser("abc", Hash.hashPassword("abc").toUpperCase()));
+        new MainFrame(Database.getUser("admin", Hash.hashPassword("adminadmin").toUpperCase()));
     }
 }
