@@ -11,7 +11,7 @@ CREATE TABLE TISCH_USER(
     id              CHAR(6), 
     username        VARCHAR2(30) UNIQUE not NULL,
     password        RAW(64) not null,
-    userFullName    VARCHAR2(64) not null,
+    userFullName    VARCHAR2(64),
     userEmail       VARCHAR2(128) not null,
     userPhoneNumber VARCHAR2(25),
     constraint user_id_username_pk primary key (id)
