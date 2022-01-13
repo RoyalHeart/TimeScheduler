@@ -49,7 +49,7 @@ public class ShowEvents {
                 Calendar calendar = new GregorianCalendar();
                 System.out.println("Title: " + event.getTitle());
                 System.out.println("Date: " + dateFormat.format(event.getDate()));
-                System.out.println("Start time: " + timeFormat.format(event.getStartTime()));
+                System.out.println("Start time: " + timeFormat.format(event.getDate()));
                 System.out.println("Duration: " + event.getDuration());
                 System.out.println("Priority: " + event.getPriority());
                 calendar.setTime(event.getDate());
@@ -90,7 +90,7 @@ public class ShowEvents {
             data.add(list);
         }
         Database.createConnection();
-        User user = Database.getUser("admin", Hash.hashPassword("adminadmin").toUpperCase());
+        User user = Database.getUser("admin", "D82494F05D6917BA02F7AAA29689CCB444BB73F20380876CB05D1F37537B7892");
         ArrayList<Event> events = Database.getEvents(user);
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
         DateFormat yearFormat = new SimpleDateFormat("yyyy");
@@ -104,7 +104,7 @@ public class ShowEvents {
                 Calendar calendar = new GregorianCalendar();
                 System.out.println("Title: " + event.getTitle());
                 System.out.println("Date: " + dateFormat.format(event.getDate()));
-                System.out.println("Start time: " + timeFormat.format(event.getStartTime()));
+                System.out.println("Start time: " + timeFormat.format(event.getDate()));
                 System.out.println("Duration: " + event.getDuration());
                 System.out.println("Priority: " + event.getPriority());
                 calendar.setTime(event.getDate());
@@ -123,8 +123,8 @@ public class ShowEvents {
         for (int i = 0; i < weeks; i++) {
             for (int j = 0; j < 7; j++) {
                 for (int t = 0; t < data.get(i).get(j).getEvents().size(); t++) {
+                    System.out.println(data.get(i).get(j).getEvents().get(t).getDate());
                     System.out.println(data.get(i).get(j).getEvents().get(t).getTitle());
-                    System.out.println(data.get(i).get(j).getEvents().get(t).getStartTime());
                 }
             }
             System.out.println();
