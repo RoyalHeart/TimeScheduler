@@ -23,17 +23,17 @@ public class Event {
         this.duration = duration;
     }
 
-    public Event(String userID, String title, String description, Date date, String location, int duration, int priority, int remind, Date startTime)
+    public Event(String userID, String title, String description, Date date,Date startTime, String location, int duration, int priority, int remind)
     {
         this.userID = userID;
         this.title = title;
         this.description = description;
         this.date = date;
+        this.startTime = startTime;
         this.location = location;
         this.duration = duration;
         this.priority = priority;
         this.remind = remind;
-        this.startTime = startTime;
     }
 
     public String getID() {return ID;}
