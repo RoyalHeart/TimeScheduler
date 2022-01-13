@@ -1,11 +1,19 @@
 package src;
 
 public class User {
-    private String Id;
+    private String id;
     private String username;
+    private String name;
     private String email;
     private String phone;
-    private String name;
+
+    public User(String id, String username, String name, String email, String phone) {
+        this.id = id;
+        this.username = username;
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+    }
 
     public User(String username, String name, String email, String phone) {
         this.username = username;
@@ -14,12 +22,15 @@ public class User {
         this.phone = phone;
     }
 
+    public User() {
+    }
+
     public String getId() {
-        return Id;
+        return id;
     }
 
     public void setId(String id) {
-        this.Id = id;
+        this.id = id;
     }
 
     public String getUsername() {
@@ -28,6 +39,14 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -46,11 +65,4 @@ public class User {
         this.phone = phone;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }
