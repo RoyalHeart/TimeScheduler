@@ -53,13 +53,13 @@ class MonthCell {
 
     public void addEvent(Event event) {
         this.events.add(event);
-        this.times.add(timeFormat.format(event.getStartTime()));
+        this.times.add(timeFormat.format(event.getDate()));
         this.titles.add(event.getTitle());
     }
 
     public void removeEvent(Event event) {
         this.events.remove(event);
-        this.times.remove(timeFormat.format(event.getStartTime()));
+        this.times.remove(timeFormat.format(event.getDate()));
         this.titles.remove(event.getTitle());
     }
 
@@ -294,7 +294,7 @@ class MyClassCellComponent extends JPanel {
 
         this.add(datePanel, BorderLayout.NORTH);
         scrollPane = new JScrollPane(eventsPanel);
-        this.add(scrollPane, BorderLayout.CENTER);
+        this.add(eventsPanel, BorderLayout.CENTER);
         this.setPreferredSize(new Dimension(100, 100));
         this.setSize(100, 100);
         // add action listeners
