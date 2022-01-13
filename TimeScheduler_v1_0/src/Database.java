@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class Database {
     final static String addUser = "INSERT INTO TISCH_USER VALUES (?, ?, ?, ?, ?, ?)";
-    final static String addEvent = "INSERT INTO EVENT VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    final static String addEvent = "INSERT INTO EVENT VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     final static String databaseUsername = "S1_student2_46";
     static String databasePassword = getDatabasePassword();
     static Connection con;
@@ -199,19 +199,16 @@ public class Database {
             // create the statement object
             java.sql.Date eventDate = new java.sql.Date(event.getDate().getTime());
             System.out.println("event Date" + eventDate);
-            java.sql.Date eventStartTime = new java.sql.Date(event.getStartTime().getTime());
-            System.out.println("eventStartTime" + eventStartTime);
             PreparedStatement ps = con.prepareStatement(addEvent);
             ps.setString(1, "");
             ps.setString(2, event.getUserID());
             ps.setString(3, event.getTitle());
             ps.setString(4, event.getDescription());
             ps.setDate(5, eventDate);
-            ps.setDate(6, eventStartTime);
-            ps.setString(7, event.getLocation());
-            ps.setInt(8, event.getDuration());
-            ps.setInt(9, event.getPriority());
-            ps.setInt(10, event.getRemind());
+            ps.setString(6, event.getLocation());
+            ps.setInt(7, event.getDuration());
+            ps.setInt(8, event.getPriority());
+            ps.setInt(9, event.getRemind());
 
             // execute query
             ps.execute();
@@ -236,7 +233,7 @@ public class Database {
             // execute query
             ResultSet rs = stmt
                     .executeQuery("SELECT * FROM EVENT WHERE USERID = '" + user.getId() + "'"
-                            + " ORDER BY EventDate, EventStartTime");
+                            + " ORDER BY EventDate");
 
             // process the result set
             while (rs.next()) {
@@ -245,13 +242,12 @@ public class Database {
                 String title = rs.getString(3);
                 String description = rs.getString(4);
                 Date Date = rs.getDate(5);
-                Date startTime = rs.getDate(6);
-                String location = rs.getString(7);
-                int duration = rs.getInt(8);
-                int priority = rs.getInt(9);
-                int remind = rs.getInt(10);
+                String location = rs.getString(6);
+                int duration = rs.getInt(7);
+                int priority = rs.getInt(8);
+                int remind = rs.getInt(9);
 
-                Event event = new Event(userid, title, description, Date, startTime, location, duration, priority,
+                Event event = new Event(userid, title, description, Date, location, duration, priority,
                         remind);
                 events.add(event);
             }
