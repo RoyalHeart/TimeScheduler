@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.Properties;
+// import java.util.Properties;
 
 public class Database {
     final static String addUser = "INSERT INTO TISCH_USER VALUES (?, ?, ?, ?, ?, ?)";
@@ -17,7 +17,6 @@ public class Database {
     // create database connection to the Oracle database
     static Connection createConnection() {
         try {
-            Properties connectionProps = new Properties();
             // step1 load the driver class
             // Class<?> driverClass = Class.forName("oracle.jdbc.driver.OracleDriver");
             Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -84,10 +83,8 @@ public class Database {
 
     // check if user exists in database
     // check for login
-    static boolean existUser(String username, String hashPassword) {
-        System.out.println(username + ' ' + hashPassword);
+    static boolean existUser(String username) {
         try {
-            System.out.println(username + ' ' + hashPassword);
             // create statement object
             // con = createConnection();
             Statement stmt = con.createStatement();
@@ -96,19 +93,12 @@ public class Database {
             ResultSet rs = stmt.executeQuery("SELECT * FROM TISCH_USER WHERE USERNAME = '" + username + "'");
 
             // execute query
-            rs.next();
-            // System.out.println(rs.getString(2) + " " + rs.getString(3));
-            // step 5 process the result set
-            // if user exists
-            if (rs.getString(3).equals(hashPassword.toUpperCase())) {
-                // System.out.println(rs.getString(2) + " " + rs.getString(3));
-                // con.close();
-                return true;
-            } else { // if user doesn't exist
-                // System.out.println(rs.getString(2) + " " + rs.getString(3));
-                // con.close();
-                return false;
+            if (rs.next()) {
+                return true; // user exists
+            } else {
+                return false; // user does not exist
             }
+
         } catch (Exception e) {
             System.out.println(e);
             return false;
@@ -157,13 +147,12 @@ public class Database {
             // process the result set
             if (rs.next()) {
                 String userID = rs.getString(1);
-                String userName = rs.getString(3);
                 String name = rs.getString(4);
                 String email = rs.getString(5);
                 String phone = rs.getString(6);
 
                 if (rs.getString(3).equals(hashPassword)) {
-                    return new User(userID, userName, name, email, phone);
+                    return new User(userID, username, name, email, phone);
                 } else {
                     return null;
                 }
@@ -246,7 +235,8 @@ public class Database {
 
             // execute query
             ResultSet rs = stmt
-                    .executeQuery("SELECT * FROM EVENT WHERE USERID = '" + user.getId() + "'" + " ORDER BY EventDate");
+                    .executeQuery("SELECT * FROM EVENT WHERE USERID = '" + user.getId() + "'"
+                            + " ORDER BY EventDate, EventStartTime");
 
             // process the result set
             while (rs.next()) {
