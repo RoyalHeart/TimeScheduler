@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 import java.awt.event.ActionEvent;
 // import java.awt.event.ActionListener;
 
-public class AddEventDialog extends JDialog {
-
+public class AddEventDialog extends JDialog 
+{
     AddEventDialog(User user) 
     {
         this.setTitle("Event");
@@ -49,6 +49,7 @@ public class AddEventDialog extends JDialog {
 class TitlePanel extends JPanel 
 {
     static JTextField titleField = new JTextField(50);
+    Graphics2D g2;
     TitlePanel() 
     {
         this.setLayout(new FlowLayout());
@@ -74,6 +75,11 @@ class TitlePanel extends JPanel
     static String getTitle() 
     {
         return titleField.getText();
+    }
+
+    // Test for drawing
+    @Override
+    protected void paintComponent(Graphics g) {
     }
 }
 
@@ -347,11 +353,15 @@ class SetBtn extends JPanel
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (DateTime.getDuration() <= 0) 
+                { 
+                    JOptionPane.showMessageDialog(null, "Please select end time greater than start time!");
+                    return;
+                } else {System.out.println(DateTime.getDuration());}
                 // setEvent(TitlePanel.getTitle(), DateTime.getDateTime(), LocationField.getLoc(), DateTime.getDuration(), Priority.getPriority(), Reminder.getRemind());
                 System.out.println(TitlePanel.getTitle());
                 System.out.println(DateTime.getDateTime());
                 System.out.println(LocationField.getLoc());
-                System.out.println(DateTime.getDuration());
                 System.out.println(Priority.getPriority());
                 System.out.println(Reminder.getRemind());
                 System.out.println(Description.getDescription());
@@ -451,6 +461,9 @@ class DateLabelFormatter extends AbstractFormatter {
     }
 
 }
+
+
+
 
 
 
