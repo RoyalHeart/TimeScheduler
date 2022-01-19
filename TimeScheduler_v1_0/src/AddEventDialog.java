@@ -370,6 +370,23 @@ class SetBtn extends JPanel
                 } catch (ParseException e2) {
                     e2.printStackTrace();
                 }
+                try {
+                    Event event = new Event(userID,
+                            TitlePanel.getTitle(),
+                            Description.getDescription(),
+                            DateTime.getDate(),
+                            LocationField.getLoc(),
+                            DateTime.getDuration(),
+                            Priority.getPriority(),
+                            Reminder.getRemind());
+                    if (Database.addEvent(event)) {
+                        JOptionPane.showMessageDialog(null, "Event added successfully!");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Fail to add event");
+                    }
+                } catch (Exception e1) {
+                    System.out.println("Parse Error");
+                }
             }
 
         });
