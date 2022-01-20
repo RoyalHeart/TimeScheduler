@@ -35,6 +35,19 @@ public class Event {
         this.priority = priority;
         // this.startTime = startTime;
     }
+    
+    public Event(String id, String userID, String title, String description, Date date, Date remind, String location,
+            int duration, int priority) {
+        this.ID = id;
+        this.userID = userID;
+        this.title = title;
+        this.description = description;
+        this.date = date;
+        this.remind = remind;
+        this.location = location;
+        this.duration = duration;
+        this.priority = priority;
+    }
 
     public String getID() {return ID;}
     public void setID(String ID) {this.ID = ID;}
