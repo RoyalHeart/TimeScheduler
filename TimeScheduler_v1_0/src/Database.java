@@ -198,6 +198,7 @@ public class Database {
         try {
             // create the statement object
             java.sql.Date eventDate = new java.sql.Date(event.getDate().getTime());
+            java.sql.Date eventRemind = new java.sql.Date(event.getRemind().getTime());
             System.out.println("event Date" + eventDate);
             PreparedStatement ps = con.prepareStatement(addEvent);
             ps.setString(1, "");
@@ -205,10 +206,10 @@ public class Database {
             ps.setString(3, event.getTitle());
             ps.setString(4, event.getDescription());
             ps.setDate(5, eventDate);
-            ps.setString(6, event.getLocation());
-            ps.setInt(7, event.getDuration());
-            ps.setInt(8, event.getPriority());
-            ps.setInt(9, event.getRemind());
+            ps.setDate(6, eventRemind);
+            ps.setString(7, event.getLocation());
+            ps.setInt(8, event.getDuration());
+            ps.setInt(9, event.getPriority());
 
             // execute query
             ps.execute();
@@ -241,14 +242,13 @@ public class Database {
                 String userid = rs.getString(2);
                 String title = rs.getString(3);
                 String description = rs.getString(4);
-                Date Date = rs.getDate(5);
-                String location = rs.getString(6);
-                int duration = rs.getInt(7);
-                int priority = rs.getInt(8);
-                int remind = rs.getInt(9);
-
-                Event event = new Event(userid, title, description, Date, location, duration, priority,
-                        remind);
+                Date date = rs.getDate(5);
+                Date remind = rs.getDate(6);
+                String location = rs.getString(7);
+                int duration = rs.getInt(8);
+                int priority = rs.getInt(9);
+                
+                Event event = new Event(id, userid, title, description, date, remind, location, duration, priority);
                 events.add(event);
             }
             return events;
@@ -257,5 +257,4 @@ public class Database {
             return null;
         }
     }
-
 }
