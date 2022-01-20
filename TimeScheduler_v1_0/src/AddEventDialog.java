@@ -300,7 +300,7 @@ class Reminder extends JPanel
         switch (reminderComboBox.getSelectedIndex())
         {
             case 0:
-                return null;
+                return DateTime.getDate();
             case 1:
                 temp = temp.minusMinutes(1);
                 break;
@@ -408,7 +408,11 @@ class SetBtn extends JPanel
                             );
                     if (Database.addEvent(event)) {
                         JOptionPane.showMessageDialog(null, "Event added successfully!");
-                        SchedulerJava.scheduleMail(user, event);
+                        Mail.sendRemindEmail(user, event);
+                        if (event.getRemind().compareTo(event.getDate()) < 0) {
+                            System.out.println("Remind set");
+                            SchedulerJava.scheduleMail(user, event);
+                        }
                     } else {
                         JOptionPane.showMessageDialog(null, "Fail to add event");
                     }
