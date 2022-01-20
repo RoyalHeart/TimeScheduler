@@ -4,24 +4,23 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Date;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import javax.swing.*;
 
 public class ShowEvents {
-    public static ArrayList<List<MonthCell>> updateDataEvent(ArrayList<List<MonthCell>> returnData, Calendar cal,
+    public static ArrayList<List<MonthCell>> updateMonthDataEvent(ArrayList<List<MonthCell>> data, Calendar cal,
             User user) {
         cal.set(Calendar.DAY_OF_MONTH, 1);
         int month = cal.get(Calendar.MONTH);
-        System.out.println(month);
+        System.out.println("Month: " + month);
         int year = cal.get(Calendar.YEAR);
-        System.out.println(year);
+        System.out.println("Year: " + year);
         int startDay = cal.get(Calendar.DAY_OF_WEEK);
         int numberOfDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
         int weeks = cal.getActualMaximum(Calendar.WEEK_OF_MONTH);
         int day = 1;
-        ArrayList<List<MonthCell>> data = new ArrayList<List<MonthCell>>();
+        data = new ArrayList<List<MonthCell>>();
         for (int i = 0; i < weeks; i++) {
             List<MonthCell> list = new ArrayList<MonthCell>();
             for (int j = 0; j < 7; j++) {
@@ -40,7 +39,6 @@ public class ShowEvents {
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
         DateFormat yearFormat = new SimpleDateFormat("yyyy");
         DateFormat monthFormat = new SimpleDateFormat("MM");
-        DateFormat dayFormat = new SimpleDateFormat("dd");
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         for (Event event : events) {
             int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
@@ -62,6 +60,46 @@ public class ShowEvents {
         }
         return data;
     };
+
+    public static ArrayList<WeekCell> updateWeekDataEvent(ArrayList<WeekCell> weekData, Calendar cal, User user) {
+        int month = cal.get(Calendar.MONTH);
+        System.out.println("Month: " + month);
+        int year = cal.get(Calendar.YEAR);
+        System.out.println("Year: " + year);
+        int week = cal.get(Calendar.WEEK_OF_MONTH);
+        System.out.println("Week: " + week);
+        weekData = new ArrayList<WeekCell>();
+        for (int i = 0; i < 7; i++) {
+            WeekCell weekCell = new WeekCell();
+            weekData.add(weekCell);
+        }
+        ArrayList<Event> events = Database.getEvents(user);
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        DateFormat yearFormat = new SimpleDateFormat("yyyy");
+        DateFormat monthFormat = new SimpleDateFormat("MM");
+        DateFormat weekFormat = new SimpleDateFormat("ww");
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        for (Event event : events) {
+            int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
+            int eventMonth = Integer.valueOf(monthFormat.format(event.getDate()));
+            int eventWeek = Integer.valueOf(weekFormat.format(event.getDate()));
+            if (eventYear == year && eventMonth == month + 1 && eventWeek == week) {
+                Calendar calendar = new GregorianCalendar();
+                System.out.println("Title: " + event.getTitle());
+                System.out.println("Date: " + dateFormat.format(event.getDate()));
+                System.out.println("Start time: " + timeFormat.format(event.getDate()));
+                System.out.println("Duration: " + event.getDuration());
+                System.out.println("Priority: " + event.getPriority());
+                calendar.setTime(event.getDate());
+                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                System.out.println("Date of Month: " + calendar.get(Calendar.DAY_OF_WEEK));
+                System.out.println("Week: " + calendar.get(Calendar.WEEK_OF_MONTH) + "\n");
+                weekData.get(dayOfWeek - 1).date = dateFormat.format(event.getDate());
+                weekData.get(dayOfWeek - 1).addEvent(event);
+            }
+        }
+        return weekData;
+    }
 
     public static void main(String[] args) {
         Calendar cal = new GregorianCalendar();
@@ -95,7 +133,6 @@ public class ShowEvents {
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
         DateFormat yearFormat = new SimpleDateFormat("yyyy");
         DateFormat monthFormat = new SimpleDateFormat("MM");
-        DateFormat dayFormat = new SimpleDateFormat("dd");
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         for (Event event : events) {
             int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
