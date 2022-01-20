@@ -20,6 +20,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.awt.event.ActionEvent;
 // import java.awt.event.ActionListener;
 
@@ -34,7 +36,7 @@ public class AddEventDialog extends JDialog
         this.setLocationRelativeTo(null);
         this.add(new TitlePanel(), BorderLayout.NORTH);
         this.add(new EventMainPanel(), BorderLayout.CENTER);
-        this.add(new SetBtn(user.getId()), BorderLayout.SOUTH);
+        this.add(new SetBtn(user), BorderLayout.SOUTH);
         this.setResizable(false);
         this.setVisible(true);
     }
@@ -366,11 +368,9 @@ class Description extends JPanel
 class SetBtn extends JPanel
 {
     JButton setBtn = new JButton("Set");
-    String userID;
-    SetBtn(String userID) 
+    SetBtn(User user) 
     {
         this.add(setBtn);
-        this.userID = userID;
         setBtn.addActionListener(new ActionListener() {
 
             @Override
@@ -397,16 +397,18 @@ class SetBtn extends JPanel
                     e2.printStackTrace();
                 }
                 try {
-                    Event event = new Event(userID,
+                    Event event = new Event(user.getId(),
                             TitlePanel.getTitle(),
                             Description.getDescription(),
                             DateTime.getDate(),
+                            Reminder.getRemind(),
                             LocationField.getLoc(),
                             DateTime.getDuration(),
-                            Priority.getPriority(),
-                            Reminder.getRemind());
+                            Priority.getPriority()
+                            );
                     if (Database.addEvent(event)) {
                         JOptionPane.showMessageDialog(null, "Event added successfully!");
+                        SchedulerJava.scheduleMail(user, event);
                     } else {
                         JOptionPane.showMessageDialog(null, "Fail to add event");
                     }
