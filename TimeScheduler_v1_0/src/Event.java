@@ -8,11 +8,11 @@ public class Event {
     private String title;
     private String description;
     private Date date;
+    private Date remind;
     private String location;
     private int duration;
     // private Date startTime;
     private int priority;
-    private int remind;
 
     public Event(String userID, String title, Date date, int duration)
     {
@@ -23,16 +23,16 @@ public class Event {
         this.duration = duration;
     }
 
-    public Event(String userID, String title, String description, Date date, String location, int duration, int priority, int remind)
+    public Event(String userID, String title, String description, Date date, Date remind, String location, int duration, int priority)
     {
         this.userID = userID;
         this.title = title;
         this.description = description;
         this.date = date;
+        this.remind = remind;
         this.location = location;
         this.duration = duration;
         this.priority = priority;
-        this.remind = remind;
         // this.startTime = startTime;
     }
 
@@ -60,8 +60,8 @@ public class Event {
     public int getPriority() {return priority;}
     public void setPriority(int priority) {this.priority = priority;}
 
-    public int getRemind() {return remind;}
-    public void setRemind(int remind) {this.remind = remind;}
+    public Date getRemind() {return remind;}
+    public void setRemind(Date remind) {this.remind = remind;}
     
     /* public Date getStartTime() {return startTime;}
     public void setStartTime(Date startTime) {this.startTime = startTime;} */
