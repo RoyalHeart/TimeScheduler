@@ -279,8 +279,7 @@ class LocationField extends JPanel
 }
 
 class Reminder extends JPanel 
-
-    {
+{
     JLabel reminderLabel = new JLabel("Remind before: ");
     static String[] arr = {"No remind", "1 minute", "3 hour", "3 days", "1 week"};
     static JComboBox<String> reminderComboBox = new JComboBox<String>(arr);
@@ -291,9 +290,32 @@ class Reminder extends JPanel
         this.add(reminderComboBox);
     }
 
-    static int getRemind() 
+    static Date getRemind() throws ParseException 
     {
-        return reminderComboBox.getSelectedIndex();
+        // convert date to localdatetime
+        LocalDateTime temp = DateTime.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        Date date = new Date();
+        switch (reminderComboBox.getSelectedIndex())
+        {
+            case 0:
+                return null;
+            case 1:
+                temp = temp.minusMinutes(1);
+                break;
+            case 2:
+                temp = temp.minusHours(3);
+                break;
+            case 3:
+                temp = temp.minusDays(3);
+                break;
+            case 4:
+                temp = temp.minusDays(7);
+                break;
+        }
+
+        // convert localdatetime to date
+        date = Date.from(temp.atZone(ZoneId.systemDefault()).toInstant());
+        return date;
     }
 }
 
@@ -363,7 +385,11 @@ class SetBtn extends JPanel
                 System.out.println(DateTime.getDateTime());
                 System.out.println(LocationField.getLoc());
                 System.out.println(Priority.getPriority());
-                System.out.println(Reminder.getRemind());
+                try {
+                    System.out.println(Reminder.getRemind());
+                } catch (ParseException e1) {
+                    e1.printStackTrace();
+                }
                 System.out.println(Description.getDescription());
                 try {
                     System.out.println(DateTime.getDate());
