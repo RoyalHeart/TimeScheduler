@@ -42,7 +42,7 @@ public class MainFrame extends JFrame {
             Database.createConnection();
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             // UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-            new MainFrame(Database.getUser("admin", "D82494F05D6917BA02F7AAA29689CCB444BB73F20380876CB05D1F37537B7892");
+            new MainFrame(Database.getUser("admin", "D82494F05D6917BA02F7AAA29689CCB444BB73F20380876CB05D1F37537B7892"));
         } catch (Exception e) {
             e.printStackTrace();
         }
