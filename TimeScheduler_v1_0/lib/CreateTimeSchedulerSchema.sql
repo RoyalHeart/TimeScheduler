@@ -21,15 +21,15 @@ INSERT INTO TISCH_USER VALUES ('0', 'admin', 'D82494F05D6917BA02F7AAA29689CCB444
 
 CREATE TABLE EVENT(
     -- expected to have up to 1 000 000 000 events(each user can have up to 1 000 events)
-    id                  CHAR(9), 
+    id                  CHAR(9),
     userId              CHAR(6),
     eventTitle          VARCHAR2(60) not null,
     eventDescription    VARCHAR2(512),
     eventDate           DATE not null,
+    eventRemind         DATE,
     eventLocation       VARCHAR2(128),
     eventDuration       INT not null,
     eventPriority       INT,
-    eventRemind       INT,
     constraint event_id_userId_pk primary key (id, userId),
     constraint event_userId_fk foreign key (userId) references TISCH_USER(id)
 );
