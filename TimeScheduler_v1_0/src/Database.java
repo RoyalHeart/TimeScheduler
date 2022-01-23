@@ -1,31 +1,40 @@
 package src;
 
-import java.sql.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
-// import java.util.Properties;
+import java.util.Properties;
+import java.util.Scanner;
+
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.iv.RandomIvGenerator;
+import org.jasypt.properties.EncryptableProperties;
 
 public class Database {
-    final static String addUser = "INSERT INTO TISCH_USER VALUES (?, ?, ?, ?, ?, ?)";
-    final static String addEvent = "INSERT INTO EVENT VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    final static String databaseUsername = "S1_student2_46";
-    static String databasePassword = getDatabasePassword();
+    final static String addUser = "INSERT INTO TISCH_USER (ID, USERNAME, PASSWORD, USERFULLNAME, USEREMAIL, USERPHONENUMBER) VALUES (?, ?, ?, ?, ?, ?)";
+    final static String addEvent = "INSERT INTO EVENT (ID, USERID, EVENTTITLE, EVENTDESCRIPTION, EVENTDATE, EVENTREMIND, EVENTLOCATION, EVENTDURATION, EVENTPRIORITY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    static String jasyptPassword = getJasyptPassword();
+    final static Properties databaseProperties = getDatabaseProperties();
     static Connection con;
 
     // create database connection to the Oracle database
     static Connection createConnection() {
         try {
             // step1 load the driver class
-            // Class<?> driverClass = Class.forName("oracle.jdbc.driver.OracleDriver");
-            Class.forName("oracle.jdbc.driver.OracleDriver");
+            Class.forName(databaseProperties.getProperty("dbconfig.driver"));
 
             // step2 create the connection object
             con = DriverManager.getConnection(
-                    "jdbc:oracle:thin:@db1.fb2.frankfurt-university.de:1521:info01",
-                    databaseUsername,
-                    databasePassword);
+                    databaseProperties.getProperty("dbconfig.url"),
+                    databaseProperties.getProperty("dbconfig.username"),
+                    databaseProperties.getProperty("dbconfig.password"));
             return con;
         } catch (Exception e) {
             e.printStackTrace();
@@ -34,16 +43,31 @@ public class Database {
         }
     };
 
+    private static Properties getDatabaseProperties() {
+        try {
+            StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+            encryptor.setPassword(jasyptPassword); // could be got from web, env variable...
+            encryptor.setAlgorithm("PBEWithHMACSHA512AndAES_256");
+            encryptor.setIvGenerator(new RandomIvGenerator());
+            Properties properties = new EncryptableProperties(encryptor);
+            properties.load(new FileInputStream("TimeScheduler_v1_0/lib/databaseconfig.properties"));
+            return properties;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return databaseProperties;
+    }
+
     // read password from file
-    private static String getDatabasePassword() {
+    private static String getJasyptPassword() {
         File myObj = new File("TimeScheduler_v1_0/lib/DatabaseLoginInfo.txt");
         try {
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
-                databasePassword = myReader.nextLine();
+                jasyptPassword = myReader.nextLine();
             }
             myReader.close();
-            return databasePassword;
+            return jasyptPassword;
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -81,9 +105,36 @@ public class Database {
         }
     }
 
+    // check if username exists in database
+    static boolean existUsername(String username) {
+        try {
+            // create the connection object
+            // Connection con = createConnection();
+
+            // create the prepared statement object
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM TISCH_USER WHERE USERNAME = ?");
+            ps.setString(1, username);
+
+            // execute query
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                ps.close();
+                // con.close();
+                return true; // username exists
+            } else {
+                ps.close();
+                // con.close();
+                return false; // username does not exist
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return false; // failed to check username
+        }
+    }
+
     // check if user exists in database
     // check for login
-    static boolean existUser(String username) {
+    static boolean existUser(String username, String hashPassword) {
         try {
             // create statement object
             // con = createConnection();
@@ -93,7 +144,7 @@ public class Database {
             ResultSet rs = stmt.executeQuery("SELECT * FROM TISCH_USER WHERE USERNAME = '" + username + "'");
 
             // execute query
-            if (rs.next()) {
+            if (rs.next() && rs.getString("PASSWORD").equals(hashPassword)) {
                 return true; // user exists
             } else {
                 return false; // user does not exist
@@ -105,6 +156,7 @@ public class Database {
         }
     }
 
+    // check if the user is an admin or not
     static boolean existAdmin(String username, String hashPassword) {
         try {
             // create the connection object
@@ -118,19 +170,27 @@ public class Database {
 
             // process the result set
             if (rs.next()) {
-                if (rs.getString(3).equals(hashPassword) && rs.getString(1).equals("0")) {
-                    return true;
+                String userID = rs.getString(1);
+                if (rs.getString("PASSWORD").equals(hashPassword)) {
+                    rs = stmt.executeQuery("SELECT * FROM ADMINISTRATOR WHERE ID = '" + rs.getString(1) + "'");
+                    if (userID.equals(rs.getString(1))) {
+                        return true; // admin exists
+                    } else {
+                        return false; // user is not an admin
+                    }
                 } else {
-                    return false;
+                    return false; // password is wrong for this user
                 }
+            } else {
+                return false; // user does not exist
             }
 
             // close the connection object
             // con.close();
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
-        return false;
     }
 
     static User getUser(String username, String hashPassword) {
@@ -154,16 +214,17 @@ public class Database {
                 if (rs.getString(3).equals(hashPassword)) {
                     return new User(userID, username, name, email, phone);
                 } else {
-                    return null;
+                    return null; // password is wrong for this user
                 }
+            } else {
+                return null; // username does not exist
             }
-
             // close the connection object
             // con.close();
         } catch (Exception e) {
             System.out.println(e);
+            return null;
         }
-        return null;
     }
 
     static User getAdmin(String username, String hashPassword) {
@@ -179,10 +240,20 @@ public class Database {
             ResultSet rs = stmt.executeQuery("SELECT * FROM TISCH_USER WHERE USERNAME = '" + username + "'");
 
             // process the result set
-            if (rs.next() && rs.getString(1).equals("0")) {
-                User user = new User(rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6));
-                // con.close();
-                return user;
+            if (rs.next()) {
+                if (rs.getString(3).equals(hashPassword)) {
+                    String userID = rs.getString(1);
+                    String name = rs.getString(4);
+                    String email = rs.getString(5);
+                    String phone = rs.getString(6);
+                    rs = stmt.executeQuery("SELECT * FROM ADMINISTRATOR WHERE ID = '" + rs.getString(1) + "'");
+                    if (rs.next()) {
+                        System.out.println("Admin ID: " + userID);
+                        return new User(userID, username, name, email, phone);
+                    } else {
+                        return null;
+                    }
+                }
             }
 
             // close the connection object
@@ -247,7 +318,7 @@ public class Database {
                 String location = rs.getString(7);
                 int duration = rs.getInt(8);
                 int priority = rs.getInt(9);
-                
+
                 Event event = new Event(id, userid, title, description, date, remind, location, duration, priority);
                 events.add(event);
             }
