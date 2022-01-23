@@ -3,7 +3,6 @@ package src;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 // import java.util.Locale;
@@ -20,7 +19,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -122,18 +120,21 @@ class WeekCellComponent extends JPanel {
 
     public WeekCellComponent(WeekCell myClass, JTable table) {
         // initialize components (labels, buttons, etc.)
+        this.setPreferredSize(new Dimension(table.getSize().width, 120 * 25));
         TableColumn column = table.getColumnModel().getColumn(0);
 
+        // every minute is 2 pixels
         layeredPane.setPreferredSize(new Dimension(column.getWidth(), 120 * 24));
-        layeredPane.setBounds(0, 100, table.getSize().width, 120 * 24); // every
-        // minute is 2 pixels
-        // layeredPane.setBorder(javax.swing.BorderFactory.createLineBorder(Color.black));
-        this.setPreferredSize(new Dimension(table.getSize().width, 120 * 25));
-        layeredPane.setBackground(new Color(255, 255, 255));
+        layeredPane.setBounds(0, 0, table.getSize().width, 120 * 24);
+        layeredPane.setBackground(new Color(255, 200, 200));
         layeredPane.setOpaque(true);
         JButton eventButton = new JButton();
         Event lastEvent;
         int lastWidth = column.getWidth();
+
+        // add events to the layered pane one by one
+        // a better way is to get all the bounds of the events and add them to the
+        // layered pane
         for (int i = 0; i < myClass.events.size(); i++) {
             if (i > 0) {
                 lastEvent = myClass.events.get(i - 1);
@@ -148,37 +149,40 @@ class WeekCellComponent extends JPanel {
             long lastStartTime = lastEvent.getDate().getTime();
             int y = (Integer.parseInt(hourFormat.format(event.getDate()))) * 120
                     + Integer.parseInt(minuteFormat.format(event.getDate())) * 2;
-
             eventButton = new JButton();
-            JLabel time = new JLabel(timeStart + " - " + timeEnd);
-            time.setBounds(0, 0, 0, 20);
             JLabel titleLabel = new JLabel(title);
-            titleLabel.setBounds(0, 0, 0, 20);
-            eventButton.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
-            // eventButton.setHorizontalAlignment(SwingConstants.LEFT);
-            // eventButton.setVerticalAlignment(SwingConstants.TOP);
+            titleLabel.setBounds(5, 2, column.getWidth(), 15);
+            JLabel time = new JLabel(timeStart + " - " + timeEnd);
+            time.setBounds(5, 14, column.getWidth(), 15);
+            eventButton.setLayout(null);
+            eventButton.setOpaque(true);
             eventButton.add(titleLabel);
             eventButton.add(time);
-            // eventButton.setBorder(0, 0, 0, 0);
-            // eventButton.setBorder(BorderFactory.createBevelBorder(0, Color.GREEN,
-            // Color.BLUE));
-            if (startTime > lastStartTime && startTime < lastStartTime + lastEvent.getDuration() * 60000 && i > 0) {
+            if (startTime > lastStartTime && startTime < lastStartTime + lastEvent.getDuration() * 60000
+                    && i > 0) {
                 eventButton.setBounds(0, y, lastWidth - 10, 2 * event.getDuration());
                 lastWidth -= 10;
-            } else if (startTime == lastStartTime && startTime < lastStartTime + lastEvent.getDuration() * 60000
+            } else if (startTime == lastStartTime
+                    && startTime < lastStartTime + lastEvent.getDuration() * 60000
                     && i > 0) {
                 eventButton.setBounds((int) lastWidth / 2, y, (int) (lastWidth / 2) - 10,
                         2 * event.getDuration());
-                lastWidth -= lastWidth / 2 - 10;
+                lastWidth = lastWidth / 2 - 10;
             } else {
                 eventButton.setBounds(0, y, column.getWidth(), 2 * event.getDuration());
                 lastWidth = column.getWidth();
             }
             if (event.getPriority() == 0) {
+                eventButton.setBorder(BorderFactory.createEtchedBorder(0, Color.RED,
+                        Color.RED));
                 eventButton.setBackground(Color.RED);
             } else if (event.getPriority() == 1) {
+                eventButton.setBorder(BorderFactory.createBevelBorder(0, Color.YELLOW,
+                        Color.YELLOW));
                 eventButton.setBackground(Color.YELLOW);
             } else if (event.getPriority() == 2) {
+                eventButton.setBorder(BorderFactory.createBevelBorder(0, Color.GREEN,
+                        Color.GREEN));
                 eventButton.setBackground(Color.GREEN);
             }
             eventButton.addActionListener(new ActionListener() {
@@ -186,24 +190,15 @@ class WeekCellComponent extends JPanel {
                     JOptionPane.showMessageDialog(null, "Event: " + title + "\nTime: " + time.getText());
                 }
             });
-            layeredPane.add(eventButton, Integer.valueOf(i));
 
+            layeredPane.add(eventButton, Integer.valueOf(i));
         }
         this.add(layeredPane);
-        // add action listeners
-    }
-
-    public void updateData(WeekCell myClass, boolean isSelected) {
-        // add action listeners
     }
 }
 
 class WeekCellRenderer implements TableCellRenderer {
     WeekCellComponent panel;
-
-    public WeekCellRenderer() {
-
-    }
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
@@ -216,9 +211,6 @@ class WeekCellRenderer implements TableCellRenderer {
 class WeekCellEditor extends AbstractCellEditor implements TableCellEditor {
     WeekCellComponent panel;
     WeekCell weekCell;
-
-    public WeekCellEditor() {
-    }
 
     public Component getTableCellEditorComponent(JTable table, Object value,
             boolean isSelected, int row, int column) {
