@@ -16,6 +16,7 @@ import javax.mail.internet.MimeMessage;
 // Mail class is used to send email to the user
 public class Mail {
     private static String verifyCode = "";
+    private static String emailVerified = "";
     private static final String username = "notification.tisch@gmail.com";
     private static final String password = "trhwsetebngtbeqx";
 
@@ -46,6 +47,7 @@ public class Mail {
 
     public static String generateVerifyCode() {
         Random rand = new Random();
+        verifyCode = "";
         for (int i = 0; i < 6; i++) {
             verifyCode += rand.nextInt(10);
         }
@@ -55,6 +57,7 @@ public class Mail {
     public static String sendVerifyCode(User user) {
         Properties prop = createProperty();
         Session session = createSession(prop);
+        emailVerified = user.getEmail();
         try {
             verifyCode = generateVerifyCode();
             Message message = new MimeMessage(session);
@@ -62,6 +65,7 @@ public class Mail {
             message.setRecipients(
                     Message.RecipientType.TO,
                     InternetAddress.parse(user.getEmail()));
+
             message.setSubject("Verify email to join TISCH");
             message.setText("Dear new user" + "\n\n" +
                     "Your verification code is: " + verifyCode + "\n" +
@@ -85,6 +89,10 @@ public class Mail {
 
     public static void setVerifyCode(String verifyCode) {
         Mail.verifyCode = verifyCode;
+    }
+
+    public static String getEmailVerified() {
+        return emailVerified;
     }
 
     public static boolean sendRemindEmail(User user, Event event) {
