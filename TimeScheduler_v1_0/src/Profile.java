@@ -2,7 +2,7 @@ package src;
 
 // import java.util.*;
 import java.awt.*;
-
+import java.sql.SQLException;
 
 // import java.awt.event.*;
 import javax.swing.*;
@@ -89,6 +89,7 @@ public class Profile extends JPanel {
     {
         JButton nameEditBtn = new JButton("Edit");
         JLabel name = new JLabel(user.getName());
+        editDialog edit;
         namePanel()
         {
             this.setLayout(new FlowLayout());
@@ -99,7 +100,9 @@ public class Profile extends JPanel {
             {
                 nameEditBtn.addActionListener(e ->
                 {
-                    new editDialog(new nameEditPanel());
+                    if (edit == null || !edit.isShowing()) {
+                        edit = new editDialog(new nameEditPanel());
+                    } 
                 });
             } catch(Exception e)
             {
@@ -112,6 +115,7 @@ public class Profile extends JPanel {
     {
         JButton emailEditBtn = new JButton("Edit");
         JLabel email = new JLabel(user.getEmail());
+        editDialog edit;
         emailPanel()
         {
             this.setLayout(new FlowLayout());
@@ -122,7 +126,9 @@ public class Profile extends JPanel {
             {
                 emailEditBtn.addActionListener(e ->
                 {
-                    new editDialog(new emailEditPanel());
+                    if (edit == null || !edit.isShowing()) {
+                        edit = new editDialog(new emailEditPanel());
+                    }
                 });
             } catch (Exception e)
             {
@@ -135,6 +141,7 @@ public class Profile extends JPanel {
     {
         JButton phoneEditButton = new JButton("Edit");
         JLabel phone = new JLabel(user.getPhone());
+        editDialog edit;
         phonePanel()
         {
             this.setLayout(new FlowLayout());
@@ -145,7 +152,9 @@ public class Profile extends JPanel {
             {
                 phoneEditButton.addActionListener(e ->
                 {
-                    new editDialog(new phoneEditPanel());
+                    if (edit == null || !edit.isShowing()) {
+                        edit = new editDialog(new phoneEditPanel());
+                    }
                 });
             } catch (Exception e)
             {
@@ -165,8 +174,8 @@ public class Profile extends JPanel {
             this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             this.setResizable(false);
             this.setLocationRelativeTo(null);
-            
-            this.add(new btnPanel(), BorderLayout.SOUTH);
+            // Need to fix this
+            // this.add(new btnPanel(this), BorderLayout.SOUTH);
         }
     }
 
@@ -176,6 +185,8 @@ public class Profile extends JPanel {
         editDialog(basePanel edit)
         {
             this.add(edit, BorderLayout.CENTER);
+            this.setModal(true);
+            this.add(new btnPanel(this, edit, null), BorderLayout.SOUTH);
         }
     }
 
@@ -185,6 +196,7 @@ public class Profile extends JPanel {
         passwDialog(passwEditPanel passwEdit)
         {
             this.add(passwEdit, BorderLayout.CENTER);
+            this.add(new btnPanel(this, null, passwEdit), BorderLayout.SOUTH);
         }
     }
 
@@ -311,12 +323,70 @@ public class Profile extends JPanel {
         JButton cancelBtn = new JButton("Cancel");
         JButton confirmBtn = new JButton("Confirm");
 
-        btnPanel()
+        // baseD to reference to basdeDialog, baseP to reference basePanel, passwP to reference to passwEditPanel
+        btnPanel(baseDialog baseD, basePanel baseP, passwEditPanel passwP)
         {
             this.setLayout(new FlowLayout());
             this.add(confirmBtn);
             this.add(cancelBtn);
+            try
+            {
+                cancelBtn.addActionListener(e ->
+                {
+                    baseD.dispose();
+                });
+            } catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            try
+            {
+                confirmBtn.addActionListener(e -> {
+                    // baseP is opened
+                    if (baseP != null)
+                    {
+                        // check if name and confirm new =
+                        if (baseP.newField.getText().equals(baseP.confirmField.getText()))
+                        {
+                            // check if name is in correct form
+                            if (RegisterValidator.isValidName(baseP.newField.getText()))
+                            {
+                                try {
+                                    Database.updateName(baseP.newField.getText(), user);
+                                    baseD.dispose();
+                                    
+                                } catch (SQLException e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
+                            else
+                            {
+                                JOptionPane.showMessageDialog(null, "Name is invalid.");
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Name does not match.");
+                        }
+                    }
+                    // passwP is opened
+                    else
+                    {
+                        System.out.println(passwP.newPassw.getPassword());
+                        System.out.println(passwP.confirmNewPassw.getPassword());
+                        if (new String(passwP.newPassw.getPassword()).equals(new String(passwP.confirmNewPassw.getPassword())))
+                        {
+                            // To-do
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Password does not match");
+                        }
+                    }
+                });
+            } catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 }
+
+
 
