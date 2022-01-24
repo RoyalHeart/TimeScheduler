@@ -1,15 +1,29 @@
 package src;
 
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.table.*;
-import java.util.List;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JViewport;
+import javax.swing.SwingConstants;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 public class SwingCalendar extends JPanel {
     User user;
@@ -182,25 +196,35 @@ public class SwingCalendar extends JPanel {
             String month = cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
             int year = cal.get(Calendar.YEAR);
             label.setText(week + "/" + month + " " + year);
-            weekData = new ArrayList<WeekCell>();
-            for (int i = 0; i < 7; i++) {
-                WeekCell cell = new WeekCell(cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US));
-                weekData.add(cell);
-            }
             weekData = ShowEvents.updateWeekDataEvent(weekData, cal, user);
             weekModel.update(weekData);
             table = new JTable(weekModel);
-            table.setRowHeight(2400);
-            table.setPreferredSize(new Dimension(1000, 2400));
-            table.setSize(1000, 2400);
+            table.setRowHeight(24 * 60 * 2);
+            table.setPreferredSize(new Dimension(1000, 24 * 60 * 2));
+            table.setSize(1000, 24 * 60 * 2);
             table.setDefaultRenderer(WeekCell.class, new WeekCellRenderer());// render the table cell
             table.setDefaultEditor(WeekCell.class, new WeekCellEditor());
             table.setEnabled(true);
             table.getTableHeader().setReorderingAllowed(false);
             pane = new JScrollPane(table);
             pane.setViewportView(table);
-            pane.getVerticalScrollBar().setUnitIncrement(15);
+            pane.getVerticalScrollBar().setUnitIncrement(2 * 15);
+            pane.getVerticalScrollBar().setValue(6 * 60 * 2);
             this.add(pane, BorderLayout.CENTER);
+            JPanel timeline = new JPanel();
+            JViewport viewport = new JViewport();
+            timeline.setLayout(new GridLayout(24, 1));
+            timeline.setPreferredSize(new Dimension(30, 24 * 60 * 2));
+            timeline.setSize(30, 24 * 60 * 2);
+            for (int i = 0; i < 24; i++) {
+                JLabel label = new JLabel(i + ":00");
+                label.setBounds(0, 0, 20, 60 * 2);
+                label.setHorizontalAlignment(JLabel.CENTER);
+                label.setVerticalAlignment(JLabel.TOP);
+                timeline.add(label);
+            }
+            viewport.setView(timeline);
+            pane.setRowHeader(viewport);
 
             JTableHeader th = table.getTableHeader();
             TableColumnModel tcm = th.getColumnModel();
