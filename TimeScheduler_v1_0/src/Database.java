@@ -328,4 +328,19 @@ public class Database {
             return null;
         }
     }
+    
+    static void updateName(String name, User user) throws SQLException
+    {
+        // create the statement object, statement object allows you to sends SQL statement to database
+        Statement stmt = con.createStatement();
+        // execute query
+        if(stmt.executeUpdate("UPDATE TISCH_USER SET userfullname = '" + name + "' WHERE id = " + user.getId()) == 0)
+        {
+            System.out.println("Can not update database");
+        } else {
+            JOptionPane.showMessageDialog(null, "Update name successfully.");
+        };
+
+        return;
+    }
 }
