@@ -7,7 +7,6 @@ import java.sql.SQLException;
 // import java.awt.event.*;
 import javax.swing.*;
 
-
 public class Profile extends JPanel {
     JPanel panel = new JPanel();
     JLabel nameLabel = new JLabel("Name: ");
@@ -25,35 +24,43 @@ public class Profile extends JPanel {
         JLabel label = new JLabel("Profile");
         label.setHorizontalAlignment(SwingConstants.CENTER);
         this.add(label, BorderLayout.NORTH);
-        panel.setLayout(new GridLayout(3,0));
-        /* panel.add(nameLabel);
-        panel.add(name);
-        panel.add(emailLabel);
-        panel.add(email);
-        panel.add(phoneLabel);
-        panel.add(phone); */
-        panel.add(new namePanel());
-        panel.add(new emailPanel());
-        panel.add(new phonePanel());
+        panel.setLayout(new GridLayout(3, 0));
+        /*
+         * panel.add(nameLabel);
+         * panel.add(name);
+         * panel.add(emailLabel);
+         * panel.add(email);
+         * panel.add(phoneLabel);
+         * panel.add(phone);
+         */
+        panel.add(new namePanel(user));
+        panel.add(new emailPanel(user));
+        panel.add(new phonePanel(user));
         editPanel.setLayout(new FlowLayout());
-        editPanel.add(chPasswBtn); 
+        editPanel.add(chPasswBtn);
         this.add(panel, BorderLayout.CENTER);
         this.add(editPanel, BorderLayout.SOUTH);
 
-        try
-        {
-            chPasswBtn.addActionListener(e ->
-            {
+        try {
+            chPasswBtn.addActionListener(e -> {
                 new passwDialog(new passwEditPanel());
             });
-        } catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    class profilePanel extends JPanel
-    {
+    void updatePanel(User user) {
+        panel.removeAll();
+
+        panel.add(new namePanel(user));
+        panel.add(new emailPanel(user));
+        panel.add(new phonePanel(user));
+        panel.revalidate();
+        panel.repaint();
+    }
+
+    class profilePanel extends JPanel {
         JTextField emailField = new JTextField(20);
         JTextField phoneField = new JTextField(20);
         JPanel editPanel = new JPanel();
@@ -65,111 +72,103 @@ public class Profile extends JPanel {
             // add namePanel to gridbaglayout
             gbc.gridx = 0;
             gbc.gridy = 0;
-            editPanel.add(new namePanel(), gbc);
+            editPanel.add(new namePanel(user), gbc);
 
             // add emailPanel to gridbaglayout
             gbc.gridx = 0;
             gbc.gridy = 1;
-            editPanel.add(new emailPanel(), gbc);
+            editPanel.add(new emailPanel(user), gbc);
 
             // add phonePanel to gridbaglayout
             gbc.gridx = 0;
             gbc.gridy = 2;
-            editPanel.add(new phonePanel(), gbc);
-            
-            /* editPanel.add(emailLabel);
-            editPanel.add(emailField);
-            editPanel.add(phoneLabel);
-            editPanel.add(phoneLabel); */
-            this.add(editPanel, BorderLayout.CENTER); 
+            editPanel.add(new phonePanel(user), gbc);
+
+            /*
+             * editPanel.add(emailLabel);
+             * editPanel.add(emailField);
+             * editPanel.add(phoneLabel);
+             * editPanel.add(phoneLabel);
+             */
+            this.add(editPanel, BorderLayout.CENTER);
         }
     }
 
-    class namePanel extends JPanel
-    {
+    class namePanel extends JPanel {
         JButton nameEditBtn = new JButton("Edit");
         JLabel name = new JLabel(user.getName());
         editDialog edit;
-        namePanel()
-        {
+
+        namePanel(User user) {
+            name = new JLabel(user.getName());
             this.setLayout(new FlowLayout());
             this.add(nameLabel);
             this.add(name);
             this.add(nameEditBtn);
-            try
-            {
-                nameEditBtn.addActionListener(e ->
-                {
+            try {
+                nameEditBtn.addActionListener(e -> {
                     if (edit == null || !edit.isShowing()) {
                         edit = new editDialog(new nameEditPanel());
-                    } 
+                    }
                 });
-            } catch(Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    class emailPanel extends JPanel
-    {
+    class emailPanel extends JPanel {
         JButton emailEditBtn = new JButton("Edit");
         JLabel email = new JLabel(user.getEmail());
         editDialog edit;
-        emailPanel()
-        {
+
+        emailPanel(User user) {
+            email = new JLabel(user.getEmail());
             this.setLayout(new FlowLayout());
             this.add(emailLabel);
             this.add(email);
             this.add(emailEditBtn);
-            try
-            {
-                emailEditBtn.addActionListener(e ->
-                {
+            try {
+                emailEditBtn.addActionListener(e -> {
                     if (edit == null || !edit.isShowing()) {
                         edit = new editDialog(new emailEditPanel());
                     }
                 });
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    class phonePanel extends JPanel
-    {
+    class phonePanel extends JPanel {
         JButton phoneEditButton = new JButton("Edit");
         JLabel phone = new JLabel(user.getPhone());
         editDialog edit;
-        phonePanel()
-        {
+
+        phonePanel(User user) {
+            phone = new JLabel(user.getPhone());
             this.setLayout(new FlowLayout());
             this.add(phoneLabel);
             this.add(phone);
             this.add(phoneEditButton);
-            try
-            {
-                phoneEditButton.addActionListener(e ->
-                {
+            try {
+                phoneEditButton.addActionListener(e -> {
                     if (edit == null || !edit.isShowing()) {
                         edit = new editDialog(new phoneEditPanel());
                     }
                 });
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
     // base dialog for edit name, email, phone, password...
-    class baseDialog extends JDialog
-    {
-        baseDialog() 
-        {
+    class baseDialog extends JDialog {
+        baseDialog() {
+            super(SwingUtilities.windowForComponent(panel));
             this.setLayout(new BorderLayout());
-            this.setSize(600,400);
+            this.setSize(600, 400);
             this.setVisible(true);
             this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             this.setResizable(false);
@@ -180,10 +179,8 @@ public class Profile extends JPanel {
     }
 
     // dialog for edit name, email, phone, ...
-    class editDialog extends baseDialog
-    {
-        editDialog(basePanel edit)
-        {
+    class editDialog extends baseDialog {
+        editDialog(basePanel edit) {
             this.add(edit, BorderLayout.CENTER);
             this.setModal(true);
             this.add(new btnPanel(this, edit, null), BorderLayout.SOUTH);
@@ -191,18 +188,15 @@ public class Profile extends JPanel {
     }
 
     // dialog for edit password
-    class passwDialog extends baseDialog
-    {
-        passwDialog(passwEditPanel passwEdit)
-        {
+    class passwDialog extends baseDialog {
+        passwDialog(passwEditPanel passwEdit) {
             this.add(passwEdit, BorderLayout.CENTER);
             this.add(new btnPanel(this, null, passwEdit), BorderLayout.SOUTH);
         }
     }
 
     // base panel for edit panel
-    class basePanel extends JPanel
-    {
+    class basePanel extends JPanel {
         // label for new name, email, phone, ...
         protected JLabel newLabel = new JLabel();
         // label for confirm new name, email, phone, ...
@@ -220,8 +214,7 @@ public class Profile extends JPanel {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        basePanel()
-        {
+        basePanel() {
             this.setLayout(new GridBagLayout());
 
             currentPanel.setLayout(new FlowLayout());
@@ -249,10 +242,8 @@ public class Profile extends JPanel {
         }
     }
 
-    class nameEditPanel extends basePanel
-    {
-        nameEditPanel()
-        {
+    class nameEditPanel extends basePanel {
+        nameEditPanel() {
             currentLabel.setText("Current name: ");
             currentDisplayLabel.setText(user.getName());
             newLabel.setText("New name: ");
@@ -260,10 +251,8 @@ public class Profile extends JPanel {
         }
     }
 
-    class emailEditPanel extends basePanel
-    {
-        emailEditPanel()
-        {
+    class emailEditPanel extends basePanel {
+        emailEditPanel() {
             currentLabel.setText("Current email address: ");
             currentDisplayLabel.setText(user.getEmail());
             newLabel.setText("New email address: ");
@@ -271,10 +260,8 @@ public class Profile extends JPanel {
         }
     }
 
-    class phoneEditPanel extends basePanel
-    {
-        phoneEditPanel()
-        {
+    class phoneEditPanel extends basePanel {
+        phoneEditPanel() {
             currentLabel.setText("Current phone number: ");
             currentDisplayLabel.setText(user.getPhone());
             newLabel.setText("New phone number: ");
@@ -282,10 +269,8 @@ public class Profile extends JPanel {
         }
     }
 
-
     // panel for change password
-    class passwEditPanel extends JPanel
-    {
+    class passwEditPanel extends JPanel {
         // label for new password
         JLabel newLabel = new JLabel("New Password: ");
         // label for confirm new password
@@ -296,13 +281,13 @@ public class Profile extends JPanel {
         JPasswordField confirmNewPassw = new JPasswordField(20);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        passwEditPanel()
-        {
+
+        passwEditPanel() {
             this.setLayout(new GridBagLayout());
             gbc.gridx = 0;
             gbc.gridy = 0;
             this.add(newLabel, gbc);
-            
+
             gbc.gridx = 1;
             gbc.gridy = 0;
             this.add(newPassw, gbc);
@@ -318,49 +303,33 @@ public class Profile extends JPanel {
     }
 
     // panel for confirm and cancel btn in edit dialog
-    class btnPanel extends JPanel
-    {
+    class btnPanel extends JPanel {
         JButton cancelBtn = new JButton("Cancel");
         JButton confirmBtn = new JButton("Confirm");
 
-        // baseD to reference to basdeDialog, baseP to reference basePanel, passwP to reference to passwEditPanel
-        btnPanel(baseDialog baseD, basePanel baseP, passwEditPanel passwP)
-        {
+        // baseD to reference to baseDialog, baseP to reference basePanel, passwP to
+        // reference to passwEditPanel
+        btnPanel(baseDialog baseD, basePanel baseP, passwEditPanel passwP) {
             this.setLayout(new FlowLayout());
             this.add(confirmBtn);
             this.add(cancelBtn);
-            try
-            {
-                cancelBtn.addActionListener(e ->
-                {
-                    baseD.dispose();
-                });
-            } catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-            try
-            {
+            cancelBtn.addActionListener(e -> {
+                baseD.dispose();
+            });
+            try {
                 confirmBtn.addActionListener(e -> {
                     // baseP is opened
-                    if (baseP != null)
-                    {
+                    if (baseP != null) {
                         // check if name and confirm new =
-                        if (baseP.newField.getText().equals(baseP.confirmField.getText()))
-                        {
+                        if (baseP.newField.getText().equals(baseP.confirmField.getText())) {
                             // check if name is in correct form
-                            if (RegisterValidator.isValidName(baseP.newField.getText()))
-                            {
-                                try {
-                                    Database.updateName(baseP.newField.getText(), user);
-                                    baseD.dispose();
-                                    
-                                } catch (SQLException e1) {
-                                    e1.printStackTrace();
-                                }
-                            }
-                            else
-                            {
+                            if (RegisterValidator.isValidName(baseP.newField.getText())) {
+                                user.setName(baseP.newField.getText());
+                                Database.updateName(baseP.newField.getText(), user);
+                                updatePanel(user);
+                                baseD.dispose();
+
+                            } else {
                                 JOptionPane.showMessageDialog(null, "Name is invalid.");
                             }
                         } else {
@@ -368,25 +337,20 @@ public class Profile extends JPanel {
                         }
                     }
                     // passwP is opened
-                    else
-                    {
+                    else {
                         System.out.println(passwP.newPassw.getPassword());
                         System.out.println(passwP.confirmNewPassw.getPassword());
-                        if (new String(passwP.newPassw.getPassword()).equals(new String(passwP.confirmNewPassw.getPassword())))
-                        {
+                        if (new String(passwP.newPassw.getPassword())
+                                .equals(new String(passwP.confirmNewPassw.getPassword()))) {
                             // To-do
                         } else {
                             JOptionPane.showMessageDialog(null, "Password does not match");
                         }
                     }
                 });
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 }
-
-
-
