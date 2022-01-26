@@ -348,4 +348,53 @@ public class Database {
 
         return false;
     }
+    
+    static boolean isAdmin(User user) {
+    	try {
+    		Statement stm = con.createStatement();
+    		String sql = "SELECT ID FROM TISCH_USER WHERE USERNAME = '" + user.getUsername() + "'";
+    		ResultSet rs = stm.executeQuery(sql);
+    		
+    		String userID = rs.getString(1);
+    		sql = "SELECT 1 FROM ADMINISTRATOR WHERE ID = " + userID;
+    		rs = stm.executeQuery(sql);
+    		
+    		if(rs.next())
+    			return true;
+    		else {
+				return false;
+			}
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    		return false;
+		}
+    }
+    
+    static Vector<Vector> getUserList() {
+    	try {
+    		Statement stm = con.createStatement();
+    		String sql = "SELECT ID, USERNAME, USERFULLNAME, USEREMAIL FROM TISCH_USER";
+    		ResultSet rs = stm.executeQuery(sql);
+    		
+    		Vector<Vector> data = new Vector<Vector>();
+    		while (rs.next()){
+    			Vector<Object> row = new Vector<Object>(4);
+    			
+    			for(int i = 1; i <= 4; i++) {	// rs start from 1
+    				row.addElement(rs.getObject(i));
+    			}
+    			
+    			data.addElement(row);
+    		}
+    		
+    		stm.close();
+    		rs.close();
+    		
+    		return data;
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return null;
+    	}
+    }
 }
