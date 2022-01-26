@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.Vector;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.iv.RandomIvGenerator;
@@ -24,7 +25,11 @@ public class Database {
     final static Properties databaseProperties = getDatabaseProperties();
     static Connection con;
 
-    // create database connection to the Oracle database
+    /**
+     * create database connection to the Oracle database
+     * 
+     * @return Connection object to the database
+     */
     static Connection createConnection() {
         try {
             // step1 load the driver class
@@ -43,6 +48,13 @@ public class Database {
         }
     };
 
+    /**
+     * get the database properties from the properties file
+     * the properties file is encrypted using jasypt
+     * and the properties contain the database connection information
+     * 
+     * @return Properties of the database
+     */
     private static Properties getDatabaseProperties() {
         try {
             StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
@@ -58,7 +70,13 @@ public class Database {
         return databaseProperties;
     }
 
-    // read password from file
+    /**
+     * get the jasypt password from the file
+     * a much better way to do this would be to use a web service to get the
+     * password from the database
+     * 
+     * @return the jasypt password
+     */
     private static String getJasyptPassword() {
         File myObj = new File("TimeScheduler_v1_0/lib/DatabaseLoginInfo.txt");
         try {
@@ -75,8 +93,18 @@ public class Database {
         }
     }
 
-    // add user to database
-    // hash password is hash(password + username) with SHA-256
+    /**
+     * add user to database and return if the user is added successfully
+     * 
+     * @param username     username of the user
+     * @param hashPassword hash(password+username) of the user
+     * @param name         full name of the user
+     * @param email        email of the user
+     * @param phone        phone number of the user
+     * @return true if the user is added successfully, false otherwise
+     * 
+     * 
+     */
     public static boolean addUser(String username, String hashPassword, String name,
             String email, String phone) {
         try {
@@ -105,7 +133,12 @@ public class Database {
         }
     }
 
-    // check if username exists in database
+    /**
+     * check if username exists in database and return true if it does
+     * 
+     * @param username username to check
+     * @return true if username exists in database
+     */
     static boolean existUsername(String username) {
         try {
             // create the connection object
@@ -132,9 +165,11 @@ public class Database {
         }
     }
 
-    // check if user exists in database
-    // check for login
-    static boolean existUser(String username, String hashPassword) {
+    /*
+     * check if user exists in database
+     * check for login
+     */
+    static boolean existUser(String username, String password) {
         try {
             // create statement object
             // con = createConnection();
@@ -142,7 +177,7 @@ public class Database {
 
             // create a query
             ResultSet rs = stmt.executeQuery("SELECT * FROM TISCH_USER WHERE USERNAME = '" + username + "'");
-
+            String hashPassword = Hash.hashPassword(password + username).toUpperCase();
             // execute query
             if (rs.next() && rs.getString("PASSWORD").equals(hashPassword)) {
                 return true; // user exists
@@ -156,8 +191,16 @@ public class Database {
         }
     }
 
-    // check if the user is an admin or not
-    static boolean existAdmin(String username, String hashPassword) {
+    /**
+     * check if the user is admin or not
+     * check for login
+     * 
+     * @param username username of the user
+     * @param password plain password of the user
+     * @return true if user is admin
+     *         false if user is not admin
+     */
+    static boolean existAdmin(String username, String password) {
         try {
             // create the connection object
             // Connection con = createConnection();
@@ -167,13 +210,12 @@ public class Database {
 
             // execute query
             ResultSet rs = stmt.executeQuery("SELECT * FROM TISCH_USER WHERE USERNAME = '" + username + "'");
-
+            String hashPassword = Hash.hashPassword(password + username).toUpperCase();
             // process the result set
             if (rs.next()) {
-                String userID = rs.getString(1);
                 if (rs.getString("PASSWORD").equals(hashPassword)) {
-                    rs = stmt.executeQuery("SELECT * FROM ADMINISTRATOR WHERE ID = '" + rs.getString(1) + "'");
-                    if (userID.equals(rs.getString(1))) {
+                    rs = stmt.executeQuery("SELECT 1 FROM ADMINISTRATOR WHERE ID = '" + rs.getString("ID") + "'");
+                    if (rs.next()) {
                         return true; // admin exists
                     } else {
                         return false; // user is not an admin
@@ -193,7 +235,15 @@ public class Database {
         }
     }
 
-    static User getUser(String username, String hashPassword) {
+    /**
+     * get the user as a User object from the database
+     * 
+     * @param username     the username of the user
+     * @param hashPassword the hashPassword of the user
+     * @return the user object from the database
+     *         null if user does not exist
+     */
+    static User getUser(String username, String password) {
         try {
             // create the connection object
             // Connection con = createConnection();
@@ -203,7 +253,7 @@ public class Database {
 
             // execute query
             ResultSet rs = stmt.executeQuery("SELECT * FROM TISCH_USER WHERE USERNAME = '" + username + "'");
-
+            String hashPassword = Hash.hashPassword(password + username).toUpperCase();
             // process the result set
             if (rs.next()) {
                 String userID = rs.getString(1);
@@ -227,7 +277,15 @@ public class Database {
         }
     }
 
-    static User getAdmin(String username, String hashPassword) {
+    /**
+     * get the admin as a user object from the database
+     * 
+     * @param username     username of the admin
+     * @param hashPassword the hashed password
+     * @return admin as a user object
+     *         null if user does not exist
+     */
+    static User getAdmin(String username, String password) {
         try {
 
             // create the connection object
@@ -238,7 +296,7 @@ public class Database {
 
             // execute query
             ResultSet rs = stmt.executeQuery("SELECT * FROM TISCH_USER WHERE USERNAME = '" + username + "'");
-
+            String hashPassword = Hash.hashPassword(password + username).toUpperCase();
             // process the result set
             if (rs.next()) {
                 if (rs.getString(3).equals(hashPassword)) {
@@ -264,7 +322,13 @@ public class Database {
         return null;
     }
 
-    // add event of a user to database
+    /**
+     * add event of a user to the database
+     * 
+     * @param event the event to be added
+     * @return true if event is added successfully
+     *         false if event is not added successfully
+     */
     static boolean addEvent(Event event) {
         try {
             // create the statement object
@@ -295,7 +359,12 @@ public class Database {
         }
     }
 
-    // get all events from a user from database
+    /**
+     * get all events from a user from database
+     * 
+     * @param user the user to get the events from
+     * @return an array list of all events from a user
+     */
     static ArrayList<Event> getEvents(User user) {
         ArrayList<Event> events = new ArrayList<>();
         try {
@@ -329,6 +398,14 @@ public class Database {
         }
     }
 
+    /**
+     * update name of a user in the database
+     * 
+     * @param name the new name of the user
+     * @param user the user to update name
+     * @return true if name is updated successfully
+     *         false if name is not updated successfully
+     */
     static boolean updateName(String name, User user) {
         // create the statement object, statement object allows you to sends SQL
         // statement to database
@@ -348,52 +425,36 @@ public class Database {
 
         return false;
     }
-    
-    static boolean isAdmin(User user) {
-    	try {
-    		Statement stm = con.createStatement();
-    		String sql = "SELECT ID FROM TISCH_USER WHERE USERNAME = '" + user.getUsername() + "'";
-    		ResultSet rs = stm.executeQuery(sql);
-    		
-    		String userID = rs.getString(1);
-    		sql = "SELECT 1 FROM ADMINISTRATOR WHERE ID = " + userID;
-    		rs = stm.executeQuery(sql);
-    		
-    		if(rs.next())
-    			return true;
-    		else {
-				return false;
-			}
-    	}
-    	catch (Exception e) {
-    		e.printStackTrace();
-    		return false;
-		}
-    }
-    
+
+    /**
+     * get all user to make a list of all users from the database
+     * 
+     * @return a list of all users
+     */
     static Vector<Vector> getUserList() {
-    	try {
-    		Statement stm = con.createStatement();
-    		String sql = "SELECT ID, USERNAME, USERFULLNAME, USEREMAIL FROM TISCH_USER";
-    		ResultSet rs = stm.executeQuery(sql);
-    		
-    		Vector<Vector> data = new Vector<Vector>();
-    		while (rs.next()){
-    			Vector<Object> row = new Vector<Object>(4);
-    			
-    			for(int i = 1; i <= 4; i++) {	// rs start from 1
-    				row.addElement(rs.getObject(i));
-    			}
-    			
-    			data.addElement(row);
-    		}
-    		
-    		stm.close();
-    		rs.close();
-    		
-    		return data;
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    		return null;
+        try {
+            Statement stm = con.createStatement();
+            String sql = "SELECT ID, USERNAME, USERFULLNAME, USEREMAIL FROM TISCH_USER";
+            ResultSet rs = stm.executeQuery(sql);
+
+            Vector<Vector> data = new Vector<Vector>();
+            while (rs.next()) {
+                Vector<Object> row = new Vector<Object>(4);
+
+                for (int i = 1; i <= 4; i++) { // rs start from 1
+                    row.addElement(rs.getObject(i));
+                }
+
+                data.addElement(row);
+            }
+
+            stm.close();
+            rs.close();
+
+            return data;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
