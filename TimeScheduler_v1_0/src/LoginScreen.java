@@ -74,7 +74,7 @@ public class LoginScreen extends JFrame {
                             Hash.hashPassword(passwordPanel.getPassword() + usernamePanel.getUsername()).toUpperCase());
                     System.out.println("Login Success as Administrator");
                     dispose();
-                    new MainFrame(admin);
+                    new AdminInterface();
                 } else if (Database.existUser(usernamePanel.getUsername(),
                         Hash.hashPassword(passwordPanel.getPassword() + usernamePanel.getUsername()).toUpperCase())) {
                     User user = Database.getUser(usernamePanel.getUsername(),
