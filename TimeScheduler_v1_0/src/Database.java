@@ -26,9 +26,9 @@ public class Database {
     static Connection con;
 
     /**
-     * create database connection to the Oracle database
+     * create database {@code Connection} to the Oracle database
      * 
-     * @return Connection object to the database
+     * @return {@code Connection} object to the database
      */
     static Connection createConnection() {
         try {
@@ -49,11 +49,11 @@ public class Database {
     };
 
     /**
-     * get the database properties from the properties file
-     * the properties file is encrypted using jasypt
+     * Get the database properties from the properties file.
+     * The properties file is encrypted using jasypt,
      * and the properties contain the database connection information
      * 
-     * @return Properties of the database
+     * @return {@code Properties} of the database
      */
     private static Properties getDatabaseProperties() {
         try {
@@ -71,11 +71,11 @@ public class Database {
     }
 
     /**
-     * get the jasypt password from the file
-     * a much better way to do this would be to use a web service to get the
-     * password from the database
+     * Get the jasypt password from the file.
+     * A much better way to do this would be to use a web service,
+     * or from enviroment variable to get the password
      * 
-     * @return the jasypt password
+     * @return the jasypt password as a {@code String}
      */
     private static String getJasyptPassword() {
         File myObj = new File("TimeScheduler_v1_0/lib/DatabaseLoginInfo.txt");
@@ -101,7 +101,8 @@ public class Database {
      * @param name         full name of the user
      * @param email        email of the user
      * @param phone        phone number of the user
-     * @return true if the user is added successfully, false otherwise
+     * @return true if the user is added successfully,
+     *         false otherwise
      * 
      * 
      */
@@ -134,10 +135,11 @@ public class Database {
     }
 
     /**
-     * check if username exists in database and return true if it does
+     * Check if username exists in database and return true if it does
      * 
      * @param username username to check
      * @return true if username exists in database
+     *         , false otherwise
      */
     static boolean existUsername(String username) {
         try {
@@ -165,9 +167,18 @@ public class Database {
         }
     }
 
-    /*
-     * check if user exists in database
-     * check for login
+    /**
+     * <p>
+     * Check if the user exists in the database and return true if it does
+     * <p>
+     * <p>
+     * Using for login purpose
+     * </p>
+     * 
+     * @param username username of the user
+     * @param password plain password of the user
+     * @return true if user is exist in the database,
+     *         false if user is not exist in the database
      */
     static boolean existUser(String username, String password) {
         try {
@@ -192,12 +203,16 @@ public class Database {
     }
 
     /**
-     * check if the user is admin or not
-     * check for login
+     * <p>
+     * Check if the user is admin or not
+     * <p>
+     * <p>
+     * Using for login purpose
+     * </p>
      * 
      * @param username username of the user
      * @param password plain password of the user
-     * @return true if user is admin
+     * @return true if user is admin,
      *         false if user is not admin
      */
     static boolean existAdmin(String username, String password) {
@@ -236,12 +251,12 @@ public class Database {
     }
 
     /**
-     * get the user as a User object from the database
+     * Get the {@code User} object from the database
      * 
-     * @param username     the username of the user
-     * @param hashPassword the hashPassword of the user
-     * @return the user object from the database
-     *         null if user does not exist
+     * @param username the username of the user
+     * @param password the plain password of the user
+     * @return the user object from the database,
+     *         or null if user does not exist
      */
     static User getUser(String username, String password) {
         try {
@@ -278,12 +293,12 @@ public class Database {
     }
 
     /**
-     * get the admin as a user object from the database
+     * Get the admin as a {@code User} object from the database
      * 
      * @param username     username of the admin
      * @param hashPassword the hashed password
-     * @return admin as a user object
-     *         null if user does not exist
+     * @return admin as a {@code User} object,
+     *         or null if user does not exist
      */
     static User getAdmin(String username, String password) {
         try {
@@ -323,7 +338,7 @@ public class Database {
     }
 
     /**
-     * add event of a user to the database
+     * Add {@code Event} of a user to the database
      * 
      * @param event the event to be added
      * @return true if event is added successfully
@@ -360,9 +375,9 @@ public class Database {
     }
 
     /**
-     * get all events from a user from database
+     * Get all events from a user from database
      * 
-     * @param user the user to get the events from
+     * @param user the {@code User} to get the events from
      * @return an array list of all events from a user
      */
     static ArrayList<Event> getEvents(User user) {
@@ -399,11 +414,11 @@ public class Database {
     }
 
     /**
-     * update name of a user in the database
+     * Update name of a {@code User} in the database
      * 
      * @param name the new name of the user
      * @param user the user to update name
-     * @return true if name is updated successfully
+     * @return true if name is updated successfully,
      *         false if name is not updated successfully
      */
     static boolean updateName(String name, User user) {
@@ -427,9 +442,9 @@ public class Database {
     }
 
     /**
-     * get all user to make a list of all users from the database
+     * Get all user to make a list of all users from the database
      * 
-     * @return a list of all users
+     * @return a list of all users in the database
      */
     static Vector<Vector> getUserList() {
         try {
