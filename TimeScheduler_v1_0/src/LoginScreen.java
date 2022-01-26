@@ -9,10 +9,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.File;
 
-import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -23,8 +20,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-
-import org.imgscalr.Scalr;
 
 // login JFrame as the application's login frame
 public class LoginScreen extends JFrame {
@@ -55,12 +50,11 @@ public class LoginScreen extends JFrame {
         this.setPreferredSize(new Dimension(450, 300));
         this.setMinimumSize(new Dimension(400, 300));
         this.setLayout(new GridBagLayout());
-        loginPanel.setLayout(new GridBagLayout());
-
-        // this.setBackground(Color.pink);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setIconImage(icon.getImage());
+        loginPanel.setLayout(new GridBagLayout());
+        loginPanel.setBackground(Color.PINK);
 
         // login button
         JButton loginButton = new JButton("Login");
@@ -68,17 +62,13 @@ public class LoginScreen extends JFrame {
         loginButton.setOpaque(false);
         try {
             loginButton.addActionListener(e -> {
-                if (Database.existAdmin(usernamePanel.getUsername(),
-                        Hash.hashPassword(passwordPanel.getPassword() + usernamePanel.getUsername()).toUpperCase())) {
-                    User admin = Database.getAdmin(usernamePanel.getUsername(),
-                            Hash.hashPassword(passwordPanel.getPassword() + usernamePanel.getUsername()).toUpperCase());
+                if (Database.existAdmin(usernamePanel.getUsername(), passwordPanel.getPassword())) {
+                    User admin = Database.getAdmin(usernamePanel.getUsername(), passwordPanel.getPassword());
                     System.out.println("Login Success as Administrator");
                     dispose();
                     new AdminInterface();
-                } else if (Database.existUser(usernamePanel.getUsername(),
-                        Hash.hashPassword(passwordPanel.getPassword() + usernamePanel.getUsername()).toUpperCase())) {
-                    User user = Database.getUser(usernamePanel.getUsername(),
-                            Hash.hashPassword(passwordPanel.getPassword() + usernamePanel.getUsername()).toUpperCase());
+                } else if (Database.existUser(usernamePanel.getUsername(), passwordPanel.getPassword())) {
+                    User user = Database.getUser(usernamePanel.getUsername(), passwordPanel.getPassword());
                     System.out.println("Login Success");
                     dispose();
                     new MainFrame(user);
@@ -107,13 +97,7 @@ public class LoginScreen extends JFrame {
         try {
             Image loginImage = icon.getImage().getScaledInstance(200, 200, Image.SCALE_AREA_AVERAGING);
             Icon loginIcon = new ImageIcon(loginImage);
-            // BufferedImage loginBufferedImage = ImageIO.read(new
-            // File("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png"));
-            // BufferedImage thumbnail = Scalr.resize(loginBufferedImage, 200);
-            // iconLabel.setIcon(new ImageIcon(thumbnail));
-            // iconLabel = new JLabel(new ImageIcon(thumbnail));
             iconLabel = new JLabel(loginIcon);
-            // iconLabel.setBounds(0, 0, 300, 200);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -121,7 +105,7 @@ public class LoginScreen extends JFrame {
         this.addComp(loginPanel, passwordPanel, 0, 1, 1, 1, GridBagConstraints.BOTH, 1, 1);
         this.addComp(loginPanel, buttonPanel, 0, 2, 1, 1, GridBagConstraints.BOTH, 1, 1);
         this.addComp(loginPanel, iconLabel, 1, 0, 1, 3, GridBagConstraints.BOTH, 0.4, 1);
-        loginPanel.setBackground(Color.PINK);
+
         this.setContentPane(loginPanel);
         this.setVisible(true);
     }
