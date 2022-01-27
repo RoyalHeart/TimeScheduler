@@ -481,6 +481,26 @@ public class Database {
 
         return false;
     }
+    
+    static boolean updatePassword(String password, User user)
+    {
+        try {
+            Statement stmt = con.createStatement();
+            if (stmt.executeUpdate(
+                    "UPDATE TISCH_USER SET PASSWORD = '" + Hash.hashPassword(password + user.getUsername()).toUpperCase() + "' WHERE id = " + user.getId()) == 0)
+            {
+                return false;
+            }
+            else 
+            {
+                System.out.println("Password is updated.");
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     /**
      * Get all user to make a list of all users from the database
