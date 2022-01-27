@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -40,25 +43,95 @@ import javax.swing.table.TableColumnModel;
  * @author Tam Thai Hoang 1370674
  */
 public class SwingCalendar extends JPanel {
-    User user;
-    JPanel panel; // panel to display the calendar month, year and buttons
-    JLabel label; // label to display the selected month, year
-    // month data
-    ArrayList<List<MonthCell>> data = new ArrayList<List<MonthCell>>();
-    MonthTableModel model = new MonthTableModel(data); // month table model
-    JTable table = new JTable(model); // table to display the calendar
-    // week data
-    ArrayList<WeekCell> weekData = new ArrayList<WeekCell>();
-    WeekTableModel weekModel = new WeekTableModel(weekData); // week table model
+    private User user;
+    private JPanel panel; // panel to display the calendar month, year and buttons
+    private JLabel label; // label to display the selected month, year
+    /**
+     * {@code LEFT} is the int left for the left button to go to the previous
+     * month/week.
+     */
+    private static final int LEFT = 0;
 
-    JScrollPane pane = new JScrollPane(table); // panel to display the calendar ScrollPane
-    Calendar cal = new GregorianCalendar();
-    Date today = cal.getTime();
-    String viewList[] = { "Month", "Week" }; // list of views
-    JComboBox<String> viewComboBox = new JComboBox<>(viewList); // combo box to select the view
-    static String view = "Month"; // default view
-    String[] weekDate = { "", "", "", "", "", "", "" };
-    String[] columns = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+    /**
+     * {@code RIGHT} is the int right for the right button to go to the next
+     * month/week.
+     */
+    private static final int RIGHT = 1;
+
+    /**
+     * {@code monthData} is the {@code ArrayList<List>} of {@link MonthCell}s to be
+     * displayed in the calendar.
+     */
+    private ArrayList<List<MonthCell>> monthData = new ArrayList<List<MonthCell>>();
+
+    /**
+     * {@code monthModel} is the {@link MonthTableModel} to display month table.
+     */
+    private MonthTableModel monthModel = new MonthTableModel(monthData);
+
+    /**
+     * {@code table} is the {@link JTable} to show the calendar.
+     */
+    private JTable table = new JTable(monthModel);
+
+    /**
+     * {@code monthData} is the {@code ArrayList<List>} of {@link MonthCell}s to be
+     * displayed in the calendar.
+     */
+    private ArrayList<WeekCell> weekData = new ArrayList<WeekCell>();
+
+    /**
+     * {@code weekModel} is the {@link WeekTableModel} to display week table.
+     */
+    private WeekTableModel weekModel = new WeekTableModel(weekData);
+
+    /**
+     * {@code pane} is the {@link JScrollPane} view the calendar with a scroll bar.
+     */
+    private JScrollPane pane = new JScrollPane(table);
+
+    /**
+     * {@code cal} is the {@link Calendar} to get calendar information.
+     */
+    private Calendar cal = new GregorianCalendar();
+
+    /**
+     * {@code today} is the current {@link Date} at runtime.
+     */
+    private Date today = cal.getTime();
+
+    private ImageIcon exportImageIcon = new ImageIcon("TimeScheduler_v1_0/src/Images/exportIcon.png");
+    private Image exportImage = exportImageIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private Icon exportIcon = new ImageIcon(exportImage);
+
+    /**
+     * {@code exportButton} is the {@link JButton} to export the calendar to a
+     * PDF file.
+     */
+    private JButton exportButton = new JButton(exportIcon);
+
+    private String viewList[] = { "Month", "Week" }; // list of views
+
+    /**
+     * {@code viewComboBox} is the {@link JComboBox} to select the view of
+     * {@link SwingCalendar}.
+     */
+    private JComboBox<String> viewComboBox = new JComboBox<>(viewList); // combo box to select the view
+
+    /**
+     * {@code view} is the view of {@link SwingCalendar}.
+     */
+    private static String view = "Month"; // default view
+
+    /**
+     * {@code weekDate} is used to display the week date in week view.
+     */
+    private String[] weekDate = { "", "", "", "", "", "", "" };
+
+    /**
+     * {@code columns} is used to display the day of week in month view.
+     */
+    private String[] columns = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 
     /**
      * Constructs a {@code SwingCalendar} object using {@link User} events.
@@ -66,7 +139,7 @@ public class SwingCalendar extends JPanel {
     SwingCalendar(User user) {
         this.user = user;
         // function for the drop down menu to change view
-        viewComboBox.setPreferredSize(new Dimension(70, 20));
+        viewComboBox.setPreferredSize(new Dimension(70, 30));
         viewComboBox.addActionListener(ae -> {
             if (viewComboBox.getSelectedItem().equals("Month")) {
                 view = "Month";
@@ -82,6 +155,7 @@ public class SwingCalendar extends JPanel {
         // initialize the panel
         this.setSize(400, 200);
         this.setPreferredSize(new Dimension(400, 200));
+        this.setMinimumSize(new Dimension(300, 200));
         this.setLayout(new BorderLayout());
         this.setVisible(true);
 
@@ -89,15 +163,17 @@ public class SwingCalendar extends JPanel {
         label.setHorizontalAlignment(SwingConstants.CENTER);
 
         JButton b1 = new JButton("<-");
+        b1.setPreferredSize(new Dimension(50, 30));
         b1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 // cal.add(Calendar.MONTH, -1);
-                update(0);
+                update(LEFT);
                 update();
             }
         });
 
         JButton todayButton = new JButton("Today");
+        todayButton.setPreferredSize(new Dimension(60, 30));
         todayButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 cal.setTime(today);
@@ -107,20 +183,23 @@ public class SwingCalendar extends JPanel {
 
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new FlowLayout());
+        leftPanel.setPreferredSize(new Dimension(150, 40));
         leftPanel.add(b1);
         leftPanel.add(todayButton);
 
         JButton b2 = new JButton("->");
+        b2.setPreferredSize(new Dimension(50, 30));
         b2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                update(1);
+                update(RIGHT);
                 update();
             }
         });
 
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new FlowLayout());
-        rightPanel.setPreferredSize(new Dimension(150, 40));
+        rightPanel.setPreferredSize(new Dimension(200, 40));
+        rightPanel.add(exportButton);
         rightPanel.add(viewComboBox);
         rightPanel.add(b2);
 
@@ -140,22 +219,20 @@ public class SwingCalendar extends JPanel {
     /**
      * update when the left or right button is clicked
      * 
-     * @param side {@code 0} for left, {@code 1} for right
+     * @param side {@code 0} for {@code LEFT}, {@code 1} for {@code RIGHT}
      */
     void update(int side) {
         if (view == "Month") {
-            if (side == 0) {
+            if (side == LEFT) {
                 cal.add(Calendar.MONTH, -1);
             } else {
                 cal.add(Calendar.MONTH, +1);
             }
         } else if (view == "Week") {
-            if (side == 0) {
-                System.out.println("WEEK of month: " + cal.get(Calendar.WEEK_OF_MONTH));
-                cal.add(Calendar.WEEK_OF_MONTH, -1);
-                System.out.println("WEEK of month: " + cal.get(Calendar.WEEK_OF_MONTH));
+            if (side == LEFT) {
+                cal.add(Calendar.DAY_OF_MONTH, -7);
             } else {
-                cal.add(Calendar.WEEK_OF_MONTH, +1);
+                cal.add(Calendar.DAY_OF_MONTH, +7);
             }
         }
     }
@@ -165,8 +242,10 @@ public class SwingCalendar extends JPanel {
      * changed
      */
     void update() {
-
         if (view == "Month") {
+            if (exportButton.getActionListeners().length == 0) {
+                exportButton.addActionListener(new FileChoose(user, cal, view));
+            }
             String month = cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
             int year = cal.get(Calendar.YEAR);
             label.setText(month + " " + year);
@@ -176,7 +255,7 @@ public class SwingCalendar extends JPanel {
             int weeks = cal.getActualMaximum(Calendar.WEEK_OF_MONTH);
             int day = 1;
 
-            data = new ArrayList<List<MonthCell>>();
+            monthData = new ArrayList<List<MonthCell>>();
             for (int i = 0; i < weeks; i++) {
                 List<MonthCell> list = new ArrayList<MonthCell>();
                 for (int j = 0; j < 7; j++) {
@@ -189,12 +268,12 @@ public class SwingCalendar extends JPanel {
                         day++;
                     }
                 }
-                data.add(list);
+                monthData.add(list);
             }
-            data = LoadEvents.updateMonthDataEvent(data, cal, user);
+            monthData = LoadEvents.updateMonthDataEvent(monthData, cal, user);
             this.remove(pane);
-            model.update(data);
-            table = new JTable(model);
+            monthModel.update(monthData);
+            table = new JTable(monthModel);
             table.setDefaultRenderer(MonthCell.class, new MonthCellRenderer());// render the table cell
             table.setDefaultEditor(MonthCell.class, new MonthCellEditor());
             table.setRowHeight(100);
@@ -205,6 +284,9 @@ public class SwingCalendar extends JPanel {
             pane.setVisible(true);
             this.add(pane, BorderLayout.CENTER);
         } else if (view == "Week") {
+            if (exportButton.getActionListeners().length == 0) {
+                exportButton.addActionListener(new FileChoose(user, cal, view));
+            }
             this.remove(pane);
             int week = cal.get(Calendar.WEEK_OF_MONTH);
             String month = cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
@@ -225,6 +307,8 @@ public class SwingCalendar extends JPanel {
             pane.getVerticalScrollBar().setUnitIncrement(2 * 15);
             pane.getVerticalScrollBar().setValue(6 * 60 * 2);
             this.add(pane, BorderLayout.CENTER);
+
+            // set the time line panel from 0:00 to 23:00
             JPanel timeline = new JPanel();
             JViewport viewport = new JViewport();
             timeline.setLayout(new GridLayout(24, 1));
@@ -252,6 +336,7 @@ public class SwingCalendar extends JPanel {
                 tc.setHeaderValue(columns[day] + " " + weekDate[day]);
                 th.repaint();
             }
+
         }
     }
 }
