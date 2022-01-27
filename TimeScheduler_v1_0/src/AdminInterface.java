@@ -59,11 +59,6 @@ public class AdminInterface extends JFrame {
 		lblNewLabel.setBounds(20, 11, 65, 14);
 		contentPane.add(lblNewLabel);
 		
-		// temporary code for testing
-		/* need to delete after integrate */
-		Database.createConnection();
-
-		
 		// Initialize the table
 		Vector<String> columnNames = new Vector<String>();
 		Vector<Vector> data = Database.getUserList();
@@ -99,6 +94,7 @@ public class AdminInterface extends JFrame {
 		btnDelete.setBounds(323, 7, 89, 23);
 		contentPane.add(btnDelete);
 		
+		setVisible(true);
 	}
 	
 	void processEdit() {
@@ -110,39 +106,3 @@ public class AdminInterface extends JFrame {
 	}
 }
 
-/*
-{
-@Override
-public Class getColumnClass(int column)
-{
-	for(int row = 0; row < getRowCount(); row++)
-	{
-		Object o = getValueAt(row, column);
-				
-		if(o != null)
-		{
-			return o.getClass();
-		}
-	}
-	
-return Object.class;
-}
-};*/
-
-//Get data
-		/*
-		Connection connection = Database.createConnection();
-		String sql = "SELECT ID, USERNAME, USERFULLNAME, USEREMAIL FROM TISCH_USER";
-		java.sql.Statement stm = connection.createStatement();
-		ResultSet rs = stm.executeQuery( sql );
-		
-		while (rs.next()){
-			Vector<Object> row = new Vector<Object>(4);
-			
-			for(int i = 0; i < 4; i++) {
-				row.addElement(rs.getObject(i));
-			}
-			
-			data.addElement(row);
-		}
-		*/
