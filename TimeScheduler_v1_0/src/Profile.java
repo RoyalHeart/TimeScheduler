@@ -14,10 +14,8 @@ public class Profile extends JPanel {
     JButton chPasswBtn = new JButton("Change Password");
     JPanel editPanel = new JPanel();
     User user;
-    MainFrame mf;
 
-    Profile(User user, MainFrame mf) {
-        this.mf = mf;
+    Profile(User user) {
         this.user = user;
         this.setLayout(new BorderLayout());
         this.setSize(300, 200);
@@ -85,12 +83,6 @@ public class Profile extends JPanel {
             gbc.gridy = 2;
             editPanel.add(new phonePanel(user), gbc);
 
-            /*
-             * editPanel.add(emailLabel);
-             * editPanel.add(emailField);
-             * editPanel.add(phoneLabel);
-             * editPanel.add(phoneLabel);
-             */
             this.add(editPanel, BorderLayout.CENTER);
         }
     }
@@ -174,8 +166,6 @@ public class Profile extends JPanel {
             this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             this.setResizable(false);
             this.setLocationRelativeTo(null);
-            // Need to fix this
-            // this.add(new btnPanel(this), BorderLayout.SOUTH);
         }
     }
 
@@ -333,6 +323,7 @@ public class Profile extends JPanel {
                     {
                         user.setName(base.newField.getText());
                         Database.updateName(base.newField.getText(), user);
+                        JOptionPane.showMessageDialog(null, "Updated name successfully.");
                         return true;
                     }
 
@@ -341,6 +332,7 @@ public class Profile extends JPanel {
                     {
                         user.setEmail(base.newField.getText());
                         Database.updateEmail(base.newField.getText(), user);
+                        JOptionPane.showMessageDialog(null, "Updated email successfully.");
                         return true;
                     }
 
@@ -349,6 +341,7 @@ public class Profile extends JPanel {
                     {
                         user.setPhone(base.newField.getText());
                         Database.updatePhone(base.newField.getText(), user);
+                        JOptionPane.showMessageDialog(null, "Updated phone successfully.");
                         return true;
                     }
             }
@@ -369,17 +362,17 @@ public class Profile extends JPanel {
                     // baseP is opened
                     if (baseP != null) {
                         this.base = baseP;
-                        if (checkInvalid(flag)) 
+                        if (baseP.newField.getText().equals(baseP.confirmField.getText()))
                         {
                             // Check if new field and confirm field = 
-                            if (baseP.newField.getText().equals(baseP.confirmField.getText()))
+                            if (checkInvalid(flag))
                             {
                                 updatePanel(user);
                                 baseD.dispose();
                             }
                             else 
                             {
-                                showNotMatchMessage(flag);
+                                showInvalidMessage(flag);
                                 /* Using JOptionPane will freeze the main frame
                                 ** Set modal(true) in editDialog makes this problem
                                 ** Solve 
@@ -388,7 +381,7 @@ public class Profile extends JPanel {
                         } 
                         else 
                         {
-                            showInvalidMessage(flag);
+                            showNotMatchMessage(flag);
                             // Using JOptionPane will freeze the main frame
                         }
                     }
@@ -396,7 +389,9 @@ public class Profile extends JPanel {
                     else  {
                         if (new String(passwP.newPassw.getPassword())
                                 .equals(new String(passwP.confirmNewPassw.getPassword()))) {
-                            // To-do
+                            Database.updatePassword(new String(passwP.newPassw.getPassword()), user);
+                            JOptionPane.showMessageDialog(null, "Updated password successfully.");
+                            baseD.dispose();
                         } else {
                             JOptionPane.showMessageDialog(null, "Password does not match");
                         }
@@ -408,4 +403,3 @@ public class Profile extends JPanel {
         }
     }
 }
-
