@@ -18,6 +18,11 @@ import javax.swing.JTable;
  * @author Tam Thai Hoang 1370674
  */
 public class LoadEvents {
+    private static DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    private static DateFormat weekFormat = new SimpleDateFormat("ww");
+    private static DateFormat monthFormat = new SimpleDateFormat("MM");
+    private static DateFormat yearFormat = new SimpleDateFormat("yyyy");
+    private static DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
     /**
      * Get the month data from the database and return it as a list of MonthCell
@@ -34,9 +39,7 @@ public class LoadEvents {
             User user) {
         cal.set(Calendar.DAY_OF_MONTH, 1);
         int month = cal.get(Calendar.MONTH);
-        System.out.println("Month: " + month);
         int year = cal.get(Calendar.YEAR);
-        System.out.println("Year: " + year);
         int startDay = cal.get(Calendar.DAY_OF_WEEK);
         int numberOfDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
         int weeks = cal.getActualMaximum(Calendar.WEEK_OF_MONTH);
@@ -57,25 +60,21 @@ public class LoadEvents {
             data.add(list);
         }
         ArrayList<Event> events = Database.getEvents(user);
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
-        DateFormat yearFormat = new SimpleDateFormat("yyyy");
-        DateFormat monthFormat = new SimpleDateFormat("MM");
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         for (Event event : events) {
             int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
             int eventMonth = Integer.valueOf(monthFormat.format(event.getDate()));
             if (eventYear == year && eventMonth == month + 1) {
                 Calendar calendar = new GregorianCalendar();
-                System.out.println("Title: " + event.getTitle());
-                System.out.println("Date: " + dateFormat.format(event.getDate()));
-                System.out.println("Start time: " + timeFormat.format(event.getDate()));
-                System.out.println("Duration: " + event.getDuration());
-                System.out.println("Priority: " + event.getPriority());
+                // System.out.println("Title: " + event.getTitle());
+                // System.out.println("Date: " + dateFormat.format(event.getDate()));
+                // System.out.println("Start time: " + timeFormat.format(event.getDate()));
+                // System.out.println("Duration: " + event.getDuration());
+                // System.out.println("Priority: " + event.getPriority());
                 calendar.setTime(event.getDate());
                 int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
                 int week = calendar.get(Calendar.WEEK_OF_MONTH);
-                System.out.println("Date of Month: " + calendar.get(Calendar.DAY_OF_WEEK));
-                System.out.println("Week: " + calendar.get(Calendar.WEEK_OF_MONTH) + "\n");
+                // System.out.println("Date of Month: " + calendar.get(Calendar.DAY_OF_WEEK));
+                // System.out.println("Week: " + calendar.get(Calendar.WEEK_OF_MONTH) + "\n");
                 data.get(week - 1).get(dayOfWeek - 1).addEvent(event);
             }
         }
@@ -93,43 +92,109 @@ public class LoadEvents {
      * @return The list of WeekCell objects to show to the SwingCalendar
      */
     public static ArrayList<WeekCell> updateWeekDataEvent(ArrayList<WeekCell> weekData, Calendar cal, User user) {
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
         int month = cal.get(Calendar.MONTH);
-        System.out.println("Month: " + month);
         int year = cal.get(Calendar.YEAR);
-        System.out.println("Year: " + year);
         int week = cal.get(Calendar.WEEK_OF_MONTH);
-        System.out.println("Week: " + week);
+        boolean isWeekOverflow = false;
+        System.out.println("Month: " + month + " Year: " + year + " Week: " + week);
+        int month2;
+        int year2;
+        int week2;
+        if (week == cal.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
+            isWeekOverflow = true;
+            System.out.println("Week is overflow");
+        }
         weekData = new ArrayList<WeekCell>();
         for (int i = 0; i < 7; i++) {
             WeekCell weekCell = new WeekCell();
             weekData.add(weekCell);
         }
         ArrayList<Event> events = Database.getEvents(user);
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
-        DateFormat yearFormat = new SimpleDateFormat("yyyy");
-        DateFormat monthFormat = new SimpleDateFormat("MM");
-        DateFormat weekFormat = new SimpleDateFormat("ww");
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        if (!isWeekOverflow) {
+            for (Event event : events) {
+                int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
+                int eventMonth = Integer.valueOf(monthFormat.format(event.getDate()));
+                int eventWeek = Integer.valueOf(weekFormat.format(event.getDate()));
+                if (eventYear == year && eventMonth == month + 1 && eventWeek == week) {
+                    Calendar calendar = new GregorianCalendar();
+                    // System.out.println("Title: " + event.getTitle());
+                    // System.out.println("Date: " + dateFormat.format(event.getDate()));
+                    // System.out.println("Start time: " + timeFormat.format(event.getDate()));
+                    // System.out.println("Duration: " + event.getDuration());
+                    // System.out.println("Priority: " + event.getPriority());
+                    calendar.setTime(event.getDate());
+                    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                    // System.out.println("Date of Month: " + calendar.get(Calendar.DAY_OF_WEEK));
+                    // System.out.println("Week: " + calendar.get(Calendar.WEEK_OF_MONTH) + "\n");
+                    weekData.get(dayOfWeek - 1).date = dateFormat.format(event.getDate());
+                    weekData.get(dayOfWeek - 1).addEvent(event);
+                }
+            }
+            return weekData;
+        } else {
+            Calendar cal2 = new GregorianCalendar();
+            cal2.setTime(cal.getTime());
+            cal2.add(Calendar.DATE, +6);
+            month2 = cal2.get(Calendar.MONTH);
+            year2 = cal2.get(Calendar.YEAR);
+            week2 = cal2.get(Calendar.WEEK_OF_MONTH);
+            for (Event event : events) {
+                int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
+                int eventMonth = Integer.valueOf(monthFormat.format(event.getDate()));
+                int eventWeek = Integer.valueOf(weekFormat.format(event.getDate()));
+                // System.out.println(
+                // "Event year: " + eventYear + " Event month: " + eventMonth + " Event week: "
+                // + eventWeek);
+                if (eventYear == year && eventMonth == month + 1 && eventWeek == week
+                        || (eventYear == year2 && eventMonth == month2 + 1 && eventWeek == week)) {
+                    Calendar calendar = new GregorianCalendar();
+                    // System.out.println("Title: " + event.getTitle());
+                    // System.out.println("Date: " + dateFormat.format(event.getDate()));
+                    // System.out.println("Start time: " + timeFormat.format(event.getDate()));
+                    // System.out.println("Duration: " + event.getDuration());
+                    // System.out.println("Priority: " + event.getPriority());
+                    calendar.setTime(event.getDate());
+                    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                    // System.out.println("Date of Month: " + calendar.get(Calendar.DAY_OF_WEEK));
+                    // System.out.println("Week: " + calendar.get(Calendar.WEEK_OF_MONTH) + "\n");
+                    weekData.get(dayOfWeek - 1).date = dateFormat.format(event.getDate());
+                    weekData.get(dayOfWeek - 1).addEvent(event);
+                }
+            }
+            return weekData;
+        }
+    }
+
+    /**
+     * Get the month data from the database and return it as a list of
+     * {@link Event}s
+     * to print to {@link PDF}.
+     * 
+     * @param user The {@link User} to get the events from
+     * @param cal  The {@link Calendar} to get which month will be printed from
+     * @return The list of {@link Event}s to print to PDF
+     */
+    public static ArrayList<Event> getEventsOfMonth(User user, Calendar cal) {
+        ArrayList<Event> monthEvents = new ArrayList<Event>();
+        int month = cal.get(Calendar.MONTH);
+        int year = cal.get(Calendar.YEAR);
+        ArrayList<Event> events = Database.getEvents(user);
         for (Event event : events) {
             int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
             int eventMonth = Integer.valueOf(monthFormat.format(event.getDate()));
-            int eventWeek = Integer.valueOf(weekFormat.format(event.getDate()));
-            if (eventYear == year && eventMonth == month + 1 && eventWeek == week) {
-                Calendar calendar = new GregorianCalendar();
-                System.out.println("Title: " + event.getTitle());
-                System.out.println("Date: " + dateFormat.format(event.getDate()));
-                System.out.println("Start time: " + timeFormat.format(event.getDate()));
-                System.out.println("Duration: " + event.getDuration());
-                System.out.println("Priority: " + event.getPriority());
-                calendar.setTime(event.getDate());
-                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-                System.out.println("Date of Month: " + calendar.get(Calendar.DAY_OF_WEEK));
-                System.out.println("Week: " + calendar.get(Calendar.WEEK_OF_MONTH) + "\n");
-                weekData.get(dayOfWeek - 1).date = dateFormat.format(event.getDate());
-                weekData.get(dayOfWeek - 1).addEvent(event);
+            if (eventYear == year && eventMonth == month + 1) {
+                // System.out.println("Title: " + event.getTitle());
+                // System.out.println("Date: " + dateFormat.format(event.getDate()));
+                // System.out.println("Day of month: " + calendar.get(Calendar.DAY_OF_WEEK));
+                // System.out.println("Description: " + event.getDescription());
+                // System.out.println("Start time: " + timeFormat.format(event.getDate()));
+                // System.out.println("Duration: " + event.getDuration());
+                // System.out.println("Priority: " + event.getPriority());
+                monthEvents.add(event);
             }
         }
-        return weekData;
+        return monthEvents;
     }
 
     /**
@@ -137,40 +202,53 @@ public class LoadEvents {
      * to print to {@link PDF}.
      * 
      * @param user The {@link User} to get the events from
-     * @param cal  The {@link Calendar} to get which week will be print from
+     * @param cal  The {@link Calendar} to get which week will be printed from
      * @return The list of {@link Event}s to print to PDF
      */
     public static ArrayList<Event> getEventsOfWeek(User user, Calendar cal) {
         ArrayList<Event> weekEvents = new ArrayList<Event>();
-        int month = cal.get(Calendar.MONTH);
-        System.out.println("Month: " + month);
-        int year = cal.get(Calendar.YEAR);
-        System.out.println("Year: " + year);
         int week = cal.get(Calendar.WEEK_OF_MONTH);
-        System.out.println("Week: " + week);
+        int month = cal.get(Calendar.MONTH);
+        int year = cal.get(Calendar.YEAR);
         ArrayList<Event> events = Database.getEvents(user);
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
-        DateFormat yearFormat = new SimpleDateFormat("yyyy");
-        DateFormat monthFormat = new SimpleDateFormat("MM");
-        DateFormat weekFormat = new SimpleDateFormat("ww");
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
         for (Event event : events) {
             int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
             int eventMonth = Integer.valueOf(monthFormat.format(event.getDate()));
             int eventWeek = Integer.valueOf(weekFormat.format(event.getDate()));
             if (eventYear == year && eventMonth == month + 1 && eventWeek == week) {
-                Calendar calendar = new GregorianCalendar();
-                System.out.println("Title: " + event.getTitle());
-                System.out.println("Date: " + dateFormat.format(event.getDate()));
-                System.out.println("Day of week: " + calendar.get(Calendar.DAY_OF_WEEK));
-                System.out.println("Description: " + event.getDescription());
-                System.out.println("Start time: " + timeFormat.format(event.getDate()));
-                System.out.println("Duration: " + event.getDuration());
-                System.out.println("Priority: " + event.getPriority());
+                // System.out.println("Title: " + event.getTitle());
+                // System.out.println("Date: " + dateFormat.format(event.getDate()));
+                // System.out.println("Day of week: " + calendar.get(Calendar.DAY_OF_WEEK));
+                // System.out.println("Description: " + event.getDescription());
+                // System.out.println("Start time: " + timeFormat.format(event.getDate()));
+                // System.out.println("Duration: " + event.getDuration());
+                // System.out.println("Priority: " + event.getPriority());
                 weekEvents.add(event);
             }
         }
         return weekEvents;
+    }
+
+    /**
+     * Get the {@link Event}s that will be reminded in the future.
+     * 
+     * @param user The {@link User} to get the events from
+     * @param cal  The {@link Calendar} to get
+     * @return The list of {@link Event}s that will be reminded
+     */
+    public static ArrayList<Event> getRemindEvents(User user) {
+        Calendar cal = new GregorianCalendar();
+        Calendar remindCalendar = new GregorianCalendar();
+        ArrayList<Event> remindEvents = new ArrayList<Event>();
+        ArrayList<Event> events = Database.getEvents(user);
+        for (Event event : events) {
+            remindCalendar.setTime(event.getRemind());
+            if (cal.compareTo(remindCalendar) < 0) {
+                remindEvents.add(event);
+            }
+        }
+        return remindEvents;
     }
 
     public static void main(String[] args) {
@@ -200,7 +278,7 @@ public class LoadEvents {
             data.add(list);
         }
         Database.createConnection();
-        User user = Database.getUser("admin", "D82494F05D6917BA02F7AAA29689CCB444BB73F20380876CB05D1F37537B7892");
+        User user = Database.getUser("admin", "admin");
         ArrayList<Event> events = Database.getEvents(user);
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
         DateFormat yearFormat = new SimpleDateFormat("yyyy");
@@ -228,7 +306,6 @@ public class LoadEvents {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
         frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
         for (int i = 0; i < weeks; i++) {
             for (int j = 0; j < 7; j++) {
                 for (int t = 0; t < data.get(i).get(j).getEvents().size(); t++) {
@@ -245,5 +322,6 @@ public class LoadEvents {
         table.setDefaultEditor(MonthCell.class, new MonthCellEditor());
         JScrollPane scrollPane = new JScrollPane(table);
         frame.add(scrollPane);
+        frame.setVisible(true);
     }
 }
