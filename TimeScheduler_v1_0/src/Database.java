@@ -440,6 +440,47 @@ public class Database {
 
         return false;
     }
+    
+    static boolean updateEmail(String email, User user)
+    {
+        try
+        {
+            Statement stmt = con.createStatement();
+            if (stmt.executeUpdate("UPDATE TISCH_USER SET USEREMAIL = '" + email + "' WHERE id = " + user.getId()) == 0)
+            {
+                return false;
+            }
+            else {
+                System.out.println("Email is updated");
+                return true;}
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    static boolean updatePhone(String phone, User user)
+    {
+        try {
+            Statement stmt = con.createStatement();
+            if (stmt.executeUpdate("UPDATE TISCH_USER SET USERPHONENUMBER = '" + phone + "' WHERE id = " + user.getId()) == 0)
+            {
+                return false;
+            }
+            else 
+            {
+                System.out.println("Phone is updated.");
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 
     /**
      * Get all user to make a list of all users from the database
