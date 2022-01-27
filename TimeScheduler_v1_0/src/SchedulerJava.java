@@ -2,6 +2,7 @@ package src;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.quartz.JobBuilder;
@@ -23,16 +24,36 @@ public class SchedulerJava {
         }
     }
 
+    public static void closeScheduler() {
+        try {
+            scheduler.shutdown();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void scheduleMail(User user, Event event) {
         try {
-            JobDetail jobDetail = JobBuilder.newJob(MailJob.class).withIdentity("job1", "group1").build();
+            JobDetail jobDetail = JobBuilder.newJob(MailJob.class)/* .withIdentity("", "") */.build();
             jobDetail.getJobDataMap().put("user", user);
             jobDetail.getJobDataMap().put("event", event);
             Trigger trigger = TriggerBuilder.newTrigger()
-                    .withIdentity("trigger1", "group1")
+                    /* .withIdentity("", "") */
                     .startAt(event.getRemind())
                     .build();
             scheduler.scheduleJob(jobDetail, trigger);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setFutureRemind(User user) {
+        ArrayList<Event> remindEvents = LoadEvents.getRemindEvents(user);
+        try {
+            for (Event event : remindEvents) {
+                scheduleMail(user, event);
+                System.out.println("Mail scheduled for " + event.getTitle() + " at " + event.getRemind());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
