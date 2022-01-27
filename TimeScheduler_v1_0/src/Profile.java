@@ -2,7 +2,6 @@ package src;
 
 // import java.util.*;
 import java.awt.*;
-import java.sql.SQLException;
 
 // import java.awt.event.*;
 import javax.swing.*;
@@ -15,8 +14,10 @@ public class Profile extends JPanel {
     JButton chPasswBtn = new JButton("Change Password");
     JPanel editPanel = new JPanel();
     User user;
+    MainFrame mf;
 
-    Profile(User user) {
+    Profile(User user, MainFrame mf) {
+        this.mf = mf;
         this.user = user;
         this.setLayout(new BorderLayout());
         this.setSize(300, 200);
@@ -108,7 +109,7 @@ public class Profile extends JPanel {
             try {
                 nameEditBtn.addActionListener(e -> {
                     if (edit == null || !edit.isShowing()) {
-                        edit = new editDialog(new nameEditPanel());
+                        edit = new editDialog(new nameEditPanel(), 0);
                     }
                 });
             } catch (Exception e) {
@@ -131,7 +132,7 @@ public class Profile extends JPanel {
             try {
                 emailEditBtn.addActionListener(e -> {
                     if (edit == null || !edit.isShowing()) {
-                        edit = new editDialog(new emailEditPanel());
+                        edit = new editDialog(new emailEditPanel(), 1);
                     }
                 });
             } catch (Exception e) {
@@ -154,7 +155,7 @@ public class Profile extends JPanel {
             try {
                 phoneEditButton.addActionListener(e -> {
                     if (edit == null || !edit.isShowing()) {
-                        edit = new editDialog(new phoneEditPanel());
+                        edit = new editDialog(new phoneEditPanel(), 2);
                     }
                 });
             } catch (Exception e) {
@@ -180,10 +181,9 @@ public class Profile extends JPanel {
 
     // dialog for edit name, email, phone, ...
     class editDialog extends baseDialog {
-        editDialog(basePanel edit) {
+        editDialog(basePanel edit, int flag) {
             this.add(edit, BorderLayout.CENTER);
-            this.setModal(true);
-            this.add(new btnPanel(this, edit, null), BorderLayout.SOUTH);
+            this.add(new btnPanel(this, edit, flag, null), BorderLayout.SOUTH);
         }
     }
 
@@ -191,7 +191,7 @@ public class Profile extends JPanel {
     class passwDialog extends baseDialog {
         passwDialog(passwEditPanel passwEdit) {
             this.add(passwEdit, BorderLayout.CENTER);
-            this.add(new btnPanel(this, null, passwEdit), BorderLayout.SOUTH);
+            this.add(new btnPanel(this, null, 3, passwEdit), BorderLayout.SOUTH);
         }
     }
 
@@ -306,10 +306,58 @@ public class Profile extends JPanel {
     class btnPanel extends JPanel {
         JButton cancelBtn = new JButton("Cancel");
         JButton confirmBtn = new JButton("Confirm");
+        // String array to easy display message dialog
+        String[] arr = {"Name", "Email", "Phone"};
+        // Variable to reference to BasePanel
+        basePanel base;
+
+        void showNotMatchMessage(int flag)
+        {
+            String showString = arr[flag] + " does not match.";
+            JOptionPane.showMessageDialog(null, showString);
+        }
+
+        void showInvalidMessage(int flag)
+        {
+            String showString = arr[flag] + " is invalid.";
+            JOptionPane.showMessageDialog(null, showString);
+        }
+
+        // Function to check validation of name, email and phone
+        boolean checkInvalid(int flag)
+        {
+            switch (flag) 
+            {
+                case 0:
+                    if (RegisterValidator.isValidName(base.newField.getText())) 
+                    {
+                        user.setName(base.newField.getText());
+                        Database.updateName(base.newField.getText(), user);
+                        return true;
+                    }
+
+                case 1:
+                    if (RegisterValidator.isValidEmail(base.newField.getText()))
+                    {
+                        user.setEmail(base.newField.getText());
+                        Database.updateEmail(base.newField.getText(), user);
+                        return true;
+                    }
+
+                case 2:
+                    if (RegisterValidator.isValidPhone(base.newField.getText()))
+                    {
+                        user.setPhone(base.newField.getText());
+                        Database.updatePhone(base.newField.getText(), user);
+                        return true;
+                    }
+            }
+            return false;
+        }
 
         // baseD to reference to baseDialog, baseP to reference basePanel, passwP to
         // reference to passwEditPanel
-        btnPanel(baseDialog baseD, basePanel baseP, passwEditPanel passwP) {
+        btnPanel(baseDialog baseD, basePanel baseP, int flag, passwEditPanel passwP) {
             this.setLayout(new FlowLayout());
             this.add(confirmBtn);
             this.add(cancelBtn);
@@ -320,26 +368,32 @@ public class Profile extends JPanel {
                 confirmBtn.addActionListener(e -> {
                     // baseP is opened
                     if (baseP != null) {
-                        // check if name and confirm new =
-                        if (baseP.newField.getText().equals(baseP.confirmField.getText())) {
-                            // check if name is in correct form
-                            if (RegisterValidator.isValidName(baseP.newField.getText())) {
-                                user.setName(baseP.newField.getText());
-                                Database.updateName(baseP.newField.getText(), user);
+                        this.base = baseP;
+                        if (checkInvalid(flag)) 
+                        {
+                            // Check if new field and confirm field = 
+                            if (baseP.newField.getText().equals(baseP.confirmField.getText()))
+                            {
                                 updatePanel(user);
                                 baseD.dispose();
-
-                            } else {
-                                JOptionPane.showMessageDialog(null, "Name is invalid.");
                             }
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Name does not match.");
+                            else 
+                            {
+                                showNotMatchMessage(flag);
+                                /* Using JOptionPane will freeze the main frame
+                                ** Set modal(true) in editDialog makes this problem
+                                ** Solve 
+                                */
+                            }
+                        } 
+                        else 
+                        {
+                            showInvalidMessage(flag);
+                            // Using JOptionPane will freeze the main frame
                         }
                     }
                     // passwP is opened
-                    else {
-                        System.out.println(passwP.newPassw.getPassword());
-                        System.out.println(passwP.confirmNewPassw.getPassword());
+                    else  {
                         if (new String(passwP.newPassw.getPassword())
                                 .equals(new String(passwP.confirmNewPassw.getPassword()))) {
                             // To-do
@@ -354,3 +408,4 @@ public class Profile extends JPanel {
         }
     }
 }
+
