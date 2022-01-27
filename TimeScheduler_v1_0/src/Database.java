@@ -18,17 +18,50 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.iv.RandomIvGenerator;
 import org.jasypt.properties.EncryptableProperties;
 
+/**
+ * <p>
+ * {@code Database} is used to connect to the database and perform CRUD.
+ * <p>
+ * <p>
+ * It is used to store the information of the {@link User}s, administrators and
+ * {@link Event}s.
+ * </p>
+ * 
+ * @author Tam Thai Hoang 1370674
+ * @author Huy Truong Quang (get list of user)
+ * @author Sang Doan Tan (update user profile)
+ */
 public class Database {
+    /**
+     * The {@code String} to add an user to TISCH_USER table.
+     */
     final static String addUser = "INSERT INTO TISCH_USER (ID, USERNAME, PASSWORD, USERFULLNAME, USEREMAIL, USERPHONENUMBER) VALUES (?, ?, ?, ?, ?, ?)";
+    
+    /**
+     * The {@code String} to add an event to EVENT table.
+     */
     final static String addEvent = "INSERT INTO EVENT (ID, USERID, EVENTTITLE, EVENTDESCRIPTION, EVENTDATE, EVENTREMIND, EVENTLOCATION, EVENTDURATION, EVENTPRIORITY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    /**
+     * The {@code jasyptPassword} to decrypt the {@code database properties}file.
+     */
     static String jasyptPassword = getJasyptPassword();
+    
+    /**
+     * The encrypted {@link Properties} to get database configuration for connection.
+     */
     final static Properties databaseProperties = getDatabaseProperties();
+    
+    /**
+     * The {@code Connection} object to connect to the database.
+     */
     static Connection con;
 
     /**
-     * create database {@code Connection} to the Oracle database
+     * create database {@link Connection} to the Oracle database with the
+     * properties from the {@code databaseProperties} object.
      * 
-     * @return {@code Connection} object to the database
+     * @return {@link Connection} to the database
      */
     static Connection createConnection() {
         try {
@@ -47,11 +80,27 @@ public class Database {
             return null;
         }
     };
+    
+    /**
+     * This method is used to close the {@link Connection} to the database.
+     * 
+     * @return {@code true} if the {@link Connection} is closed successfully,
+     *         {@code false} otherwise
+     */
+    static boolean closeConnection() {
+        try {
+            System.out.println("Closing connection to database");
+            con.close();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     /**
-     * Get the database properties from the properties file.
-     * The properties file is encrypted using jasypt,
-     * and the properties contain the database connection information
+     * Get the {@code database properties} from the properties file.
+     * The properties file is encrypted using jasypt
      * 
      * @return {@code Properties} of the database
      */
