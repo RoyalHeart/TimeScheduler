@@ -133,12 +133,12 @@ public class LoadEvents {
     }
 
     /**
-     * Get the day data from the database and return it as a list of DayCell
-     * objects to show to the {@link SwingCalendar}.
+     * Get the week data from the database and return it as a list of {@link Event}s
+     * to print to {@link PDF}.
      * 
-     * @param cal  The {@link Calendar} object to get the month data from
-     * @param user The {@link User} object to get the events from
-     * @return The list of DayCell objects to show to the SwingCalendar
+     * @param user The {@link User} to get the events from
+     * @param cal  The {@link Calendar} to get which week will be print from
+     * @return The list of {@link Event}s to print to PDF
      */
     public static ArrayList<Event> getEventsOfWeek(User user, Calendar cal) {
         ArrayList<Event> weekEvents = new ArrayList<Event>();
