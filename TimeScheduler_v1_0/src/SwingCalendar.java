@@ -25,13 +25,27 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+/**
+ * <p>
+ * {@code SwingCalendar} implements a calendar and extends {@link JPanel},
+ * so it can be shown in a {@code JFrame}.
+ * <p>
+ * <p>
+ * This {@code SwingCalendar} has two different view:
+ * <ul>
+ * <li>{@code Month}</li>
+ * <li>{@code Week}</li>
+ * </ul/>
+ * 
+ * @author Tam Thai Hoang 1370674
+ */
 public class SwingCalendar extends JPanel {
     User user;
     JPanel panel; // panel to display the calendar month, year and buttons
     JLabel label; // label to display the selected month, year
     // month data
     ArrayList<List<MonthCell>> data = new ArrayList<List<MonthCell>>();
-    MyClassTableModel model = new MyClassTableModel(data); // month table model
+    MonthTableModel model = new MonthTableModel(data); // month table model
     JTable table = new JTable(model); // table to display the calendar
     // week data
     ArrayList<WeekCell> weekData = new ArrayList<WeekCell>();
@@ -46,6 +60,9 @@ public class SwingCalendar extends JPanel {
     String[] weekDate = { "", "", "", "", "", "", "" };
     String[] columns = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 
+    /**
+     * Constructs a {@code SwingCalendar} object using {@link User} events.
+     */
     SwingCalendar(User user) {
         this.user = user;
         // function for the drop down menu to change view
@@ -113,14 +130,18 @@ public class SwingCalendar extends JPanel {
         panel.add(label, BorderLayout.CENTER);
         panel.add(rightPanel, BorderLayout.EAST);
 
-        // // panel is the part with week/month and year
-        // // pane is the date table/time slot table
+        // panel is the part with week/month and year
+        // pane is the date table/time slot table
         this.add(panel, BorderLayout.NORTH);
         this.add(pane, BorderLayout.CENTER);
         this.update();
     }
 
-    // update when the left or right button is clicked
+    /**
+     * update when the left or right button is clicked
+     * 
+     * @param side {@code 0} for left, {@code 1} for right
+     */
     void update(int side) {
         if (view == "Month") {
             if (side == 0) {
@@ -139,7 +160,10 @@ public class SwingCalendar extends JPanel {
         }
     }
 
-    // update the date table
+    /**
+     * update the {@link SwingCalendar} when the month, year, or {@code view} is
+     * changed
+     */
     void update() {
 
         if (view == "Month") {
@@ -167,13 +191,12 @@ public class SwingCalendar extends JPanel {
                 }
                 data.add(list);
             }
-            data = ShowEvents.updateMonthDataEvent(data, cal, user);
+            data = LoadEvents.updateMonthDataEvent(data, cal, user);
             this.remove(pane);
-            // model = new MyClassTableModel(data);
             model.update(data);
             table = new JTable(model);
-            table.setDefaultRenderer(MonthCell.class, new MyClassCellRenderer());// render the table cell
-            table.setDefaultEditor(MonthCell.class, new MyClassCellEditor());
+            table.setDefaultRenderer(MonthCell.class, new MonthCellRenderer());// render the table cell
+            table.setDefaultEditor(MonthCell.class, new MonthCellEditor());
             table.setRowHeight(100);
             table.setFillsViewportHeight(true);
             table.setEnabled(true);
@@ -181,22 +204,13 @@ public class SwingCalendar extends JPanel {
             pane = new JScrollPane(table);
             pane.setVisible(true);
             this.add(pane, BorderLayout.CENTER);
-
-            // // the table
-            // // set the column header
-            // for (int i = 0; i < 7; i++) {
-            // TableColumn tc = tcm.getColumn(i);
-            // tc.setHeaderValue(columns[i]);
-            // th.repaint();
-            // }
-
         } else if (view == "Week") {
             this.remove(pane);
             int week = cal.get(Calendar.WEEK_OF_MONTH);
             String month = cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
             int year = cal.get(Calendar.YEAR);
             label.setText(week + "/" + month + " " + year);
-            weekData = ShowEvents.updateWeekDataEvent(weekData, cal, user);
+            weekData = LoadEvents.updateWeekDataEvent(weekData, cal, user);
             weekModel.update(weekData);
             table = new JTable(weekModel);
             table.setRowHeight(24 * 60 * 2);
