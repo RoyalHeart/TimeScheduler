@@ -3,12 +3,33 @@ package src;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import javax.swing.*;
+import java.util.List;
 
-public class ShowEvents {
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+
+/**
+ * This class is used to get {@link Event} from the {@link Database}
+ * and change the events to corresponding datatype.
+ * 
+ * @author Tam Thai Hoang 1370674
+ */
+public class LoadEvents {
+
+    /**
+     * Get the month data from the database and return it as a list of MonthCell
+     * objects to show to the {@link SwingCalendar}.
+     * 
+     * @param data An empty {@link ArrayList} of {@link MonthCell} objects to be
+     *             filled with the data
+     *             from the {@link Database}
+     * @param cal  The {@link Calendar} object to get the month data from
+     * @param user The {@link User} object to get the events from
+     * @return The list of MonthCell objects to show to the {@link SwingCalendar}
+     */
     public static ArrayList<List<MonthCell>> updateMonthDataEvent(ArrayList<List<MonthCell>> data, Calendar cal,
             User user) {
         cal.set(Calendar.DAY_OF_MONTH, 1);
@@ -61,6 +82,16 @@ public class ShowEvents {
         return data;
     };
 
+    /**
+     * Get the week data from the database and return it as a list of WeekCell
+     * objects to show to the {@link SwingCalendar}.
+     * 
+     * @param weekData The empty list of WeekCell objects to be filled with the data
+     *                 from the {@link Database}
+     * @param cal      The {@link Calendar} object to get the month data from
+     * @param user     The {@link User} object to get the events from
+     * @return The list of WeekCell objects to show to the SwingCalendar
+     */
     public static ArrayList<WeekCell> updateWeekDataEvent(ArrayList<WeekCell> weekData, Calendar cal, User user) {
         int month = cal.get(Calendar.MONTH);
         System.out.println("Month: " + month);
@@ -99,6 +130,47 @@ public class ShowEvents {
             }
         }
         return weekData;
+    }
+
+    /**
+     * Get the day data from the database and return it as a list of DayCell
+     * objects to show to the {@link SwingCalendar}.
+     * 
+     * @param cal  The {@link Calendar} object to get the month data from
+     * @param user The {@link User} object to get the events from
+     * @return The list of DayCell objects to show to the SwingCalendar
+     */
+    public static ArrayList<Event> getEventsOfWeek(User user, Calendar cal) {
+        ArrayList<Event> weekEvents = new ArrayList<Event>();
+        int month = cal.get(Calendar.MONTH);
+        System.out.println("Month: " + month);
+        int year = cal.get(Calendar.YEAR);
+        System.out.println("Year: " + year);
+        int week = cal.get(Calendar.WEEK_OF_MONTH);
+        System.out.println("Week: " + week);
+        ArrayList<Event> events = Database.getEvents(user);
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        DateFormat yearFormat = new SimpleDateFormat("yyyy");
+        DateFormat monthFormat = new SimpleDateFormat("MM");
+        DateFormat weekFormat = new SimpleDateFormat("ww");
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        for (Event event : events) {
+            int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
+            int eventMonth = Integer.valueOf(monthFormat.format(event.getDate()));
+            int eventWeek = Integer.valueOf(weekFormat.format(event.getDate()));
+            if (eventYear == year && eventMonth == month + 1 && eventWeek == week) {
+                Calendar calendar = new GregorianCalendar();
+                System.out.println("Title: " + event.getTitle());
+                System.out.println("Date: " + dateFormat.format(event.getDate()));
+                System.out.println("Day of week: " + calendar.get(Calendar.DAY_OF_WEEK));
+                System.out.println("Description: " + event.getDescription());
+                System.out.println("Start time: " + timeFormat.format(event.getDate()));
+                System.out.println("Duration: " + event.getDuration());
+                System.out.println("Priority: " + event.getPriority());
+                weekEvents.add(event);
+            }
+        }
+        return weekEvents;
     }
 
     public static void main(String[] args) {
@@ -166,11 +238,11 @@ public class ShowEvents {
             }
             System.out.println();
         }
-        MyClassTableModel model = new MyClassTableModel(data);
+        MonthTableModel model = new MonthTableModel(data);
         JTable table = new JTable(model);
         table.setRowHeight(100);
-        table.setDefaultRenderer(MonthCell.class, new MyClassCellRenderer());
-        table.setDefaultEditor(MonthCell.class, new MyClassCellEditor());
+        table.setDefaultRenderer(MonthCell.class, new MonthCellRenderer());
+        table.setDefaultEditor(MonthCell.class, new MonthCellEditor());
         JScrollPane scrollPane = new JScrollPane(table);
         frame.add(scrollPane);
     }
