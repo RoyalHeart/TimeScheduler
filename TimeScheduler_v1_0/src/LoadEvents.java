@@ -143,11 +143,9 @@ public class LoadEvents {
                 int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
                 int eventMonth = Integer.valueOf(monthFormat.format(event.getDate()));
                 int eventWeek = Integer.valueOf(weekFormat.format(event.getDate()));
-                // System.out.println(
-                // "Event year: " + eventYear + " Event month: " + eventMonth + " Event week: "
-                // + eventWeek);
                 if (eventYear == year && eventMonth == month + 1 && eventWeek == week
-                        || (eventYear == year2 && eventMonth == month2 + 1 && eventWeek == week)) {
+                        || (eventYear == year2 && eventMonth == month2 + 1 && eventWeek == week)
+                        || (eventYear == year2 && eventMonth == month2 + 1 && eventWeek == week2)) {
                     Calendar calendar = new GregorianCalendar();
                     // System.out.println("Title: " + event.getTitle());
                     // System.out.println("Date: " + dateFormat.format(event.getDate()));
