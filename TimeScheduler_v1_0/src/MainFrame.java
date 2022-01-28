@@ -2,6 +2,7 @@ package src;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -15,8 +16,11 @@ import javax.swing.UIManager;
 
 public class MainFrame extends JFrame {
     ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
+    Container panel = new Container();
 
     MainFrame(User user) {
+        panel = this.getContentPane();
+        AddEventDialog addEventDialog = new AddEventDialog(user, panel);
         SchedulerJava.createScheduler();
         SchedulerJava.setFutureRemind(user);
         this.setIconImage(icon.getImage());
@@ -33,8 +37,7 @@ public class MainFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO Auto-generated method stub
-                new AddEventDialog(user);
+                addEventDialog.setVisible(true);
             }
 
         });
