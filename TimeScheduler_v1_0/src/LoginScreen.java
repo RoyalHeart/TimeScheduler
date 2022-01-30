@@ -2,7 +2,6 @@ package src;
 
 import java.awt.Color;
 import java.awt.Component;
-// import java.awt.*;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -20,8 +19,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
-// login JFrame as the application's login frame
+/**
+ * {@link LoginScreen} is used for user login.
+ * 
+ * @author Tam Thai Hoang
+ */
 public class LoginScreen extends JFrame {
     private ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
     private Username usernamePanel = new Username();
@@ -44,6 +48,9 @@ public class LoginScreen extends JFrame {
         panel.add(comp, gbc);
     }
 
+    /**
+     * Contructor for {@link LoginScreen} Frame
+     */
     LoginScreen() {
         this.setTitle("Login");
         this.setSize(450, 300);
@@ -110,7 +117,9 @@ public class LoginScreen extends JFrame {
         this.setVisible(true);
     }
 
-    // username panel for username input
+    /**
+     * {@code Username} panel for username input
+     */
     class Username extends JPanel {
         private JTextField usernameField = new JTextField(10);
         Font defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
@@ -130,7 +139,9 @@ public class LoginScreen extends JFrame {
         }
     }
 
-    // password panel for password input
+    /**
+     * {@code Password} panel for password input
+     */
     class Password extends JPanel {
         private JPasswordField passwordField = new JPasswordField(10);
         Font defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
@@ -152,13 +163,18 @@ public class LoginScreen extends JFrame {
     }
 }
 
-// Register JFrame for registering new user with username and password
+/**
+ * {@link Register} JFrame for registering new user with username and password
+ * 
+ * @author Tam Thai Hoang
+ */
 class Register extends JFrame {
-    ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
+    private ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
     private static JTextField usernameTextField = new JTextField(10);
     private static JPasswordField passwordField = new JPasswordField(10);
     private static GridBagConstraints gbc = new GridBagConstraints();
     private static JPanel registerPanel = new JPanel(new GridBagLayout());
+    private Font defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
 
     private void addComp(JPanel panel, JComponent comp, int x, int y, int gWidth, int gHeight, int fill, double weightx,
             double weighty) {
@@ -172,86 +188,118 @@ class Register extends JFrame {
         panel.add(comp, gbc);
     }
 
+    /**
+     * {@code Register} constructor for creating a new register JFrame
+     * 
+     * @param user the user that is created by the register
+     */
     Register(User user) {
+        this.setTitle("Register");
+        this.setSize(700, 500);
+        this.setPreferredSize(new Dimension(700, 500));
+        this.setMinimumSize(new Dimension(650, 350));
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setIconImage(icon.getImage());
         registerPanel = new JPanel(new GridBagLayout());
         registerPanel.setOpaque(true);
         registerPanel.setBackground(Color.PINK);
-        setTitle("Register");
-        setSize(500, 200);
-        setPreferredSize(new Dimension(500, 200));
-        setMinimumSize(new Dimension(450, 200));
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setIconImage(icon.getImage());
 
         // username panel
         JLabel usernameLabel = new JLabel("Username");
-        usernameLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
-        JLabel usernameDescriptionField = new JLabel("a-Z & 0-9, 3-15 characters");
-        usernameDescriptionField.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
-        addComp(registerPanel, usernameLabel, 0, 0, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
-        addComp(registerPanel, usernameTextField, 1, 0, 1, 1, GridBagConstraints.HORIZONTAL, 0.4, 0.333);
-        addComp(registerPanel, usernameDescriptionField, 2, 0, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
+        usernameLabel.setFont(defaultFont);
+        JLabel usernameDescriptionLabel = new JLabel(
+                "<html>a-Z & 0-9, 3-15 characters<br>Cannot contain spaces or special characters</html>");
+        usernameDescriptionLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+        usernameDescriptionLabel.setAlignmentY(JTextField.TOP_ALIGNMENT);
+        usernameDescriptionLabel.setVerticalAlignment(SwingConstants.TOP);
+        usernameTextField.setFont(defaultFont);
+        this.addComp(registerPanel, usernameLabel, 0, 0, 1, 1, GridBagConstraints.BOTH, 0.5, 0.33);
+        this.addComp(registerPanel, usernameTextField, 1, 0, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 0.333);
+        this.addComp(registerPanel, usernameDescriptionLabel, 1, 1, 1, 1, GridBagConstraints.NONE, 1, 0.1);
 
         // password panel
         JLabel passwordLabel = new JLabel("Password");
-        passwordLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+        passwordLabel.setFont(defaultFont);
         passwordLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        addComp(registerPanel, passwordLabel, 0, 1, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
-        addComp(registerPanel, passwordField, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 0.33);
+        passwordField.setFont(defaultFont);
+        this.addComp(registerPanel, passwordLabel, 0, 2, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
+        this.addComp(registerPanel, passwordField, 1, 2, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 0.33);
 
         // confirm password panel
         JLabel confirmPasswordLabel = new JLabel("Confirm Password");
-        confirmPasswordLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+        confirmPasswordLabel.setFont(defaultFont);
         JPasswordField confirmPasswordField = new JPasswordField(10);
-        addComp(registerPanel, confirmPasswordLabel, 0, 2, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
-        addComp(registerPanel, confirmPasswordField, 1, 2, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 0.33);
+        confirmPasswordField.setFont(defaultFont);
+        this.addComp(registerPanel, confirmPasswordLabel, 0, 3, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
+        this.addComp(registerPanel, confirmPasswordField, 1, 3, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 0.33);
 
         // button panel
         JPanel buttonPanel = new JPanel();
         // register next button
         JButton registerNextButton = new JButton("Next");
-        registerNextButton.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+        registerNextButton.setFont(defaultFont);
+        registerNextButton.setOpaque(false);
         JPanel registerNextButtonPanel = new JPanel();
+        registerNextButtonPanel.setOpaque(false);
         registerNextButton.addActionListener(e -> {
-            // check password == confirm password
-            if (new String(passwordField.getPassword()).equals(new String(confirmPasswordField.getPassword()))) {
-                System.out.println("Password match");
-                // check if username is valid
-                if (RegisterValidator.isValidUsername(usernameTextField.getText())) {
-                    System.out.println("Username is valid");
-                    user.setUsername(usernameTextField.getText());
-                    // check if username is already exist
-                    if (!Database.existUsername(user.getUsername())) {
-                        this.setVisible(false);
-                        this.dispose();
-                        new RegisterInfo(user);
+            // check if password is empty
+            if (!new String(passwordField.getPassword()).equals("")) {
+                // check password == confirm password
+                if (new String(passwordField.getPassword()).equals(new String(confirmPasswordField.getPassword()))) {
+                    System.out.println("Password match");
+                    // check if username is valid
+                    if (RegisterValidator.isValidUsername(usernameTextField.getText())) {
+                        System.out.println("Username is valid");
+                        user.setUsername(usernameTextField.getText());
+                        // check if username is already exist
+                        if (!Database.existUsername(user.getUsername())) {
+                            this.setVisible(false);
+                            this.dispose();
+                            new RegisterInfo(user);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Username already exists");
+                        }
                     } else {
-                        JOptionPane.showMessageDialog(null, "Username already exists");
+                        System.out.println("Username is not valid");
+                        JOptionPane.showMessageDialog(null, "Username is not valid");
                     }
                 } else {
-                    System.out.println("Username is not valid");
-                    JOptionPane.showMessageDialog(null, "Username is not valid");
+                    JOptionPane.showMessageDialog(null, "Password does not match");
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "Password does not match");
+                JOptionPane.showMessageDialog(null, "Password cannot be empty");
             }
         });
         registerNextButtonPanel.add(registerNextButton);
 
         // back button
         JButton registerBackButton = new JButton("Back");
-        registerBackButton.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+        registerBackButton.setFont(defaultFont);
+        registerBackButton.setOpaque(false);
         JPanel registerBackButtonPanel = new JPanel();
+        registerBackButtonPanel.setOpaque(false);
         registerBackButton.addActionListener(e -> {
             this.setVisible(false);
             this.dispose();
             new LoginScreen();
         });
+
+        JLabel iconLabel = new JLabel();
+        try {
+            Image loginImage = icon.getImage().getScaledInstance(200, 200, Image.SCALE_AREA_AVERAGING);
+            Icon loginIcon = new ImageIcon(loginImage);
+            iconLabel = new JLabel(loginIcon);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.addComp(registerPanel, iconLabel, 2, 0, 1, 4, GridBagConstraints.BOTH, 1, 1);
+
         registerBackButtonPanel.add(registerBackButton);
         buttonPanel.add(registerBackButtonPanel);
         buttonPanel.add(registerNextButtonPanel);
-        this.addComp(registerPanel, buttonPanel, 1, 3, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 1);
+        buttonPanel.setOpaque(false);
+        this.addComp(registerPanel, buttonPanel, 1, 4, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 1);
         this.setContentPane(registerPanel);
         this.setVisible(true);
     }
@@ -271,11 +319,16 @@ class Register extends JFrame {
     }
 }
 
-// Second register JFrame to input name, email, phone number
+/**
+ * Second register JFrame to input name, email, phone number
+ * 
+ * @author Tam Thai Hoang
+ */
 class RegisterInfo extends JFrame {
-    ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
+    private ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
     private static GridBagConstraints gbc = new GridBagConstraints();
     private static JPanel registerInfoPanel = new JPanel(new GridBagLayout());
+    private Font defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
 
     private void addComp(JPanel panel, JComponent comp, int x, int y, int gWidth, int gHeight, int fill, double weightx,
             double weighty) {
@@ -289,38 +342,56 @@ class RegisterInfo extends JFrame {
         panel.add(comp, gbc);
     }
 
+    /**
+     * Constructor for RegisterInfo class
+     * 
+     * @param user user object from the Register JFrame
+     */
     RegisterInfo(User user) {
         registerInfoPanel = new JPanel(new GridBagLayout());
+        registerInfoPanel.setBackground(Color.PINK);
         this.setTitle("Register Info");
-        this.setSize(400, 200);
-        this.setPreferredSize(new Dimension(400, 200));
+        this.setSize(700, 600);
+        this.setPreferredSize(new Dimension(700, 600));
+        this.setMinimumSize(new Dimension(630, 500));
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setIconImage(icon.getImage());
 
         // name
         JLabel nameLabel = new JLabel("Name");
-        JLabel nameDescriptionLabel = new JLabel("0-30 characters");
+        nameLabel.setFont(defaultFont);
+        JLabel nameDescriptionLabel = new JLabel(
+                "<html>0-30 characters, no spaces or special characters allowed. <br>This field is optional. <br>This name is your display name and will be used when exporting or reminding events.</html>");
+
         JTextField nameTextField = new JTextField(10);
-        this.addComp(registerInfoPanel, nameLabel, 0, 0, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
-        this.addComp(registerInfoPanel, nameTextField, 1, 0, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 0.33);
-        this.addComp(registerInfoPanel, nameDescriptionLabel, 2, 0, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
+        nameTextField.setFont(defaultFont);
+        this.addComp(registerInfoPanel, nameLabel, 0, 0, 1, 1, GridBagConstraints.BOTH, 0.25, 1);
+        this.addComp(registerInfoPanel, nameTextField, 1, 0, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 1);
+        this.addComp(registerInfoPanel, nameDescriptionLabel, 1, 1, 1, 1, GridBagConstraints.BOTH, 1, 1);
 
         // email
         JLabel emailLabel = new JLabel("Email");
-        JLabel emailDescriptionLabel = new JLabel("e.g abc@email.com");
+        emailLabel.setFont(defaultFont);
+        JLabel emailDescriptionLabel = new JLabel(
+                "<html>e.g abc@email.com.<br> *This is a required field.<br> This email will be used to send you event reminder.</html>");
         JTextField emailTextField = new JTextField(10);
-        this.addComp(registerInfoPanel, emailLabel, 0, 1, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
-        this.addComp(registerInfoPanel, emailTextField, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 0.33);
-        this.addComp(registerInfoPanel, emailDescriptionLabel, 2, 1, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
+        emailTextField.setFont(defaultFont);
+        this.addComp(registerInfoPanel, emailLabel, 0, 2, 1, 1, GridBagConstraints.BOTH, 0.25, 1);
+        this.addComp(registerInfoPanel, emailTextField, 1, 2, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 1);
+        this.addComp(registerInfoPanel, emailDescriptionLabel, 1, 3, 1, 1, GridBagConstraints.BOTH, 1, 1);
 
         // verify email
         JButton verifyButton = new JButton("Send verify code");
+        verifyButton.setFont(defaultFont);
+        verifyButton.setOpaque(false);
         JLabel verifyEmailLabel = new JLabel("Verify Email");
+        verifyEmailLabel.setFont(defaultFont);
         JTextField verifyEmailTextField = new JTextField(10);
-        this.addComp(registerInfoPanel, verifyButton, 2, 2, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
-        this.addComp(registerInfoPanel, verifyEmailLabel, 0, 2, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
-        this.addComp(registerInfoPanel, verifyEmailTextField, 1, 2, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 0.33);
+        verifyEmailTextField.setFont(defaultFont);
+        this.addComp(registerInfoPanel, verifyButton, 2, 4, 1, 1, GridBagConstraints.BOTH, 0.25, 1);
+        this.addComp(registerInfoPanel, verifyEmailLabel, 0, 4, 1, 1, GridBagConstraints.BOTH, 0.5, 1);
+        this.addComp(registerInfoPanel, verifyEmailTextField, 1, 4, 1, 1, GridBagConstraints.HORIZONTAL, 1, 1);
         verifyButton.addActionListener(e -> {
             // send verify code to email
             String email = emailTextField.getText();
@@ -338,18 +409,25 @@ class RegisterInfo extends JFrame {
 
         // phone
         JLabel phoneLabel = new JLabel("Phone");
-        JLabel phoneDescriptionLabel = new JLabel("e.g 0987654321, 10 digits");
+        phoneLabel.setFont(defaultFont);
+        JLabel phoneDescriptionLabel = new JLabel(
+                "<html>e.g 0987654321, 8-10 digits.<br> This field is optional.<br> This phone number will be used if other users want to contact you.</html>");
         JTextField phoneTextField = new JTextField(10);
-        this.addComp(registerInfoPanel, phoneLabel, 0, 3, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
-        this.addComp(registerInfoPanel, phoneTextField, 1, 3, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 0.33);
-        this.addComp(registerInfoPanel, phoneDescriptionLabel, 2, 3, 1, 1, GridBagConstraints.BOTH, 0.25, 0.33);
+        phoneTextField.setFont(defaultFont);
+        this.addComp(registerInfoPanel, phoneLabel, 0, 5, 1, 1, GridBagConstraints.BOTH, 0.25, 1);
+        this.addComp(registerInfoPanel, phoneTextField, 1, 5, 1, 1, GridBagConstraints.HORIZONTAL, 0.5, 1);
+        this.addComp(registerInfoPanel, phoneDescriptionLabel, 1, 6, 1, 1, GridBagConstraints.BOTH, 1, 1);
 
         // button panel
         JPanel buttonPanel = new JPanel();
+        buttonPanel.setOpaque(false);
 
         // back button
         JPanel backButtonPanel = new JPanel();
+        backButtonPanel.setOpaque(false);
         JButton backButton = new JButton("Back");
+        backButton.setFont(defaultFont);
+        backButton.setOpaque(false);
         backButton.addActionListener(e -> {
             this.setVisible(false);
             this.dispose();
@@ -359,7 +437,10 @@ class RegisterInfo extends JFrame {
 
         // register button
         JPanel registerButtonPanel = new JPanel();
+        registerButtonPanel.setOpaque(false);
         JButton registerButton = new JButton("Register");
+        registerButton.setFont(defaultFont);
+        registerButton.setOpaque(false);
         registerButtonPanel.add(registerButton);
 
         // check validitiy of the inputs
@@ -409,9 +490,18 @@ class RegisterInfo extends JFrame {
             }
         });
 
+        JLabel iconLabel = new JLabel();
+        try {
+            Image loginImage = icon.getImage().getScaledInstance(200, 200, Image.SCALE_AREA_AVERAGING);
+            Icon loginIcon = new ImageIcon(loginImage);
+            iconLabel = new JLabel(loginIcon);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.addComp(registerInfoPanel, iconLabel, 2, 0, 1, 4, GridBagConstraints.BOTH, 1, 1);
         buttonPanel.add(backButtonPanel);
         buttonPanel.add(registerButtonPanel);
-        this.addComp(registerInfoPanel, buttonPanel, 1, 4, 1, 1, GridBagConstraints.HORIZONTAL, 1, 1);
+        this.addComp(registerInfoPanel, buttonPanel, 1, 7, 1, 1, GridBagConstraints.HORIZONTAL, 1, 1);
         this.setContentPane(registerInfoPanel);
         this.setVisible(true);
     }
