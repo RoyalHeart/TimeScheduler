@@ -42,7 +42,25 @@ public class Profile extends JPanel {
 
         try {
             chPasswBtn.addActionListener(e -> {
-                new passwDialog(new passwEditPanel());
+                // Create JOptionPane with passwordfield
+                JPasswordField pf = new JPasswordField();
+                String[] options = {"OK", "Cancel"};
+                // If you want to focus first on passwordfield when open JOptionPane, you must use your own option type
+                int option = JOptionPane.showOptionDialog(null, pf, "Enter password",
+                         JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                         null, options, pf);
+                if (option == 0)
+                {
+                    if (Database.existUser(user.getUsername(), 
+                            Hash.hashPassword(new String(pf.getPassword()) + user.getUsername()).toUpperCase()))
+                    {
+                        new passwDialog(new passwEditPanel());
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(null, "Password is wrong.");
+                    } 
+                }
             });
         } catch (Exception e) {
             e.printStackTrace();
@@ -330,6 +348,8 @@ public class Profile extends JPanel {
                 case 1:
                     if (RegisterValidator.isValidEmail(base.newField.getText()))
                     {
+                        // String code = JOptionPane.showInputDialog(null, "Enter verifed code");
+
                         user.setEmail(base.newField.getText());
                         Database.updateEmail(base.newField.getText(), user);
                         JOptionPane.showMessageDialog(null, "Updated email successfully.");
@@ -389,6 +409,7 @@ public class Profile extends JPanel {
                     else  {
                         if (new String(passwP.newPassw.getPassword())
                                 .equals(new String(passwP.confirmNewPassw.getPassword()))) {
+
                             Database.updatePassword(new String(passwP.newPassw.getPassword()), user);
                             JOptionPane.showMessageDialog(null, "Updated password successfully.");
                             baseD.dispose();
@@ -403,3 +424,4 @@ public class Profile extends JPanel {
         }
     }
 }
+
