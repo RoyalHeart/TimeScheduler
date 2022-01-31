@@ -13,13 +13,16 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 // import java.awt.event.ActionListener;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusListener;
 import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.ParseException;
 // import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
@@ -38,6 +41,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
@@ -110,7 +114,7 @@ class EventMainPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 0.5;
+        gbc.weightx = 0.4;
         this.add(friendField, gbc);
 
         LocationField locationField = new LocationField();
@@ -236,7 +240,10 @@ class FriendField extends JPanel {
     static JTextField friendField = new JTextField(50);
     ImageIcon icon;
     JLabel iconLabel;
+    static ArrayList<String> participants = new ArrayList<String>();
+    static JList<String> list = new JList<String>();
 
+    // private static JLabel participantsLabel = new JLabel();
     FriendField() {
         this.setLayout(new FlowLayout());
         try {
@@ -267,11 +274,55 @@ class FriendField extends JPanel {
                 }
             }
         });
+        friendField.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    if (RegisterValidator.isValidEmail(friendField.getText())) {
+                        System.out.println("Participants: " + friendField.getText());
+                        if (participants.contains(friendField.getText())) {
+                            JOptionPane.showMessageDialog(e.getComponent(), "You have already added this friend");
+                        } else {
+                            participants.add(friendField.getText());
+                            updateParticipants(friendField.getText());
+                            list.setListData(participants.toArray(new String[participants.size()]));
+                            friendField.setText("");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Invalid email address");
+                    }
+                }
+            }
+
+            public void keyTyped(KeyEvent e) {
+            }
+
+            public void keyReleased(KeyEvent e) {
+            }
+        });
         this.add(friendField);
+        this.add(list);
+    }
+
+    public static ArrayList<String> getParticipants() {
+        return participants;
+    }
+
+    // public void update() {
+    // list.setListData(participants.toArray(new String[participants.size()]));
+    // }
+
+    public void updateParticipants(String participant) {
+        System.out.println("Participant label: " + participant);
+        JLabel participantLabel = new JLabel(participant);
+        list.add(participantLabel);
     }
 
     static String getFriend() {
-        return friendField.getText();
+        if (friendField.getText().equals("Participants")) {
+            return "";
+        } else {
+            return friendField.getText();
+        }
     }
 }
 
@@ -313,7 +364,11 @@ class LocationField extends JPanel {
     }
 
     static String getLoc() {
-        return locationField.getText();
+        if (locationField.getText().equals("Location")) {
+            return "";
+        } else {
+            return locationField.getText();
+        }
     }
 }
 
@@ -408,7 +463,11 @@ class Description extends JPanel {
     }
 
     static String getDescription() {
-        return descripField.getText();
+        if (descripField.getText().equals("Description")) {
+            return "";
+        } else {
+            return descripField.getText();
+        }
     }
 }
 
@@ -442,7 +501,7 @@ class SetBtn extends JPanel {
                 }
                 System.out.println("Description: " + Description.getDescription());
                 try {
-                    System.out.println("Date: " + DateTime.getDate());
+                    System.out.println("Date: " + DateTime.getDate() + "\n\n");
                 } catch (ParseException e2) {
                     e2.printStackTrace();
                 }
@@ -450,6 +509,7 @@ class SetBtn extends JPanel {
                     Event event = new Event(user.getId(),
                             TitlePanel.getTitle(),
                             Description.getDescription(),
+                            FriendField.getParticipants(),
                             DateTime.getDate(),
                             Reminder.getRemind(),
                             LocationField.getLoc(),
@@ -462,6 +522,13 @@ class SetBtn extends JPanel {
                             System.out.println("Remind set");
                             SchedulerJava.scheduleMail(user, event);
                         }
+                        // if(Database.addEventParticipants(event)) {
+                        // JOptionPane.showMessageDialog((JButton) e.getSource(), "Event added
+                        // successfully!");
+                        // }
+                        // } else {
+                        // JOptionPane.showMessageDialog((JButton) e.getSource(), "Event not added!");
+                        // }
                     } else {
                         JOptionPane.showMessageDialog((JButton) e.getSource(), "Fail to add event");
                     }
