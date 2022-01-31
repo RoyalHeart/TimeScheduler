@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Vector;
@@ -36,22 +38,27 @@ public class Database {
      * The {@code String} to add an user to TISCH_USER table.
      */
     final static String addUser = "INSERT INTO TISCH_USER (ID, USERNAME, PASSWORD, USERFULLNAME, USEREMAIL, USERPHONENUMBER) VALUES (?, ?, ?, ?, ?, ?)";
-    
+
     /**
      * The {@code String} to add an event to EVENT table.
      */
     final static String addEvent = "INSERT INTO EVENT (ID, USERID, EVENTTITLE, EVENTDESCRIPTION, EVENTDATE, EVENTREMIND, EVENTLOCATION, EVENTDURATION, EVENTPRIORITY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    
+
+    /**
+     * The {@code String} to add an event to EVENT table.
+     */
+    final static String addEventParticipants = "INSERT INTO EVENT_PARTICIPANT (EVENT_ID, USER_ID, PARTICIPANT) VALUES (?, ?, ?)";
     /**
      * The {@code jasyptPassword} to decrypt the {@code database properties}file.
      */
     static String jasyptPassword = getJasyptPassword();
-    
+
     /**
-     * The encrypted {@link Properties} to get database configuration for connection.
+     * The encrypted {@link Properties} to get database configuration for
+     * connection.
      */
     final static Properties databaseProperties = getDatabaseProperties();
-    
+
     /**
      * The {@code Connection} object to connect to the database.
      */
@@ -73,6 +80,7 @@ public class Database {
                     databaseProperties.getProperty("dbconfig.url"),
                     databaseProperties.getProperty("dbconfig.username"),
                     databaseProperties.getProperty("dbconfig.password"));
+            System.out.println("Connected to database");
             return con;
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,7 +88,7 @@ public class Database {
             return null;
         }
     };
-    
+
     /**
      * This method is used to close the {@link Connection} to the database.
      * 
@@ -409,11 +417,25 @@ public class Database {
             ps.setString(7, event.getLocation());
             ps.setInt(8, event.getDuration());
             ps.setInt(9, event.getPriority());
-
             // execute query
             ps.execute();
             ps.close();
 
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt
+                    .executeQuery("SELECT EVENT_SEQUENCE.CURRVAL FROM DUAL");
+            if (rs.next()) {
+                System.out.println("Result set: " + rs.getString(1));
+            }
+            event.setID(rs.getString(1));
+            PreparedStatement ps2 = con.prepareStatement(addEventParticipants);
+            for (String participant : event.getParticipants()) {
+                ps2.setString(1, event.getID());
+                ps2.setString(2, event.getUserID());
+                ps2.setString(3, participant);
+                ps2.execute();
+            }
+            ps2.close();
             // close the connection object
             // con.close();
             return true; // user successfully added
@@ -437,8 +459,7 @@ public class Database {
 
             // execute query
             ResultSet rs = stmt
-                    .executeQuery("SELECT * FROM EVENT WHERE USERID = '" + user.getId() + "'"
-                            + " ORDER BY EventDate");
+                    .executeQuery("SELECT * FROM EVENT WHERE USERID = '" + user.getId() + "'" + " ORDER BY EventDate");
 
             // process the result set
             while (rs.next()) {
@@ -451,10 +472,44 @@ public class Database {
                 String location = rs.getString(7);
                 int duration = rs.getInt(8);
                 int priority = rs.getInt(9);
-
                 Event event = new Event(id, userid, title, description, date, remind, location, duration, priority);
+                // event = getEventParticipants(event); // very poor performance
                 events.add(event);
             }
+            rs.close();
+            stmt.close();
+            events = getEventsParticipants(events); // better performance than above
+            return events;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    static ArrayList<Event> getEventsParticipants(ArrayList<Event> events) {
+        try {
+            // create the statement object
+            Statement stmt = con.createStatement();
+            // execute query
+            ResultSet rs = stmt
+                    .executeQuery("SELECT * FROM EVENT_PARTICIPANT");
+
+            // process the result set
+            ArrayList<String> participants = new ArrayList<>();
+            Map<String, ArrayList<String>> map = new HashMap<>();
+
+            // add all participants to the map
+            while (rs.next()) {
+                String participant = rs.getString(3);
+                participants.add(participant);
+                map.put(rs.getString(1), participants);
+            }
+            // System.out.println(map);
+            for (Event event : events) {
+                event.setParticipants(map.get(event.getID()));
+            }
+            stmt.close();
+            rs.close();
             return events;
         } catch (Exception e) {
             e.printStackTrace();
@@ -469,6 +524,7 @@ public class Database {
      * @param user the user to update name
      * @return true if name is updated successfully,
      *         false if name is not updated successfully
+     * @author Sang Doan Tan
      */
     static boolean updateName(String name, User user) {
         // create the statement object, statement object allows you to sends SQL
@@ -489,38 +545,31 @@ public class Database {
 
         return false;
     }
-    
-    static boolean updateEmail(String email, User user)
-    {
-        try
-        {
+
+    static boolean updateEmail(String email, User user) {
+        try {
             Statement stmt = con.createStatement();
-            if (stmt.executeUpdate("UPDATE TISCH_USER SET USEREMAIL = '" + email + "' WHERE id = " + user.getId()) == 0)
-            {
+            if (stmt.executeUpdate(
+                    "UPDATE TISCH_USER SET USEREMAIL = '" + email + "' WHERE id = " + user.getId()) == 0) {
                 return false;
-            }
-            else {
+            } else {
                 System.out.println("Email is updated");
-                return true;}
-        }
-        catch (Exception e)
-        {
+                return true;
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return false;
     }
 
-    static boolean updatePhone(String phone, User user)
-    {
+    static boolean updatePhone(String phone, User user) {
         try {
             Statement stmt = con.createStatement();
-            if (stmt.executeUpdate("UPDATE TISCH_USER SET USERPHONENUMBER = '" + phone + "' WHERE id = " + user.getId()) == 0)
-            {
+            if (stmt.executeUpdate(
+                    "UPDATE TISCH_USER SET USERPHONENUMBER = '" + phone + "' WHERE id = " + user.getId()) == 0) {
                 return false;
-            }
-            else 
-            {
+            } else {
                 System.out.println("Phone is updated.");
                 return true;
             }
@@ -530,18 +579,16 @@ public class Database {
 
         return false;
     }
-    
-    static boolean updatePassword(String password, User user)
-    {
+
+    static boolean updatePassword(String password, User user) {
         try {
             Statement stmt = con.createStatement();
             if (stmt.executeUpdate(
-                    "UPDATE TISCH_USER SET PASSWORD = '" + Hash.hashPassword(password + user.getUsername()).toUpperCase() + "' WHERE id = " + user.getId()) == 0)
-            {
+                    "UPDATE TISCH_USER SET PASSWORD = '"
+                            + Hash.hashPassword(password + user.getUsername()).toUpperCase() + "' WHERE id = "
+                            + user.getId()) == 0) {
                 return false;
-            }
-            else 
-            {
+            } else {
                 System.out.println("Password is updated.");
                 return true;
             }
