@@ -2,6 +2,8 @@ package src;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
 import java.util.Random;
 
@@ -40,6 +42,21 @@ public class Mail {
     }
 
     public static void main(String[] args) {
+        TestParticipants();
+    }
+
+    public static void TestParticipants() {
+        Database.createConnection();
+        User user = Database.getUser("admin", "admin");
+        Date date = new Date();
+        ArrayList<String> participants = new ArrayList<String>();
+        participants.add("huyenma2002@gmail.com");
+        participants.add("hoangtam3062002@gmail.com");
+        Event event = new Event("0", "Participant Testing", "Participant Testing", participants, date, date, "", 0, 0);
+        Mail.sendRemindEmail(user, event);
+    }
+
+    public static void TestVerify() {
         Database.createConnection();
         User user = Database.getUser("admin", Hash.hashPassword("adminadmin").toUpperCase());
         Mail.sendVerifyCode(user);
@@ -100,6 +117,15 @@ public class Mail {
         Session session = createSession(prop);
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        String priority = "";
+        if (event.getPriority() == 0) {
+            priority = "High";
+        } else if (event.getPriority() == 1) {
+            priority = "Medium";
+        } else {
+            priority = "Low";
+        }
+        // mail to user who created the event
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
@@ -114,11 +140,47 @@ public class Mail {
                     "Title: " + event.getTitle() + "\n" +
                     "Description: " + event.getDescription() + "\n" +
                     "Location: " + event.getLocation() + "\n" +
-                    "Priority: " + event.getPriority() + "\n" +
+                    "Priority: " + priority + "\n" +
                     "Duration: " + event.getDuration() + " minutes" + "\n\n" +
                     "TISCH Team");
             Transport.send(message);
             System.out.println("Message sent to " + user.getEmail());
+            // return true;
+            for (String participant : event.getParticipants()) {
+                Properties propParticipant = createProperty();
+                Session sessionParticipant = createSession(propParticipant);
+
+                // mail to participants
+                try {
+                    Message messageParticipant = new MimeMessage(sessionParticipant);
+                    messageParticipant.setFrom(new InternetAddress(username));
+                    messageParticipant.setRecipients(
+                            Message.RecipientType.TO,
+                            InternetAddress.parse(participant));
+                    // for (String participant : event.getParticipants()) {
+                    // messageParticipant.setRecipients(
+                    // Message.RecipientType.CC,
+                    // InternetAddress.parse(participant));
+                    // }
+                    messageParticipant.setSubject("Reminder from TISCH");
+                    messageParticipant.setText("You have been invited to an event by " + user.getName() +
+                            " (email: " + user.getEmail() + ")\n\n" +
+                            "You have an event on " + dateFormat.format(event.getDate()) + " at "
+                            + timeFormat.format(event.getDate()) + "\n" +
+                            "Your event information: \n" +
+                            "Title: " + event.getTitle() + "\n" +
+                            "Description: " + event.getDescription() + "\n" +
+                            "Location: " + event.getLocation() + "\n" +
+                            "Priority: " + priority + "\n" +
+                            "Duration: " + event.getDuration() + " minutes" + "\n\n" +
+                            "TISCH Team");
+                    Transport.send(messageParticipant);
+                    System.out.println("Message sent to " + participant);
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
             return true;
         } catch (MessagingException e) {
             e.printStackTrace();
