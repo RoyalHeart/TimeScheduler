@@ -18,6 +18,7 @@ CREATE TABLE TISCH_USER(
 );
 
 INSERT INTO TISCH_USER VALUES ('0', 'admin', 'D82494F05D6917BA02F7AAA29689CCB444BB73F20380876CB05D1F37537B7892', 'admin', 'notification.tisch@gmail.com', '1744519780'); -- insert admin user
+INSERT INTO TISCH_USER VALUES ('1', 'user', 'E172C5654DBC12D78CE1850A4F7956BA6E5A3D2AC40F0925FC6D691EBB54F6BF', 'user', 'hoangtam3062002@gmail.com', '1744519780'); -- insert test user
 
 CREATE TABLE EVENT(
     -- expected to have up to 1 000 000 000 events(each user can have up to 1 000 events)
@@ -31,7 +32,7 @@ CREATE TABLE EVENT(
     eventDuration       INT not null,
     eventPriority       INT,
     constraint event_id_userId_pk primary key (id, userId),
-    constraint event_userId_fk foreign key (userId) references TISCH_USER(id)
+    constraint event_userId_fk foreign key (userId) references TISCH_USER(id) ON DELETE CASCADE
 );
 
 CREATE TABLE ADMINISTRATOR(
@@ -39,7 +40,16 @@ CREATE TABLE ADMINISTRATOR(
     constraint admin_id_pk primary key (id)
 );
 
-CREATE SEQUENCE USER_SEQUENCE MINVALUE 1 MAXVALUE 999999 INCREMENT BY 1 START WITH 1;
+CREATE TABLE EVENT_PARTICIPANT(
+    EVENT_ID  CHAR(9) not null,
+    USER_ID   CHAR(6) not null,
+    PARTICIPANT VARCHAR2(128) not null,
+    constraint event_participant_eventId_userId_participant_pk primary key (EVENT_ID, USER_ID, PARTICIPANT),
+    constraint event_participant_eventId_fk foreign key (EVENT_ID,USER_ID) references EVENT(id,userID) ON DELETE CASCADE
+);
+INSERT INTO ADMINISTRATOR VALUES ('0');
+
+CREATE SEQUENCE USER_SEQUENCE MINVALUE 1 MAXVALUE 999999 INCREMENT BY 1 START WITH 2;
 
 CREATE OR REPLACE TRIGGER user_bir 
 BEFORE INSERT ON TISCH_USER 
