@@ -51,8 +51,7 @@ public class Profile extends JPanel {
                          null, options, pf);
                 if (option == 0)
                 {
-                    if (Database.existUser(user.getUsername(), 
-                            Hash.hashPassword(new String(pf.getPassword()) + user.getUsername()).toUpperCase()))
+                    if (Database.existUser(user.getUsername(), new String(pf.getPassword())))
                     {
                         new passwDialog(new passwEditPanel());
                     }
@@ -424,4 +423,6 @@ public class Profile extends JPanel {
         }
     }
 }
+
+
 
