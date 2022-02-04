@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.AbstractCellEditor;
@@ -167,6 +168,7 @@ class MonthCellComponent extends JPanel {
     JPanel eventsPanel = new JPanel(); // eventPanel has events
     JButton button = new JButton("More"); // button to show all events if there are more than 3
     JDialog dialog = new JDialog();
+    JPanel panel = this;
 
     /**
      * Constructor for {@code MonthCellComponent} class. It create a {@link JPanel}
@@ -194,17 +196,20 @@ class MonthCellComponent extends JPanel {
             titleLabels.add(titleLabel);
         }
 
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
         for (int i = 0; i < monthCell.events.size(); i++) {
             String time = timeLabels.get(i).getText();
             String title = titleLabels.get(i).getText();
             JButton eventButton = new JButton(time + " " + title);
+            Event event = monthCell.events.get(i);
+            String timeEnd = (timeFormat.format(new Date(event.getDate().getTime() + event.getDuration() * 60000)));
             eventButton.setBorderPainted(false);
             eventButton.setContentAreaFilled(false);
             eventButton.setFocusPainted(false);
             eventButton.setHorizontalAlignment(SwingConstants.LEFT);
             eventButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    JOptionPane.showMessageDialog(null, "Event: " + title + "\nTime: " + time);
+                    new EditEventDialog(event, time, timeEnd, panel);
                 }
             });
             eventsPanel.add(eventButton); // add each event Button to eventsPanel
@@ -289,3 +294,4 @@ class MonthCellEditor extends AbstractCellEditor implements TableCellEditor {
         return monthCell;
     }
 }
+
