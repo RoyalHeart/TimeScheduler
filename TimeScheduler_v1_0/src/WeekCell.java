@@ -117,6 +117,7 @@ class WeekCellComponent extends JPanel {
     DateFormat hourFormat = new SimpleDateFormat("HH");
     DateFormat minuteFormat = new SimpleDateFormat("mm");
     JLayeredPane layeredPane = new JLayeredPane();
+    JPanel panel = this;
 
     public WeekCellComponent(WeekCell myClass, JTable table) {
         // initialize components (labels, buttons, etc.)
@@ -187,7 +188,8 @@ class WeekCellComponent extends JPanel {
             }
             eventButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    JOptionPane.showMessageDialog(null, "Event: " + title + "\nTime: " + time.getText());
+                    // JOptionPane.showMessageDialog(null, "Event: " + event.getDate() + "\nTime: " + time.getText());
+                    new EditEventDialog(event, timeStart, timeEnd, panel);
                 }
             });
 
@@ -225,3 +227,4 @@ class WeekCellEditor extends AbstractCellEditor implements TableCellEditor {
         return weekCell;
     }
 }
+
