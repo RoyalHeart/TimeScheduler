@@ -43,7 +43,12 @@ public class Database {
      * The {@code String} to add an event to EVENT table.
      */
     final static String addEvent = "INSERT INTO EVENT (ID, USERID, EVENTTITLE, EVENTDESCRIPTION, EVENTDATE, EVENTREMIND, EVENTLOCATION, EVENTDURATION, EVENTPRIORITY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
+    
+     /**
+     * The {@code String} to update event in EVENT table.
+     */
+    final static String updateEvent = "UPDATE EVENT SET EVENTTITLE = ?, EVENTDESCRIPTION = ?, EVENTDATE = ?, EVENTREMIND = ?, EVENTLOCATION = ?, EVENTDURATION = ?, EVENTPRIORITY = ? WHERE ID = ? AND USERID = ?";
+    
     /**
      * The {@code String} to add an event to EVENT table.
      */
@@ -517,17 +522,16 @@ public class Database {
         }
     }
 
-    /**
+        /**
      * Update name of a {@code User} in the database
      * 
      * @param name the new name of the user
      * @param user the user to update name
      * @return true if name is updated successfully,
      *         false if name is not updated successfully
-     * @author Sang Doan Tan
      */
     static boolean updateName(String name, User user) {
-        // create the statement object, statement object allows you to sends SQL
+        // Create the statement object, statement object allows you to sends SQL
         // statement to database
         try {
             Statement stmt = con.createStatement();
@@ -545,31 +549,54 @@ public class Database {
 
         return false;
     }
-
-    static boolean updateEmail(String email, User user) {
-        try {
+    
+    /**
+     * Update email of a {@code User} in the database
+     * 
+     * @param email the new email of user
+     * @param user the user to update email
+     * @return true if email is updated successfully,
+     *         false if email is not updated successfully
+     */
+    static boolean updateEmail(String email, User user)
+    {
+        try
+        {
             Statement stmt = con.createStatement();
-            if (stmt.executeUpdate(
-                    "UPDATE TISCH_USER SET USEREMAIL = '" + email + "' WHERE id = " + user.getId()) == 0) {
+            if (stmt.executeUpdate("UPDATE TISCH_USER SET USEREMAIL = '" + email + "' WHERE id = " + user.getId()) == 0)
+            {
                 return false;
-            } else {
-                System.out.println("Email is updated");
-                return true;
             }
-        } catch (Exception e) {
+            else {
+                System.out.println("Email is updated");
+                return true;}
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
 
         return false;
     }
 
-    static boolean updatePhone(String phone, User user) {
+    /**
+     * Update phone of a {@code User} in the database
+     *
+     * @param phone the new phone of user
+     * @param user the user to update phone
+     * @return true if phone is updated successfully,
+     *         false if phone is not updated succesfully
+     */
+    static boolean updatePhone(String phone, User user)
+    {
         try {
             Statement stmt = con.createStatement();
-            if (stmt.executeUpdate(
-                    "UPDATE TISCH_USER SET USERPHONENUMBER = '" + phone + "' WHERE id = " + user.getId()) == 0) {
+            if (stmt.executeUpdate("UPDATE TISCH_USER SET USERPHONENUMBER = '" + phone + "' WHERE id = " + user.getId()) == 0)
+            {
                 return false;
-            } else {
+            }
+            else 
+            {
                 System.out.println("Phone is updated.");
                 return true;
             }
@@ -579,16 +606,26 @@ public class Database {
 
         return false;
     }
-
-    static boolean updatePassword(String password, User user) {
+    
+    /**
+     * Update pasword of a {@code User} in the database
+     * 
+     * @param password the new password of user
+     * @param user the user to update
+     * @return true if password is updated succesfully,
+     *         false if password is not updated succesffuly
+     */
+    static boolean updatePassword(String password, User user)
+    {
         try {
             Statement stmt = con.createStatement();
             if (stmt.executeUpdate(
-                    "UPDATE TISCH_USER SET PASSWORD = '"
-                            + Hash.hashPassword(password + user.getUsername()).toUpperCase() + "' WHERE id = "
-                            + user.getId()) == 0) {
+                    "UPDATE TISCH_USER SET PASSWORD = '" + Hash.hashPassword(password + user.getUsername()).toUpperCase() + "' WHERE id = " + user.getId()) == 0)
+            {
                 return false;
-            } else {
+            }
+            else 
+            {
                 System.out.println("Password is updated.");
                 return true;
             }
@@ -597,7 +634,68 @@ public class Database {
         }
         return false;
     }
+    
+    /**
+     * Delete {@code Event} of a {@code User} in the database
+     * 
+     * @param event the event that needed to delete
+     * @return true if delete event succsessfully,
+     *         false if does not delete event successfully
+     */
+    static boolean delEvent(Event event)
+    {
+        try {
+            Statement stmt = con.createStatement();
+            if (stmt.executeUpdate("DELETE EVENT WHERE id = " + event.getID() + " AND userId = " + event.getUserID()) == 0)
+            {   
+                return false;
+            }
+            else
+            {
+                System.out.println("Delete event successfully.");
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+        return false;
+    }
+
+    /**
+     * Update {@code Event} of a {@code User} in the database
+     * 
+     * @param event the event that will be updated
+     * @return true if updated event successfully,
+     *         false if can not update event
+     */
+    static boolean updateEvent(Event event)
+    {
+        try {
+            // create the statement object
+            java.sql.Date eventDate = new java.sql.Date(event.getDate().getTime());
+            java.sql.Date eventRemind = new java.sql.Date(event.getRemind().getTime());
+            PreparedStatement ps = con.prepareStatement(updateEvent);
+            ps.setString(1, event.getTitle());
+            ps.setString(2, event.getDescription());
+            ps.setDate(3, eventDate);
+            ps.setDate(4, eventRemind);
+            ps.setString(5, event.getLocation());
+            ps.setInt(6, event.getDuration());
+            ps.setInt(7, event.getPriority());
+            ps.setString(8, event.getID());
+            ps.setString(9, event.getUserID());
+
+            ps.execute();
+            ps.close();
+
+            return true; 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; 
+        } 
+
+    }
     /**
      * Get all user to make a list of all users from the database
      * 
