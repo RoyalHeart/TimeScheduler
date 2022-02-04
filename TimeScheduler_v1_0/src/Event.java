@@ -1,5 +1,6 @@
 package src;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Event {
@@ -11,20 +12,32 @@ public class Event {
     private Date remind;
     private String location;
     private int duration;
-    // private Date startTime;
     private int priority;
+    private ArrayList<String> participants;
 
-    public Event(String userID, String title, Date date, int duration)
-    {
+    public Event(String userID, String title, Date date, int duration) {
         this.userID = userID;
         this.title = title;
         this.date = date;
-        // this.startTime = startTime;
         this.duration = duration;
     }
 
-    public Event(String userID, String title, String description, Date date, Date remind, String location, int duration, int priority)
-    {
+    public Event(String userID, String title, String description, ArrayList<String> participants, Date date,
+            Date remind, String location, int duration,
+            int priority) {
+        this.userID = userID;
+        this.title = title;
+        this.description = description;
+        this.participants = participants;
+        this.date = date;
+        this.remind = remind;
+        this.location = location;
+        this.duration = duration;
+        this.priority = priority;
+    }
+
+    public Event(String userID, String title, String description, Date date, Date remind, String location, int duration,
+            int priority) {
         this.userID = userID;
         this.title = title;
         this.description = description;
@@ -33,9 +46,8 @@ public class Event {
         this.location = location;
         this.duration = duration;
         this.priority = priority;
-        // this.startTime = startTime;
     }
-    
+
     public Event(String id, String userID, String title, String description, Date date, Date remind, String location,
             int duration, int priority) {
         this.ID = id;
@@ -49,35 +61,89 @@ public class Event {
         this.priority = priority;
     }
 
-    public String getID() {return ID;}
-    public void setID(String ID) {this.ID = ID;}
+    public String getID() {
+        return ID;
+    }
 
-    public String getUserID() {return userID;}
-    public void setUserID(String userID) {this.userID = userID;}
+    public void setID(String ID) {
+        this.ID = ID;
+    }
 
-    public String getTitle() {return title;}
-    public void setTitle(String title) {this.title = title;}
+    public String getUserID() {
+        return userID;
+    }
 
-    public String getDescription() {return description;}
-    public void setDescription(String descripton) {this.description = descripton;}
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
 
-    public Date getDate() {return date;}
-    public void setDate(Date date) {this.date = date;}
+    public String getTitle() {
+        return title;
+    }
 
-    public String getLocation() {return location;}
-    public void setLocaction(String location) {this.location = location;}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public int getDuration() {return duration;}
-    public void setDuration(int duration) {this.duration = duration;}
+    public String getDescription() {
+        return description;
+    }
 
-    public int getPriority() {return priority;}
-    public void setPriority(int priority) {this.priority = priority;}
+    public void setDescription(String descripton) {
+        this.description = descripton;
+    }
 
-    public Date getRemind() {return remind;}
-    public void setRemind(Date remind) {this.remind = remind;}
-    
-    /* public Date getStartTime() {return startTime;}
-    public void setStartTime(Date startTime) {this.startTime = startTime;} */
+    public ArrayList<String> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(ArrayList<String> participants) {
+        this.participants = participants;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocaction(String location) {
+        this.location = location;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public Date getRemind() {
+        return remind;
+    }
+
+    public void setRemind(Date remind) {
+        this.remind = remind;
+    }
+
+    /*
+     * public Date getStartTime() {return startTime;}
+     * public void setStartTime(Date startTime) {this.startTime = startTime;}
+     */
 
 }
-
