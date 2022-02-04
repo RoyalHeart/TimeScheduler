@@ -56,7 +56,7 @@ public class AddEventDialog extends JDialog {
         this.setTitle("Event");
         this.setSize(800, 500);
         this.setLayout(new BorderLayout());
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.add(new TitlePanel(), BorderLayout.NORTH);
         this.add(new EventMainPanel(), BorderLayout.CENTER);
@@ -68,7 +68,6 @@ public class AddEventDialog extends JDialog {
 
 class TitlePanel extends JPanel {
     static JTextField titleField = new JTextField(50);
-    Graphics2D g2;
 
     TitlePanel() {
         this.setLayout(new FlowLayout());
@@ -91,11 +90,6 @@ class TitlePanel extends JPanel {
 
     static String getTitle() {
         return titleField.getText();
-    }
-
-    // Test for drawing
-    @Override
-    protected void paintComponent(Graphics g) {
     }
 }
 
@@ -145,9 +139,6 @@ class EventMainPanel extends JPanel {
 }
 
 class DateTime extends JPanel {
-    JTextField dateField = new JTextField(10);
-    JTextField timeFromField = new JTextField(6);
-    JTextField timeToField = new JTextField(6);
     JLabel dateLabel = new JLabel();
     JLabel timeLabel = new JLabel();
     static TestPane startTime = new TestPane();
@@ -158,7 +149,7 @@ class DateTime extends JPanel {
     // Properties for JDateTimePicker
     Properties p = new Properties();
     // Variable to store return value from jdatepicker
-    static Date date;
+    Date date;
     static JDatePickerImpl datePicker;
 
     DateTime() {
@@ -578,27 +569,6 @@ class TestPane extends JPanel {
         return (Date) cb.getSelectedItem();
     }
 }
-
-/*
- * class DateFormattedListCellRenderer extends DefaultListCellRenderer {
- * 
- * private DateFormat format;
- * 
- * public DateFormattedListCellRenderer(DateFormat format) {
- * this.format = format;
- * }
- * 
- * @Override
- * public Component getListCellRendererComponent(JList<?> list, Object value,
- * int index, boolean isSelected, boolean cellHasFocus) {
- * if (value instanceof Date) {
- * value = format.format((Date) value);
- * }
- * return super.getListCellRendererComponent(list, value, index, isSelected,
- * cellHasFocus);
- * }
- * }
- */
 
 // Render combobox to display HH:mm
 class DateComboBoxRenderer extends DefaultListCellRenderer {
