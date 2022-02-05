@@ -43,14 +43,14 @@ public class Database {
      * The {@code String} to add an event to EVENT table.
      */
     final static String addEvent = "INSERT INTO EVENT (ID, USERID, EVENTTITLE, EVENTDESCRIPTION, EVENTDATE, EVENTREMIND, EVENTLOCATION, EVENTDURATION, EVENTPRIORITY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    
-     /**
+
+    /**
      * The {@code String} to update event in EVENT table.
      */
     final static String updateEvent = "UPDATE EVENT SET EVENTTITLE = ?, EVENTDESCRIPTION = ?, EVENTDATE = ?, EVENTREMIND = ?, EVENTLOCATION = ?, EVENTDURATION = ?, EVENTPRIORITY = ? WHERE ID = ? AND USERID = ?";
-    
+
     /**
-     * The {@code String} to add an event to EVENT table.
+     * The {@code String} to add a participant to EVENT_PARTICIPANT table.
      */
     final static String addEventParticipants = "INSERT INTO EVENT_PARTICIPANT (EVENT_ID, USER_ID, PARTICIPANT) VALUES (?, ?, ?)";
     /**
@@ -491,6 +491,13 @@ public class Database {
         }
     }
 
+    /**
+     * Get all participants of events and return an array list of events with
+     * participants
+     * 
+     * @param events the {@code Event}s to get the participants from
+     * @return an array list of all events with participants
+     */
     static ArrayList<Event> getEventsParticipants(ArrayList<Event> events) {
         try {
             // create the statement object
@@ -500,16 +507,20 @@ public class Database {
                     .executeQuery("SELECT * FROM EVENT_PARTICIPANT");
 
             // process the result set
-            ArrayList<String> participants = new ArrayList<>();
-            Map<String, ArrayList<String>> map = new HashMap<>();
 
+            Map<String, ArrayList<String>> map = new HashMap<>();
             // add all participants to the map
             while (rs.next()) {
+                String eventID = rs.getString(1);
                 String participant = rs.getString(3);
-                participants.add(participant);
-                map.put(rs.getString(1), participants);
+                if (map.containsKey(eventID)) {
+                    map.get(eventID).add(participant);
+                } else {
+                    ArrayList<String> participants = new ArrayList<>();
+                    participants.add(participant);
+                    map.put(eventID, participants);
+                }
             }
-            // System.out.println(map);
             for (Event event : events) {
                 event.setParticipants(map.get(event.getID()));
             }
@@ -522,7 +533,7 @@ public class Database {
         }
     }
 
-        /**
+    /**
      * Update name of a {@code User} in the database
      * 
      * @param name the new name of the user
@@ -549,30 +560,26 @@ public class Database {
 
         return false;
     }
-    
+
     /**
      * Update email of a {@code User} in the database
      * 
      * @param email the new email of user
-     * @param user the user to update email
+     * @param user  the user to update email
      * @return true if email is updated successfully,
      *         false if email is not updated successfully
      */
-    static boolean updateEmail(String email, User user)
-    {
-        try
-        {
+    static boolean updateEmail(String email, User user) {
+        try {
             Statement stmt = con.createStatement();
-            if (stmt.executeUpdate("UPDATE TISCH_USER SET USEREMAIL = '" + email + "' WHERE id = " + user.getId()) == 0)
-            {
+            if (stmt.executeUpdate(
+                    "UPDATE TISCH_USER SET USEREMAIL = '" + email + "' WHERE id = " + user.getId()) == 0) {
                 return false;
-            }
-            else {
+            } else {
                 System.out.println("Email is updated");
-                return true;}
-        }
-        catch (Exception e)
-        {
+                return true;
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -583,20 +590,17 @@ public class Database {
      * Update phone of a {@code User} in the database
      *
      * @param phone the new phone of user
-     * @param user the user to update phone
+     * @param user  the user to update phone
      * @return true if phone is updated successfully,
      *         false if phone is not updated succesfully
      */
-    static boolean updatePhone(String phone, User user)
-    {
+    static boolean updatePhone(String phone, User user) {
         try {
             Statement stmt = con.createStatement();
-            if (stmt.executeUpdate("UPDATE TISCH_USER SET USERPHONENUMBER = '" + phone + "' WHERE id = " + user.getId()) == 0)
-            {
+            if (stmt.executeUpdate(
+                    "UPDATE TISCH_USER SET USERPHONENUMBER = '" + phone + "' WHERE id = " + user.getId()) == 0) {
                 return false;
-            }
-            else 
-            {
+            } else {
                 System.out.println("Phone is updated.");
                 return true;
             }
@@ -606,26 +610,24 @@ public class Database {
 
         return false;
     }
-    
+
     /**
      * Update pasword of a {@code User} in the database
      * 
      * @param password the new password of user
-     * @param user the user to update
+     * @param user     the user to update
      * @return true if password is updated succesfully,
      *         false if password is not updated succesffuly
      */
-    static boolean updatePassword(String password, User user)
-    {
+    static boolean updatePassword(String password, User user) {
         try {
             Statement stmt = con.createStatement();
             if (stmt.executeUpdate(
-                    "UPDATE TISCH_USER SET PASSWORD = '" + Hash.hashPassword(password + user.getUsername()).toUpperCase() + "' WHERE id = " + user.getId()) == 0)
-            {
+                    "UPDATE TISCH_USER SET PASSWORD = '"
+                            + Hash.hashPassword(password + user.getUsername()).toUpperCase() + "' WHERE id = "
+                            + user.getId()) == 0) {
                 return false;
-            }
-            else 
-            {
+            } else {
                 System.out.println("Password is updated.");
                 return true;
             }
@@ -634,7 +636,7 @@ public class Database {
         }
         return false;
     }
-    
+
     /**
      * Delete {@code Event} of a {@code User} in the database
      * 
@@ -642,16 +644,13 @@ public class Database {
      * @return true if delete event succsessfully,
      *         false if does not delete event successfully
      */
-    static boolean delEvent(Event event)
-    {
+    static boolean delEvent(Event event) {
         try {
             Statement stmt = con.createStatement();
-            if (stmt.executeUpdate("DELETE EVENT WHERE id = " + event.getID() + " AND userId = " + event.getUserID()) == 0)
-            {   
+            if (stmt.executeUpdate(
+                    "DELETE EVENT WHERE id = " + event.getID() + " AND userId = " + event.getUserID()) == 0) {
                 return false;
-            }
-            else
-            {
+            } else {
                 System.out.println("Delete event successfully.");
                 return true;
             }
@@ -669,8 +668,7 @@ public class Database {
      * @return true if updated event successfully,
      *         false if can not update event
      */
-    static boolean updateEvent(Event event)
-    {
+    static boolean updateEvent(Event event) {
         try {
             // create the statement object
             java.sql.Date eventDate = new java.sql.Date(event.getDate().getTime());
@@ -689,13 +687,14 @@ public class Database {
             ps.execute();
             ps.close();
 
-            return true; 
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return false; 
-        } 
+            return false;
+        }
 
     }
+
     /**
      * Get all user to make a list of all users from the database
      * 
