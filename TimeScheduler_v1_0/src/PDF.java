@@ -1,5 +1,7 @@
 package src;
 
+import java.awt.Component;
+import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,11 +12,21 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+
+// import com.itextpdf.awt.geom.Shape;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
 
+/**
+ * PDF
+ */
 public class PDF {
     private static Document document;
     static String filePath = "";
@@ -48,12 +60,108 @@ public class PDF {
         }
     }
 
-    public static boolean exportWeeklyEvents(User user, Calendar calendar) {
+    /**
+     * Create a PDF file with monthly events.
+     * 
+     * @param user     the {@link User} object to get the events from
+     * @param calendar the {@link Calendar} object to get the month from
+     * @return {@code true} if the file is created successfully, {@code false}
+     *         otherwise
+     */
+    public static boolean exportMonthlyEvents(User user, Calendar calendar) {
         try {
             Calendar cal = calendar;
             DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             ArrayList<Event> events = new ArrayList<Event>();
+            events = LoadEvents.getEventsOfMonth(user, cal);
+            int year = cal.get(Calendar.YEAR);
+            String monthName = cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
+            fileName = "MonthlyReport_" + monthName + "_" + year + ".pdf";
+            document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(filePath + fileName));
+            System.out.println("PDF created at: " + filePath + fileName);
+            document = createDocumentForm(user);
+            document.add(new Phrase("This is your monthly events report in " + monthName + " " + year + ":\n"));
+            if (events.size() == 0) {
+                document.add(new Phrase("You have no events for this month.\n"));
+                document.close();
+                System.out.println("Document Closed");
+                return true;
+            } else {
+                if (events.size() > 1) {
+                    document.add(new Phrase(
+                            "You have " + events.size() + " events in " + monthName + " " + year + ":\n"));
+                } else {
+                    document.add(new Phrase(
+                            "You have 1 event in " + monthName + " " + year + ":\n"));
+                }
+                for (Event event : events) {
+                    String startTime = dateFormat.format(event.getDate());
+                    String endTime = dateFormat.format(event.getDate().getTime() + event.getDuration() * 60 * 1000);
+                    String remind;
+                    if (event.getRemind() != null) {
+                        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+                        String remindTime = timeFormat.format(event.getRemind());
+                        String remindDate = dateFormat.format(event.getRemind());
+                        remind = "    Remind at:  " + remindTime + " on " + remindDate + ".";
+                    } else {
+                        remind = "    No remind.";
+                    }
+                    int priorityInt = event.getPriority();
+                    String priority = "";
+                    if (priorityInt == 0) {
+                        priority = "High";
+                    } else if (priorityInt == 1) {
+                        priority = "Medium";
+                    } else if (priorityInt == 2) {
+                        priority = "Low";
+                    }
+                    document.add(new Phrase("Title: " + event.getTitle() + "\n" +
+                            "    Description: " + event.getDescription() + "\n" +
+                            "    Date:           " + dateFormat.format(event.getDate()) + "\n" +
+                            "    Time:          " + startTime + " - " + endTime + "\n" +
+                            "    Location:     " + event.getLocation() + "\n" +
+                            "    Priority:       " + priority + "\n" +
+                            remind + "\n" +
+                            "    Participant: "));
+                    if (event.getParticipants() == null) {
+                        document.add(new Phrase("You are the only participant.\n\n"));
+                    } else {
+                        for (String participant : event.getParticipants()) {
+                            document.add(new Phrase("\n           " + participant));
+                        }
+                        document.add(new Phrase("\n\n"));
+                    }
+                }
+                document.close();
+                System.out.println("Document Closed");
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Create a PDF file with weekly events.
+     * 
+     * @param user     the {@link User} to get the events from
+     * @param calendar the {@link Calendar} to get the week from
+     * @return {@code true} if the file is created successfully, {@code false}
+     *         otherwise
+     */
+    public static boolean exportWeeklyEvents(User user, Calendar calendar) {
+        try {
+            System.out.println("Exporting weekly events..." + calendar.get(Calendar.YEAR) + " "
+                    + calendar.get(Calendar.MONTH) + " " + calendar.get(Calendar.DAY_OF_MONTH));
+            Calendar cal = calendar;
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            ArrayList<Event> events = new ArrayList<Event>();
             events = LoadEvents.getEventsOfWeek(user, cal);
+            for (Event e : events) {
+                System.out.println(e.getTitle());
+            }
             int weekOfMonth = cal.get(Calendar.WEEK_OF_MONTH);
             int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
             cal.add(Calendar.DATE, -dayOfWeek + 1);
@@ -110,77 +218,20 @@ public class PDF {
                             "    Time:          " + startTime + " - " + endTime + "\n" +
                             "    Location:     " + event.getLocation() + "\n" +
                             "    Priority:       " + priority + "\n" +
-                            remind + "\n\n"));
-                }
-                document.close();
-                System.out.println("Document Closed");
-
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public static boolean exportMonthlyEvents(User user, Calendar calendar) {
-        try {
-            Calendar cal = calendar;
-            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-            ArrayList<Event> events = new ArrayList<Event>();
-            events = LoadEvents.getEventsOfMonth(user, cal);
-            int year = cal.get(Calendar.YEAR);
-            String monthName = cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
-            fileName = "MonthlyReport_" + monthName + "_" + year + ".pdf";
-            document = new Document();
-            PdfWriter.getInstance(document, new FileOutputStream(filePath + fileName));
-            System.out.println("PDF created at: " + filePath + fileName);
-            document = createDocumentForm(user);
-            document.add(new Phrase("This is your monthly events report in " + monthName + " " + year + ":\n"));
-            if (events.size() == 0) {
-                document.add(new Phrase("You have no events for this month.\n"));
-                document.close();
-                System.out.println("Document Closed");
-                return true;
-            } else {
-                if (events.size() > 1) {
-                    document.add(new Phrase(
-                            "You have " + events.size() + " events in " + monthName + " " + year + ":\n"));
-                } else {
-                    document.add(new Phrase(
-                            "You have 1 event in " + monthName + " " + year + ":\n"));
-                }
-                for (Event event : events) {
-                    String startTime = dateFormat.format(event.getDate());
-                    String endTime = dateFormat.format(event.getDate().getTime() + event.getDuration() * 60 * 1000);
-                    String remind;
-                    if (event.getRemind() != null) {
-                        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
-                        String remindTime = timeFormat.format(event.getRemind());
-                        String remindDate = dateFormat.format(event.getRemind());
-                        remind = "    Remind at:  " + remindTime + " on " + remindDate + ".";
+                            remind + "\n" +
+                            "    Participant: "));
+                    if (event.getParticipants() == null) {
+                        document.add(new Phrase("You are the only participant."));
                     } else {
-                        remind = "    No remind.";
+                        for (String participant : event.getParticipants()) {
+                            document.add(new Phrase("\n               " + participant));
+                        }
+                        document.add(new Phrase("\n\n"));
                     }
-                    int priorityInt = event.getPriority();
-                    String priority = "";
-                    if (priorityInt == 0) {
-                        priority = "High";
-                    } else if (priorityInt == 1) {
-                        priority = "Medium";
-                    } else if (priorityInt == 2) {
-                        priority = "Low";
-                    }
-                    document.add(new Phrase("Title: " + event.getTitle() + "\n" +
-                            "    Description: " + event.getDescription() + "\n" +
-                            "    Date:           " + dateFormat.format(event.getDate()) + "\n" +
-                            "    Time:          " + startTime + " - " + endTime + "\n" +
-                            "    Location:     " + event.getLocation() + "\n" +
-                            "    Priority:       " + priority + "\n" +
-                            remind + "\n\n"));
                 }
                 document.close();
                 System.out.println("Document Closed");
+
                 return true;
             }
         } catch (Exception e) {
@@ -192,6 +243,7 @@ public class PDF {
     public static void main(String[] args) throws Exception {
         Database.createConnection();
         Calendar cal = new GregorianCalendar();
+        cal.set(2022, 0, 30);
         User user = Database.getUser("admin", "admin");
         PDF.exportWeeklyEvents(user, cal);
     }
