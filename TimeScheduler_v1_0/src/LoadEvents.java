@@ -204,28 +204,63 @@ public class LoadEvents {
      * @return The list of {@link Event}s to print to PDF
      */
     public static ArrayList<Event> getEventsOfWeek(User user, Calendar cal) {
-        ArrayList<Event> weekEvents = new ArrayList<Event>();
-        int week = cal.get(Calendar.WEEK_OF_MONTH);
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
         int month = cal.get(Calendar.MONTH);
         int year = cal.get(Calendar.YEAR);
-        ArrayList<Event> events = Database.getEvents(user);
-
-        for (Event event : events) {
-            int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
-            int eventMonth = Integer.valueOf(monthFormat.format(event.getDate()));
-            int eventWeek = Integer.valueOf(weekFormat.format(event.getDate()));
-            if (eventYear == year && eventMonth == month + 1 && eventWeek == week) {
-                // System.out.println("Title: " + event.getTitle());
-                // System.out.println("Date: " + dateFormat.format(event.getDate()));
-                // System.out.println("Day of week: " + calendar.get(Calendar.DAY_OF_WEEK));
-                // System.out.println("Description: " + event.getDescription());
-                // System.out.println("Start time: " + timeFormat.format(event.getDate()));
-                // System.out.println("Duration: " + event.getDuration());
-                // System.out.println("Priority: " + event.getPriority());
-                weekEvents.add(event);
-            }
+        int week = cal.get(Calendar.WEEK_OF_MONTH);
+        boolean isWeekOverflow = false;
+        System.out.println("Month: " + month + " Year: " + year + " Week: " + week);
+        int month2;
+        int year2;
+        int week2;
+        if (week == cal.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
+            isWeekOverflow = true;
+            System.out.println("Week is overflow");
         }
-        return weekEvents;
+        ArrayList<Event> weekEvents = new ArrayList<Event>();
+        ArrayList<Event> events = Database.getEvents(user);
+        if (!isWeekOverflow) {
+            for (Event event : events) {
+                int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
+                int eventMonth = Integer.valueOf(monthFormat.format(event.getDate()));
+                int eventWeek = Integer.valueOf(weekFormat.format(event.getDate()));
+                if (eventYear == year && eventMonth == month + 1 && eventWeek == week) {
+                    // System.out.println("Title: " + event.getTitle());
+                    // System.out.println("Date: " + dateFormat.format(event.getDate()));
+                    // System.out.println("Day of month: " + calendar.get(Calendar.DAY_OF_WEEK));
+                    // System.out.println("Description: " + event.getDescription());
+                    // System.out.println("Start time: " + timeFormat.format(event.getDate()));
+                    // System.out.println("Duration: " + event.getDuration());
+                    // System.out.println("Priority: " + event.getPriority());
+                    weekEvents.add(event);
+                }
+            }
+            return weekEvents;
+        } else {
+            Calendar cal2 = new GregorianCalendar();
+            cal2.setTime(cal.getTime());
+            cal2.add(Calendar.DATE, +6);
+            month2 = cal2.get(Calendar.MONTH);
+            year2 = cal2.get(Calendar.YEAR);
+            week2 = cal2.get(Calendar.WEEK_OF_MONTH);
+            for (Event event : events) {
+                int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
+                int eventMonth = Integer.valueOf(monthFormat.format(event.getDate()));
+                int eventWeek = Integer.valueOf(weekFormat.format(event.getDate()));
+                if (eventYear == year && eventMonth == month + 1 && eventWeek == week
+                        || (eventYear == year2 && eventMonth == month2 + 1 && eventWeek == week)
+                        || (eventYear == year2 && eventMonth == month2 + 1 && eventWeek == week2)) {
+                    // System.out.println("Title: " + event.getTitle());
+                    // System.out.println("Date: " + dateFormat.format(event.getDate()));
+                    // System.out.println("Description: " + event.getDescription());
+                    // System.out.println("Start time: " + timeFormat.format(event.getDate()));
+                    // System.out.println("Duration: " + event.getDuration());
+                    // System.out.println("Priority: " + event.getPriority());
+                    weekEvents.add(event);
+                }
+            }
+            return weekEvents;
+        }
     }
 
     /**
@@ -250,6 +285,10 @@ public class LoadEvents {
     }
 
     public static void main(String[] args) {
+        // testLoadEvent();
+    }
+
+    public static void testLoadEvent() {
         Calendar cal = new GregorianCalendar();
         cal.set(Calendar.DAY_OF_MONTH, 1);
         int month = cal.get(Calendar.MONTH);
@@ -292,6 +331,9 @@ public class LoadEvents {
                 System.out.println("Start time: " + timeFormat.format(event.getDate()));
                 System.out.println("Duration: " + event.getDuration());
                 System.out.println("Priority: " + event.getPriority());
+                for (String participant : event.getParticipants()) {
+                    System.out.println("Participants: " + participant);
+                }
                 calendar.setTime(event.getDate());
                 int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
                 int week = calendar.get(Calendar.WEEK_OF_MONTH);
