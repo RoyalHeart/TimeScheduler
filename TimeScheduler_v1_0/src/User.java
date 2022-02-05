@@ -7,23 +7,15 @@ package src;
  * <p>
  * The user object contains the following:
  * <p>
- * <p>
- * - A unique ID
- * <p>
- * <p>
- * - An username
- * <p>
- * <p>
- * - A name
- * <p>
- * <p>
- * - An email
- * <p>
- * <p>
- * - A phone number
- * <p>
+ * <ul>
+ * <li>A unique ID</li>
+ * <li>An username</li>
+ * <li>A display name of the user(optional)</li>
+ * <li>An email address</li>
+ * <li>A phone number (optional)</li>
+ * </ul>
  * 
- * @author Tam Thai Hoang 1370674
+ * @author Tam Thai Hoang
  */
 public class User {
     private String id;
