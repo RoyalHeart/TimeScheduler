@@ -12,9 +12,20 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 
+/**
+ * This class is used to schedule the sending remind email jobs.
+ * 
+ * @author Tam Thai Hoang
+ */
 public class SchedulerJava {
+    /**
+     * {@link Scheduler} to schedule the sending remind email jobs.
+     */
     private static Scheduler scheduler;
 
+    /**
+     * Create a scheduler to schedule the jobs.
+     */
     public static void createScheduler() {
         try {
             scheduler = new StdSchedulerFactory().getScheduler();
@@ -24,6 +35,9 @@ public class SchedulerJava {
         }
     }
 
+    /**
+     * This method is used to shutdown the scheduler.
+     */
     public static void closeScheduler() {
         try {
             scheduler.shutdown();
@@ -32,13 +46,20 @@ public class SchedulerJava {
         }
     }
 
+    /**
+     * This method is used to schedule remind email using user and event.
+     * 
+     * @param user  to get {@link User} information to send remind email.
+     * @param event has the {@link Event} detail for the email.
+     */
     public static void scheduleMail(User user, Event event) {
         try {
-            JobDetail jobDetail = JobBuilder.newJob(MailJob.class)/* .withIdentity("", "") */.build();
+            JobDetail jobDetail = JobBuilder.newJob(MailJob.class).withIdentity(event.getID(), event.getUserID())
+                    .build();
             jobDetail.getJobDataMap().put("user", user);
             jobDetail.getJobDataMap().put("event", event);
             Trigger trigger = TriggerBuilder.newTrigger()
-                    /* .withIdentity("", "") */
+                    .withIdentity(event.getID(), event.getUserID())
                     .startAt(event.getRemind())
                     .build();
             scheduler.scheduleJob(jobDetail, trigger);
@@ -47,6 +68,27 @@ public class SchedulerJava {
         }
     }
 
+    /**
+     * This method is used to unschedule remind email using event.
+     * 
+     * @param event has the {@link Event} detail for the email.
+     */
+    public static void unscheduleMail(Event event) {
+        try {
+            org.quartz.TriggerKey triggerKey = new org.quartz.TriggerKey(event.getID(), event.getUserID());
+            scheduler.unscheduleJob(triggerKey);
+            System.out.println(scheduler);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * This method is used to schedule all the emails of event.
+     * 
+     * @param user to get {@link User} information to send remind email.
+     * @return list of all the scheduled jobs.
+     */
     public static void setFutureRemind(User user) {
         ArrayList<Event> remindEvents = LoadEvents.getRemindEvents(user);
         try {
@@ -69,7 +111,7 @@ public class SchedulerJava {
         Event event = new Event("0", "Test Reminder", new Date(), 3);
         event.setRemind(remind);
         event.setDate(date);
-        User user = Database.getUser("admin", Hash.hashPassword("adminadmin").toUpperCase());
+        User user = Database.getUser("admin", "admin");
         // event.getDate().setMinutes(45);
         // create the scheduler
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
