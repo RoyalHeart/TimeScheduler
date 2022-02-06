@@ -5,8 +5,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -36,12 +34,10 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 // import javax.tools.DocumentationTool.Location;
 import javax.swing.JFormattedTextField.AbstractFormatter;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
@@ -49,10 +45,11 @@ import javax.swing.event.MouseInputAdapter;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+import org.w3c.dom.events.MouseEvent;
 
 public class AddEventDialog extends JDialog {
-    AddEventDialog(User user, Container panel) {
-        super(SwingUtilities.windowForComponent(panel));
+    AddEventDialog(User user, SwingCalendar calendar) {
+        super(SwingUtilities.windowForComponent(calendar));
         this.setTitle("Event");
         this.setSize(800, 500);
         this.setLayout(new BorderLayout());
@@ -60,7 +57,7 @@ public class AddEventDialog extends JDialog {
         this.setLocationRelativeTo(null);
         this.add(new TitlePanel(), BorderLayout.NORTH);
         this.add(new EventMainPanel(), BorderLayout.CENTER);
-        this.add(new SetBtn(user), BorderLayout.SOUTH);
+        this.add(new SetBtn(user, calendar, this), BorderLayout.SOUTH);
         this.setResizable(false);
         // this.setVisible(true);
     }
@@ -233,6 +230,7 @@ class FriendField extends JPanel {
     JLabel iconLabel;
     static ArrayList<String> participants = new ArrayList<String>();
     static JList<String> list = new JList<String>();
+    private JButton deleteParticipantButton = new JButton("remove");
 
     // private static JLabel participantsLabel = new JLabel();
     FriendField() {
@@ -290,29 +288,38 @@ class FriendField extends JPanel {
             public void keyReleased(KeyEvent e) {
             }
         });
+
+        deleteParticipantButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (list.getSelectedIndex() != -1) {
+                    participants.remove(list.getSelectedIndex());
+                    updateParticipants(null);
+                    list.setListData(participants.toArray(new String[participants.size()]));
+                }
+            }
+        });
+
         this.add(friendField);
         this.add(list);
+        this.add(deleteParticipantButton);
+        deleteParticipantButton.setVisible(false);
     }
 
     public static ArrayList<String> getParticipants() {
         return participants;
     }
 
-    // public void update() {
-    // list.setListData(participants.toArray(new String[participants.size()]));
-    // }
-
     public void updateParticipants(String participant) {
         System.out.println("Participant label: " + participant);
         JLabel participantLabel = new JLabel(participant);
         list.add(participantLabel);
-    }
-
-    static String getFriend() {
-        if (friendField.getText().equals("Participants")) {
-            return "";
+        if (list.getModel().getSize() >= 0) {
+            deleteParticipantButton.setEnabled(true);
+            deleteParticipantButton.setVisible(true);
         } else {
-            return friendField.getText();
+            deleteParticipantButton.setEnabled(false);
+            deleteParticipantButton.setVisible(false);
         }
     }
 }
@@ -465,7 +472,7 @@ class Description extends JPanel {
 class SetBtn extends JPanel {
     JButton setBtn = new JButton("Set");
 
-    SetBtn(User user) {
+    SetBtn(User user, SwingCalendar calendar, AddEventDialog dialog) {
         this.add(setBtn);
         setBtn.addActionListener(new ActionListener() {
 
@@ -508,18 +515,20 @@ class SetBtn extends JPanel {
                             Priority.getPriority());
                     if (Database.addEvent(event)) {
                         JOptionPane.showMessageDialog((JButton) e.getSource(), "Event added successfully!");
-                        // Mail.sendRemindEmail(user, event); // send email right after event is created
+                        calendar.cal.add(Calendar.MONTH, +1);
+                        calendar.update();
+                        calendar.cal.add(Calendar.MONTH, -1);
+                        calendar.update();
+                        new Thread(new Runnable() {
+                            public void run() {
+                                Mail.sendRemindEmail(user, event); // send email right after event is created
+                            }
+                        }).start();
                         if (event.getRemind().compareTo(event.getDate()) < 0) {
                             System.out.println("Remind set");
                             SchedulerJava.scheduleMail(user, event);
                         }
-                        // if(Database.addEventParticipants(event)) {
-                        // JOptionPane.showMessageDialog((JButton) e.getSource(), "Event added
-                        // successfully!");
-                        // }
-                        // } else {
-                        // JOptionPane.showMessageDialog((JButton) e.getSource(), "Event not added!");
-                        // }
+                        dialog.dispose();
                     } else {
                         JOptionPane.showMessageDialog((JButton) e.getSource(), "Fail to add event");
                     }
