@@ -53,6 +53,7 @@ public class Database {
      * The {@code String} to add a participant to EVENT_PARTICIPANT table.
      */
     final static String addEventParticipants = "INSERT INTO EVENT_PARTICIPANT (EVENT_ID, USER_ID, PARTICIPANT) VALUES (?, ?, ?)";
+
     /**
      * The {@code jasyptPassword} to decrypt the {@code database properties}file.
      */
@@ -649,7 +650,11 @@ public class Database {
             Statement stmt = con.createStatement();
             if (stmt.executeUpdate(
                     "DELETE EVENT WHERE id = " + event.getID() + " AND userId = " + event.getUserID()) == 0) {
-                return false;
+                if (stmt.executeUpdate("DELETE FROM EVENT_PARTICIPANT WHERE eventId = " + event.getID()) == 0) {
+                    return false; // delete event_participant failed
+                } else {
+                    return true;
+                }
             } else {
                 System.out.println("Delete event successfully.");
                 return true;
@@ -657,7 +662,6 @@ public class Database {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return false;
     }
 
@@ -687,6 +691,34 @@ public class Database {
             ps.execute();
             ps.close();
 
+            Statement stmt = con.createStatement();
+            if (event.getParticipants() != null) {
+                if (event.getParticipants().size() > 0) {
+                    // delete participants of event
+                    if (stmt.executeUpdate(
+                            "DELETE FROM EVENT_PARTICIPANT WHERE EVENT_ID = " + event.getID() + " AND USER_ID = "
+                                    + event.getUserID()) == 0) {
+                        System.out.println("Can not delete participants of event");
+                        return false;
+                    } else {
+                        System.out.println("Delete participants of event successfully.");
+                    }
+                } else {
+                    System.out.println("No participants of event.");
+                }
+            } else {
+                System.out.println("No participants object.");
+            }
+
+            // add participants of event
+            PreparedStatement ps2 = con.prepareStatement(addEventParticipants);
+            for (String participant : event.getParticipants()) {
+                ps2.setString(1, event.getID());
+                ps2.setString(2, event.getUserID());
+                ps2.setString(3, participant);
+                ps2.execute();
+            }
+            ps2.close();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
