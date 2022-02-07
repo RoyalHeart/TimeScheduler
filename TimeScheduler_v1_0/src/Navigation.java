@@ -29,9 +29,15 @@ public class Navigation extends JPanel {
     private Icon settingsIcon = new ImageIcon(settingsImage);
     private Dimension size = new Dimension(40, 30);
 
-    Navigation(JFrame frame, User user) {
+    /**
+     * Constructor of {@code Navigation} class
+     * 
+     * @param frame    the main frame of the application
+     * @param user     the user of the application
+     * @param calendar the calendar of the application
+     */
+    Navigation(JFrame frame, User user, SwingCalendar calendar) {
         // panel in navigation
-        SwingCalendar calendar = new SwingCalendar(user);
         Profile profilePanel = new Profile(user);
         Settings settingsPanel = new Settings(user);
         // default panel
