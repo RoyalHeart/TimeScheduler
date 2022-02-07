@@ -227,12 +227,14 @@ public class Mail {
                         + timeFormat.format(event.getRemind());
             }
             String participantsString = "";
-            if (event.getParticipants().size() == 0) {
-                participantsString = "No participants";
-            } else {
-                participantsString = "Participants: \n";
-                for (int i = 0; i < event.getParticipants().size(); i++) {
-                    participantsString += event.getParticipants().get(i) + "\n";
+            if (event.getParticipants() != null) {
+                if (event.getParticipants().size() == 0) {
+                    participantsString = "No participants";
+                } else {
+                    participantsString = "Participants: \n";
+                    for (int i = 0; i < event.getParticipants().size(); i++) {
+                        participantsString += event.getParticipants().get(i) + "\n";
+                    }
                 }
             }
             String body = "Dear user " + user.getName() + "\n\n" +
@@ -293,6 +295,263 @@ public class Mail {
         }
     }
 
+    public static boolean sendEditEmail(User user, Event event, Event newEvent) {
+        Session session = createSession();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        String priority = "";
+        if (event.getPriority() == 0) {
+            priority = "High";
+        } else if (event.getPriority() == 1) {
+            priority = "Medium";
+        } else {
+            priority = "Low";
+        }
+        // mail to user who created the event
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(USERNAME));
+            message.setRecipients(
+                    Message.RecipientType.TO,
+                    InternetAddress.parse(user.getEmail()));
+            message.setSubject("Reminder from TISCH");
+            String remindString = "";
+            if (event.getRemind().equals(event.getDate())) {
+                remindString = "No remind";
+            } else {
+                remindString = "Remind on: " + dateFormat.format(event.getRemind()) + " at: "
+                        + timeFormat.format(event.getRemind());
+            }
+            String participantsString = "";
+            if (event.getParticipants() != null) {
+                if (event.getParticipants().size() == 0) {
+                    participantsString = "No participants";
+                } else {
+                    participantsString = "Participants: \n";
+                    for (int i = 0; i < event.getParticipants().size(); i++) {
+                        participantsString += event.getParticipants().get(i) + "\n";
+                    }
+                }
+            } else {
+                participantsString = "No participants";
+            }
+            // old event information
+            String body = "Dear user " + user.getName() + "\n\n" +
+                    "You have an update to one of your event" + "\n" +
+                    "Your old event was on " + dateFormat.format(event.getDate()) + " at "
+                    + timeFormat.format(event.getDate()) + "\n" +
+                    "Your old event information: \n" +
+                    "Title: " + event.getTitle() + "\n" +
+                    "Description: " + event.getDescription() + "\n" +
+                    "Location: " + event.getLocation() + "\n" +
+                    "Priority: " + priority + "\n" +
+                    "Duration: " + event.getDuration() + " minutes" + "\n" +
+                    remindString + "\n" +
+                    participantsString;
+            String newRemindString = "";
+            if (event.getRemind().equals(event.getDate())) {
+                newRemindString = "No remind";
+            } else {
+                newRemindString = "Remind on: " + dateFormat.format(event.getRemind()) + " at: "
+                        + timeFormat.format(event.getRemind());
+            }
+            String newParticipantsString = "";
+            if (event.getParticipants() != null) {
+                if (event.getParticipants().size() == 0) {
+                    newParticipantsString = "No participants";
+                } else {
+                    newParticipantsString = "Participants: \n";
+                    for (int i = 0; i < event.getParticipants().size(); i++) {
+                        newParticipantsString += event.getParticipants().get(i) + "\n";
+                    }
+                }
+            } else {
+                newParticipantsString = "No participants";
+            }
+            // new event information
+            body += "\n\n" +
+                    "Your new event is on " + dateFormat.format(newEvent.getDate()) + " at "
+                    + timeFormat.format(newEvent.getDate()) + "\n" +
+                    "Your new event information: \n" +
+                    "Title: " + newEvent.getTitle() + "\n" +
+                    "Description: " + newEvent.getDescription() + "\n" +
+                    "Location: " + newEvent.getLocation() + "\n" +
+                    "Priority: " + priority + "\n" +
+                    "Duration: " + newEvent.getDuration() + " minutes" + "\n" +
+                    newRemindString + "\n" +
+                    newParticipantsString + "\n\n" +
+                    "TISCH Team";
+            message.setText(body);
+            Transport.send(message);
+            System.out.println("Message sent to " + user.getEmail());
+            Session sessionParticipant = createSession();
+            if (event.getParticipants() != null) {
+                for (String participant : event.getParticipants()) {
+                    // mail to each participant
+                    try {
+                        Message messageParticipant = new MimeMessage(sessionParticipant);
+                        messageParticipant.setFrom(new InternetAddress(USERNAME));
+                        messageParticipant.setRecipients(
+                                Message.RecipientType.TO,
+                                InternetAddress.parse(participant));
+                        messageParticipant.setSubject("Reminder from TISCH");
+
+                        String remindStringParticipant = "";
+                        if (event.getRemind().equals(event.getDate())) {
+                            remindStringParticipant = "No remind";
+                        } else {
+                            remindStringParticipant = "Remind on: " + dateFormat.format(event.getRemind()) + " at: "
+                                    + timeFormat.format(event.getRemind());
+                        }
+                        String bodyParticipant = "";
+                        bodyParticipant += "Your event invited by " + user.getName() +
+                                " (email: " + user.getEmail() + ") has an update\n\n" +
+                                "Your old is event on " + dateFormat.format(event.getDate()) + " at "
+                                + timeFormat.format(event.getDate()) + "\n" +
+                                "Your old event information: \n" +
+                                "Title: " + event.getTitle() + "\n" +
+                                "Description: " + event.getDescription() + "\n" +
+                                "Location: " + event.getLocation() + "\n" +
+                                "Priority: " + priority + "\n" +
+                                "Duration: " + event.getDuration() + " minutes" + "\n" +
+                                remindStringParticipant;
+
+                        String newRemindStringParticipant = "";
+                        if (event.getRemind().equals(event.getDate())) {
+                            newRemindStringParticipant = "No remind";
+                        } else {
+                            newRemindStringParticipant = "Remind on: " + dateFormat.format(event.getRemind()) + " at: "
+                                    + timeFormat.format(event.getRemind());
+                        }
+                        bodyParticipant += "\n\nYour new event is on " + dateFormat.format(newEvent.getDate()) + " at "
+                                + timeFormat.format(newEvent.getDate()) + "\n" +
+                                "Your new event information: \n" +
+                                "Title: " + newEvent.getTitle() + "\n" +
+                                "Description: " + newEvent.getDescription() + "\n" +
+                                "Location: " + newEvent.getLocation() + "\n" +
+                                "Priority: " + priority + "\n" +
+                                "Duration: " + newEvent.getDuration() + " minutes" + "\n" +
+                                newRemindStringParticipant + "\n\n" +
+                                "TISCH Team";
+
+                        messageParticipant.setText(bodyParticipant);
+                        Transport.send(messageParticipant);
+                        System.out.println("Message sent to " + participant);
+                    } catch (MessagingException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                }
+            } else {
+                System.out.println("No participants");
+            }
+            return true;
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean sendDeletedEmail(User user, Event event) {
+        Session session = createSession();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        String priority = "";
+        if (event.getPriority() == 0) {
+            priority = "High";
+        } else if (event.getPriority() == 1) {
+            priority = "Medium";
+        } else {
+            priority = "Low";
+        }
+        // mail to user who created the event
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(USERNAME));
+            message.setRecipients(
+                    Message.RecipientType.TO,
+                    InternetAddress.parse(user.getEmail()));
+            message.setSubject("Reminder from TISCH");
+            String remindString = "";
+            if (event.getRemind().equals(event.getDate())) {
+                remindString = "No remind";
+            } else {
+                remindString = "Remind on: " + dateFormat.format(event.getRemind()) + " at: "
+                        + timeFormat.format(event.getRemind());
+            }
+            String participantsString = "";
+            if (event.getParticipants() != null) {
+                if (event.getParticipants().size() == 0) {
+                    participantsString = "No participants";
+                } else {
+                    participantsString = "Participants: \n";
+                    for (int i = 0; i < event.getParticipants().size(); i++) {
+                        participantsString += event.getParticipants().get(i) + "\n";
+                    }
+                }
+            } else {
+                participantsString = "No participants";
+            }
+            String body = "Dear user " + user.getName() + "\n\n" +
+                    "You have deleted an event on " + dateFormat.format(event.getDate()) + " at "
+                    + timeFormat.format(event.getDate()) + "\n" +
+                    "Your deleted event information: \n" +
+                    "Title: " + event.getTitle() + "\n" +
+                    "Description: " + event.getDescription() + "\n" +
+                    "Location: " + event.getLocation() + "\n" +
+                    "Priority: " + priority + "\n" +
+                    "Duration: " + event.getDuration() + " minutes" + "\n" +
+                    remindString + "\n" +
+                    participantsString + "\n\n" +
+                    "TISCH Team";
+            message.setText(body);
+            Transport.send(message);
+            System.out.println("Message sent to " + user.getEmail());
+            Session sessionParticipant = createSession();
+            if (event.getParticipants() != null) {
+                for (String participant : event.getParticipants()) {
+                    // mail to each participant
+                    try {
+                        Message messageParticipant = new MimeMessage(sessionParticipant);
+                        messageParticipant.setFrom(new InternetAddress(USERNAME));
+                        messageParticipant.setRecipients(
+                                Message.RecipientType.TO,
+                                InternetAddress.parse(participant));
+                        messageParticipant.setSubject("Reminder from TISCH");
+                        String remindStringParticipant = "";
+                        if (event.getRemind().equals(event.getDate())) {
+                            remindStringParticipant = "No remind";
+                        } else {
+                            remindStringParticipant = "Remind on: " + dateFormat.format(event.getRemind()) + " at: "
+                                    + timeFormat.format(event.getRemind());
+                        }
+                        messageParticipant.setText("Your event invited by " + user.getName() +
+                                " (email: " + user.getEmail() + ") has been deleted\n\n" +
+                                "Your deleted event was on " + dateFormat.format(event.getDate()) + " at "
+                                + timeFormat.format(event.getDate()) + "\n" +
+                                "Your deleted event information: \n" +
+                                "Title: " + event.getTitle() + "\n" +
+                                "Description: " + event.getDescription() + "\n" +
+                                "Location: " + event.getLocation() + "\n" +
+                                "Priority: " + priority + "\n" +
+                                "Duration: " + event.getDuration() + " minutes" + "\n" +
+                                remindStringParticipant + "\n\n" +
+                                "TISCH Team");
+                        Transport.send(messageParticipant);
+                        System.out.println("Message sent to " + participant);
+                    } catch (MessagingException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return true;
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     // public static void sendEmail(String to, String subject, String body) {
 
     // Properties prop = createProperty();
