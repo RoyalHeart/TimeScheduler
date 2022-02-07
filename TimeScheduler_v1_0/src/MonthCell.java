@@ -264,12 +264,12 @@ class MonthCellRenderer implements TableCellRenderer {
     private SwingCalendar calendar;
 
     /**
-     * Constructor for {@code MonthCellRender} class. It create a
-     * {@link MonthCellComponent} to display a month cell.
+     * Constructor for {@code MonthCellRender} class. It pass the data to the
+     * {@code MonthCellComponent} class.
      * 
-     * @param user the {@link User} class that will be show the calendar.
+     * @param user     the {@link User} class that will be show the calendar.
      * @param calendar the {@link SwingCalendar} class that will be show the
-     *                calendar.
+     *                 calendar.
      */
     public MonthCellRenderer(User user, SwingCalendar calendar) {
         this.user = user;
@@ -296,12 +296,12 @@ class MonthCellEditor extends AbstractCellEditor implements TableCellEditor {
     private SwingCalendar calendar;
 
     /**
-     * Constructor for {@code MonthCellEditor} class. It create a
-     * {@link MonthCellComponent} to display a month cell.
+     * Constructor for {@code MonthCellEditor} class. It pass the data to the
+     * {@code MonthCellComponent} class.
      * 
-     * @param user the {@link User} class that will be show the calendar.
+     * @param user     the {@link User} class that will be show the calendar.
      * @param calendar the {@link SwingCalendar} class that will be show the
-     *                calendar.
+     *                 calendar.
      */
     public MonthCellEditor(User user, SwingCalendar calendar) {
         this.user = user;
