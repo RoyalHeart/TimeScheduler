@@ -7,15 +7,11 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-
 /**
  * This class is used to get {@link Event} from the {@link Database}
  * and change the events to corresponding datatype.
  * 
- * @author Tam Thai Hoang 1370674
+ * @author Tam Thai Hoang
  */
 public class LoadEvents {
     private static DateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -93,15 +89,13 @@ public class LoadEvents {
      */
     public static ArrayList<WeekCell> updateWeekDataEvent(ArrayList<WeekCell> weekData, Calendar cal, User user) {
         cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        System.out.println("Load Date: " + cal.getTime());
         int month = cal.get(Calendar.MONTH);
         int year = cal.get(Calendar.YEAR);
-        int week = cal.get(Calendar.WEEK_OF_MONTH);
+        int week = cal.get(Calendar.WEEK_OF_YEAR);
         boolean isWeekOverflow = false;
         System.out.println("Month: " + month + " Year: " + year + " Week: " + week);
-        int month2;
-        int year2;
-        int week2;
-        if (week == cal.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
+        if (cal.get(Calendar.WEEK_OF_MONTH) == cal.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
             isWeekOverflow = true;
             System.out.println("Week is overflow");
         }
@@ -136,9 +130,9 @@ public class LoadEvents {
             Calendar cal2 = new GregorianCalendar();
             cal2.setTime(cal.getTime());
             cal2.add(Calendar.DATE, +6);
-            month2 = cal2.get(Calendar.MONTH);
-            year2 = cal2.get(Calendar.YEAR);
-            week2 = cal2.get(Calendar.WEEK_OF_MONTH);
+            int month2 = cal2.get(Calendar.MONTH);
+            int year2 = cal2.get(Calendar.YEAR);
+            int week2 = cal2.get(Calendar.WEEK_OF_YEAR);
             for (Event event : events) {
                 int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
                 int eventMonth = Integer.valueOf(monthFormat.format(event.getDate()));
@@ -205,15 +199,12 @@ public class LoadEvents {
      */
     public static ArrayList<Event> getEventsOfWeek(User user, Calendar cal) {
         cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        System.out.println("Date: " + cal.getTime());
         int month = cal.get(Calendar.MONTH);
         int year = cal.get(Calendar.YEAR);
-        int week = cal.get(Calendar.WEEK_OF_MONTH);
+        int week = cal.get(Calendar.WEEK_OF_YEAR);
         boolean isWeekOverflow = false;
-        System.out.println("Month: " + month + " Year: " + year + " Week: " + week);
-        int month2;
-        int year2;
-        int week2;
-        if (week == cal.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
+        if (cal.get(Calendar.WEEK_OF_MONTH) == cal.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
             isWeekOverflow = true;
             System.out.println("Week is overflow");
         }
@@ -227,7 +218,6 @@ public class LoadEvents {
                 if (eventYear == year && eventMonth == month + 1 && eventWeek == week) {
                     // System.out.println("Title: " + event.getTitle());
                     // System.out.println("Date: " + dateFormat.format(event.getDate()));
-                    // System.out.println("Day of month: " + calendar.get(Calendar.DAY_OF_WEEK));
                     // System.out.println("Description: " + event.getDescription());
                     // System.out.println("Start time: " + timeFormat.format(event.getDate()));
                     // System.out.println("Duration: " + event.getDuration());
@@ -240,9 +230,9 @@ public class LoadEvents {
             Calendar cal2 = new GregorianCalendar();
             cal2.setTime(cal.getTime());
             cal2.add(Calendar.DATE, +6);
-            month2 = cal2.get(Calendar.MONTH);
-            year2 = cal2.get(Calendar.YEAR);
-            week2 = cal2.get(Calendar.WEEK_OF_MONTH);
+            int month2 = cal2.get(Calendar.MONTH);
+            int year2 = cal2.get(Calendar.YEAR);
+            int week2 = cal2.get(Calendar.WEEK_OF_MONTH);
             for (Event event : events) {
                 int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
                 int eventMonth = Integer.valueOf(monthFormat.format(event.getDate()));
@@ -282,86 +272,5 @@ public class LoadEvents {
             }
         }
         return remindEvents;
-    }
-
-    public static void main(String[] args) {
-        // testLoadEvent();
-    }
-
-    public static void testLoadEvent() {
-        Calendar cal = new GregorianCalendar();
-        cal.set(Calendar.DAY_OF_MONTH, 1);
-        int month = cal.get(Calendar.MONTH);
-        System.out.println(month);
-        int year = cal.get(Calendar.YEAR);
-        System.out.println(year);
-        int startDay = cal.get(Calendar.DAY_OF_WEEK);
-        int numberOfDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-        int weeks = cal.getActualMaximum(Calendar.WEEK_OF_MONTH);
-        int day = 1;
-        ArrayList<List<MonthCell>> data = new ArrayList<List<MonthCell>>();
-        for (int i = 0; i < weeks; i++) {
-            List<MonthCell> list = new ArrayList<MonthCell>();
-            for (int j = 0; j < 7; j++) {
-                if (i == 0 && j < startDay - 1) {
-                    list.add(new MonthCell());
-                } else if (day > numberOfDays) {
-                    list.add(new MonthCell());
-                } else {
-                    list.add(new MonthCell(String.valueOf(day)));
-                    day++;
-                }
-            }
-            data.add(list);
-        }
-        Database.createConnection();
-        User user = Database.getUser("admin", "admin");
-        ArrayList<Event> events = Database.getEvents(user);
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
-        DateFormat yearFormat = new SimpleDateFormat("yyyy");
-        DateFormat monthFormat = new SimpleDateFormat("MM");
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        for (Event event : events) {
-            int eventYear = Integer.valueOf(yearFormat.format(event.getDate()));
-            int eventMonth = Integer.valueOf(monthFormat.format(event.getDate()));
-            if (eventYear == year && eventMonth == month + 1) {
-                Calendar calendar = new GregorianCalendar();
-                System.out.println("Title: " + event.getTitle());
-                System.out.println("Date: " + dateFormat.format(event.getDate()));
-                System.out.println("Start time: " + timeFormat.format(event.getDate()));
-                System.out.println("Duration: " + event.getDuration());
-                System.out.println("Priority: " + event.getPriority());
-                for (String participant : event.getParticipants()) {
-                    System.out.println("Participants: " + participant);
-                }
-                calendar.setTime(event.getDate());
-                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-                int week = calendar.get(Calendar.WEEK_OF_MONTH);
-                System.out.println("Date of Month: " + calendar.get(Calendar.DAY_OF_WEEK));
-                System.out.println("Week: " + calendar.get(Calendar.WEEK_OF_MONTH) + "\n");
-                data.get(week - 1).get(dayOfWeek - 1).addEvent(event);
-            }
-        }
-        JFrame frame = new JFrame("Calendar");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
-        frame.setLocationRelativeTo(null);
-        for (int i = 0; i < weeks; i++) {
-            for (int j = 0; j < 7; j++) {
-                for (int t = 0; t < data.get(i).get(j).getEvents().size(); t++) {
-                    System.out.println(data.get(i).get(j).getEvents().get(t).getDate());
-                    System.out.println(data.get(i).get(j).getEvents().get(t).getTitle());
-                }
-            }
-            System.out.println();
-        }
-        MonthTableModel model = new MonthTableModel(data);
-        JTable table = new JTable(model);
-        table.setRowHeight(100);
-        table.setDefaultRenderer(MonthCell.class, new MonthCellRenderer());
-        table.setDefaultEditor(MonthCell.class, new MonthCellEditor());
-        JScrollPane scrollPane = new JScrollPane(table);
-        frame.add(scrollPane);
-        frame.setVisible(true);
     }
 }
