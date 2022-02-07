@@ -1,6 +1,7 @@
 package src;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -17,7 +18,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -35,7 +35,8 @@ import javax.swing.table.TableCellRenderer;
  * <li>{@code times} - the times of the events</li>
  * <li>{@code titles} - the titles of the events</li>
  * </ul>
- * @author Tam Thai Hoang 1370674
+ * 
+ * @author Tam Thai Hoang
  */
 class MonthCell {
     public String date;
@@ -112,6 +113,11 @@ class MonthTableModel extends DefaultTableModel {
     private ArrayList<List<MonthCell>> data;
     private String[] columns = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 
+    /**
+     * Constructs a {@code MonthTableModel} with the given data.
+     * 
+     * @param data the data to be displayed in the table
+     */
     public MonthTableModel(ArrayList<List<MonthCell>> data) {
         this.data = data;
     }
@@ -149,6 +155,11 @@ class MonthTableModel extends DefaultTableModel {
         return true;
     }
 
+    /**
+     * Update the data of the table model.
+     * 
+     * @param data the new data to be updated in the table
+     */
     public void update(ArrayList<List<MonthCell>> data) {
         this.data = data;
     }
@@ -160,15 +171,14 @@ class MonthTableModel extends DefaultTableModel {
  * 
  */
 class MonthCellComponent extends JPanel {
-    JLabel dateLabel = new JLabel();
-    JPanel datePanel = new JPanel();
-    JScrollPane scrollPane = new JScrollPane();
-    ArrayList<JLabel> timeLabels = new java.util.ArrayList<JLabel>();
-    ArrayList<JLabel> titleLabels = new java.util.ArrayList<JLabel>();
-    JPanel eventsPanel = new JPanel(); // eventPanel has events
-    JButton button = new JButton("More"); // button to show all events if there are more than 3
-    JDialog dialog = new JDialog();
-    JPanel panel = this;
+    private JLabel dateLabel;
+    private JPanel datePanel = new JPanel();
+    private ArrayList<JLabel> timeLabels = new java.util.ArrayList<JLabel>();
+    private ArrayList<JLabel> titleLabels = new java.util.ArrayList<JLabel>();
+    private JPanel eventsPanel = new JPanel(); // eventPanel has events
+    private JButton button = new JButton("More"); // button to show all events if there are more than 3
+    private JDialog dialog = new JDialog();
+    private JPanel panel = this;
 
     /**
      * Constructor for {@code MonthCellComponent} class. It create a {@link JPanel}
@@ -177,7 +187,7 @@ class MonthCellComponent extends JPanel {
      * @param monthCell the {@link MonthCell} class that has all the information to
      *                  display a month cell.
      */
-    public MonthCellComponent(MonthCell monthCell) {
+    public MonthCellComponent(MonthCell monthCell, User user, SwingCalendar calendar) {
         // initialize components (labels, buttons, etc.)
         this.setLayout(new BorderLayout());
         dateLabel = new JLabel(monthCell.date);
@@ -202,18 +212,21 @@ class MonthCellComponent extends JPanel {
             String title = titleLabels.get(i).getText();
             JButton eventButton = new JButton(time + " " + title);
             Event event = monthCell.events.get(i);
+            if (event.getPriority() == 0) {
+                eventButton.setBackground(Color.RED);
+            } else if (event.getPriority() == 1) {
+                eventButton.setBackground(Color.YELLOW);
+            } else if (event.getPriority() == 2) {
+                eventButton.setBackground(Color.GREEN);
+            }
             String timeEnd = (timeFormat.format(new Date(event.getDate().getTime() + event.getDuration() * 60000)));
-            eventButton.setBorderPainted(false);
-            eventButton.setContentAreaFilled(false);
-            eventButton.setFocusPainted(false);
             eventButton.setHorizontalAlignment(SwingConstants.LEFT);
             eventButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    new EditEventDialog(event, time, timeEnd, panel);
+                    new EditEventDialog(event, time, timeEnd, panel, user, calendar);
                 }
             });
             eventsPanel.add(eventButton); // add each event Button to eventsPanel
-
         }
 
         this.add(datePanel, BorderLayout.NORTH);
@@ -236,14 +249,7 @@ class MonthCellComponent extends JPanel {
                 dialog.add(datePanel, BorderLayout.NORTH);
                 dialog.add(eventsPanel, BorderLayout.CENTER);
             });
-            // JScrollPane scrollPane = new JScrollPane(eventsPanel);
-            // this.add(scrollPane, BorderLayout.CENTER);
         }
-        // add action listeners
-    }
-
-    public void updateData(MonthCell monthCell, boolean isSelected) {
-        // add action listeners
     }
 }
 
@@ -252,16 +258,28 @@ class MonthCellComponent extends JPanel {
  * events inside a month cell.
  */
 class MonthCellRenderer implements TableCellRenderer {
-    MonthCellComponent panel;
-    static MonthCell monthCell;
+    private static MonthCellComponent panel;
+    private static MonthCell monthCell;
+    private User user;
+    private SwingCalendar calendar;
 
-    public MonthCellRenderer() {
+    /**
+     * Constructor for {@code MonthCellRender} class. It create a
+     * {@link MonthCellComponent} to display a month cell.
+     * 
+     * @param user the {@link User} class that will be show the calendar.
+     * @param calendar the {@link SwingCalendar} class that will be show the
+     *                calendar.
+     */
+    public MonthCellRenderer(User user, SwingCalendar calendar) {
+        this.user = user;
+        this.calendar = calendar;
     }
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
         monthCell = (MonthCell) value;
-        panel = new MonthCellComponent(monthCell);
+        panel = new MonthCellComponent(monthCell, user, calendar);
         return panel;
     }
 }
@@ -272,21 +290,33 @@ class MonthCellRenderer implements TableCellRenderer {
  * month cell.
  */
 class MonthCellEditor extends AbstractCellEditor implements TableCellEditor {
-    MonthCellComponent panel;
-    MonthCell monthCell;
+    private static MonthCellComponent panel;
+    private static MonthCell monthCell;
+    private User user;
+    private SwingCalendar calendar;
 
-    public MonthCellEditor() {
+    /**
+     * Constructor for {@code MonthCellEditor} class. It create a
+     * {@link MonthCellComponent} to display a month cell.
+     * 
+     * @param user the {@link User} class that will be show the calendar.
+     * @param calendar the {@link SwingCalendar} class that will be show the
+     *                calendar.
+     */
+    public MonthCellEditor(User user, SwingCalendar calendar) {
+        this.user = user;
+        this.calendar = calendar;
     }
 
     public Component getTableCellEditorComponent(JTable table, Object value,
             boolean isSelected, int row, int column) {
         monthCell = (MonthCell) value;
-        System.out.println("Date: " + monthCell.date);
-        System.out.println("Times: " + monthCell.times);
-        System.out.println("Titles: " + monthCell.titles + "\n");
-        panel = new MonthCellComponent(monthCell);
-        panel.updateData(monthCell, isSelected);
-        System.out.println("Cell" + row + "," + column + " is selected: " + isSelected);
+        // System.out.println("Date: " + monthCell.date);
+        // System.out.println("Times: " + monthCell.times);
+        // System.out.println("Titles: " + monthCell.titles + "\n");
+        panel = new MonthCellComponent(monthCell, user, calendar);
+        // System.out.println("Cell" + row + "," + column + " is selected: " +
+        // isSelected);
         return panel;
     }
 
@@ -294,4 +324,3 @@ class MonthCellEditor extends AbstractCellEditor implements TableCellEditor {
         return monthCell;
     }
 }
-
