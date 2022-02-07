@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-// import java.util.Locale;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -113,13 +111,26 @@ class WeekTableModel extends DefaultTableModel {
     }
 }
 
+/**
+ * A {@code JPanel} that show all the information for a week cell.
+ * 
+ */
 class WeekCellComponent extends JPanel {
     DateFormat hourFormat = new SimpleDateFormat("HH");
     DateFormat minuteFormat = new SimpleDateFormat("mm");
     JLayeredPane layeredPane = new JLayeredPane();
     JPanel panel = this;
 
-    public WeekCellComponent(WeekCell myClass, JTable table) {
+    /**
+     * Constructor for WeekCellComponent class. Creates a new WeekCellComponent
+     * object.
+     * 
+     * @param myClass  the week cell that has all information for the cell
+     * @param table    the table that the cell is in
+     * @param user     the user that is logged in
+     * @param calendar the calendar that the user is viewing
+     */
+    public WeekCellComponent(WeekCell weekCell, JTable table, User user, SwingCalendar calendar) {
         // initialize components (labels, buttons, etc.)
         this.setPreferredSize(new Dimension(table.getSize().width, 120 * 25));
         TableColumn column = table.getColumnModel().getColumn(0);
@@ -136,16 +147,16 @@ class WeekCellComponent extends JPanel {
         // add events to the layered pane one by one
         // a better way is to get all the bounds of the events and add them to the
         // layered pane
-        for (int i = 0; i < myClass.events.size(); i++) {
+        for (int i = 0; i < weekCell.events.size(); i++) {
             if (i > 0) {
-                lastEvent = myClass.events.get(i - 1);
+                lastEvent = weekCell.events.get(i - 1);
             } else {
-                lastEvent = myClass.events.get(i);
+                lastEvent = weekCell.events.get(i);
             }
-            Event event = myClass.events.get(i);
-            String timeStart = myClass.timesStart.get(i);
-            String timeEnd = myClass.timesEnd.get(i);
-            String title = myClass.titles.get(i);
+            Event event = weekCell.events.get(i);
+            String timeStart = weekCell.timesStart.get(i);
+            String timeEnd = weekCell.timesEnd.get(i);
+            String title = weekCell.titles.get(i);
             long startTime = event.getDate().getTime();
             long lastStartTime = lastEvent.getDate().getTime();
             int y = (Integer.parseInt(hourFormat.format(event.getDate()))) * 120
@@ -188,8 +199,9 @@ class WeekCellComponent extends JPanel {
             }
             eventButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    // JOptionPane.showMessageDialog(null, "Event: " + event.getDate() + "\nTime: " + time.getText());
-                    new EditEventDialog(event, timeStart, timeEnd, panel);
+                    // JOptionPane.showMessageDialog(null, "Event: " + event.getDate() + "\nTime: "
+                    // + time.getText());
+                    new EditEventDialog(event, timeStart, timeEnd, panel, user, calendar);
                 }
             });
 
@@ -199,27 +211,65 @@ class WeekCellComponent extends JPanel {
     }
 }
 
+/**
+ * {@code WeekCellRenderer} implements {@link TableCellRenderer} to show all
+ * events inside a week cell.
+ */
 class WeekCellRenderer implements TableCellRenderer {
-    WeekCellComponent panel;
+    private static WeekCellComponent panel;
+    private User user;
+    private SwingCalendar calendar;
+
+    /**
+     * Constructor for {@code WeekCellRenderer} class. It takes in a
+     * {@code User} object and a {@code SwingCalendar} object.
+     * 
+     * @param user     the {@link User} class that will be show the calendar.
+     * @param calendar the {@link SwingCalendar} class that will be show the
+     *                 calendar.
+     */
+    public WeekCellRenderer(User user, SwingCalendar calendar) {
+        this.user = user;
+        this.calendar = calendar;
+    }
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
-        WeekCell myClass = (WeekCell) value;
-        panel = new WeekCellComponent(myClass, table);
+        WeekCell weekCell = (WeekCell) value;
+        panel = new WeekCellComponent(weekCell, table, user, calendar);
         return panel;
     }
 }
 
+/**
+ * {@code WeekCellEditor} implements {@link TableCellEditor} to edit all events
+ * inside a week cell.
+ */
 class WeekCellEditor extends AbstractCellEditor implements TableCellEditor {
-    WeekCellComponent panel;
-    WeekCell weekCell;
+    private static WeekCellComponent panel;
+    private static WeekCell weekCell;
+    private User user;
+    private SwingCalendar calendar;
+
+    /**
+     * Constructor for {@code WeekCellEditor} class. It takes in a
+     * {@code User} object and a {@code SwingCalendar} object.
+     * 
+     * @param user     the {@link User} class that will be show the calendar.
+     * @param calendar the {@link SwingCalendar} class that will be show the
+     *                 calendar.
+     */
+    public WeekCellEditor(User user, SwingCalendar calendar) {
+        this.user = user;
+        this.calendar = calendar;
+    }
 
     public Component getTableCellEditorComponent(JTable table, Object value,
             boolean isSelected, int row, int column) {
-        WeekCell myClass = (WeekCell) value;
-        weekCell = myClass;
-        panel = new WeekCellComponent(myClass, table);
-        System.out.println("Cell" + row + "," + column + " is selected: " + isSelected);
+        weekCell = (WeekCell) value;
+        panel = new WeekCellComponent(weekCell, table, user, calendar);
+        // System.out.println("Cell" + row + "," + column + " is selected: " +
+        // isSelected);
         return panel;
     }
 
@@ -227,4 +277,3 @@ class WeekCellEditor extends AbstractCellEditor implements TableCellEditor {
         return weekCell;
     }
 }
-
