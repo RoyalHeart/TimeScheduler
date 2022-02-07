@@ -3,7 +3,6 @@ package src;
 // import oracle.jdbc.proxy.annotation.OnError;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -11,14 +10,16 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 // import java.awt.event.ActionListener;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusListener;
-import java.sql.Time;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.text.ParseException;
 // import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
@@ -44,21 +45,24 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
-public class EditEventDialog extends JDialog{
-    Event event;
-    JDialog dialog;
-    JPanel panel;
-    String timeStart;
-    String timeEnd;
+public class EditEventDialog extends JDialog {
+    private Event event;
+    private JDialog dialog;
+    private JPanel panel;
+    private String timeStart;
+    private String timeEnd;
+    private User user;
+    private SwingCalendar swingCalendar;
 
-    EditEventDialog(Event event, String timeStart, String timeEnd, JPanel panel)
-    {
+    EditEventDialog(Event event, String timeStart, String timeEnd, JPanel panel, User user, SwingCalendar calendar) {
         super(SwingUtilities.windowForComponent(panel));
         this.event = event;
         this.dialog = this;
         this.panel = panel;
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
+        this.user = user;
+        swingCalendar = calendar;
         this.setTitle("Event");
         this.setSize(300, 300);
         this.setLayout(new BorderLayout());
@@ -70,14 +74,12 @@ public class EditEventDialog extends JDialog{
         this.add(new Btn(), BorderLayout.SOUTH);
     }
 
-    class displayPanel extends JPanel 
-    {
+    class displayPanel extends JPanel {
         JLabel title = new JLabel();
         JLabel time = new JLabel();
         GridBagConstraints gbc = new GridBagConstraints();
 
-        displayPanel()
-        {
+        displayPanel() {
             this.setLayout(new GridBagLayout());
             title.setText(event.getTitle());
             gbc.gridx = 0;
@@ -92,20 +94,26 @@ public class EditEventDialog extends JDialog{
         }
     }
 
-    class Btn extends JPanel
-    {
+    class Btn extends JPanel {
         JButton editBtn = new JButton("Edit");
         JButton delBtn = new JButton("Delete");
-        Btn()
-        {
+
+        Btn() {
             this.setLayout(new FlowLayout());
             this.add(editBtn);
             this.add(delBtn);
 
             try {
                 delBtn.addActionListener(e -> {
-                    if (Database.delEvent(event))
-                    {
+                    if (Database.delEvent(event)) {
+                        SchedulerJava.unscheduleMail(event);
+                        swingCalendar.update();
+                        new Thread(new Runnable() {
+                            public void run() {
+                                // send email when event is deleted
+                                Mail.sendDeletedEmail(user, event);
+                            }
+                        }).start();
                         JOptionPane.showMessageDialog(null, "Event deleted successfully.");
                         dialog.dispose();
                     }
@@ -115,10 +123,9 @@ public class EditEventDialog extends JDialog{
             }
 
             try {
-                editBtn.addActionListener(e ->
-                {
+                editBtn.addActionListener(e -> {
                     dialog.dispose();
-                    new MainPanel(event, panel, timeStart, timeEnd);
+                    new MainPanel(event, panel, timeStart, timeEnd, user);
                 });
             } catch (Exception e) {
                 e.printStackTrace();
@@ -126,10 +133,8 @@ public class EditEventDialog extends JDialog{
         }
     }
 
-    class MainPanel extends JDialog
-    {
-        MainPanel(Event event, JPanel panel, String timeStart, String timeEnd)
-        {
+    class MainPanel extends JDialog {
+        MainPanel(Event event, JPanel panel, String timeStart, String timeEnd, User user) {
             super(SwingUtilities.windowForComponent(panel));
             this.setTitle("Event");
             this.setSize(800, 500);
@@ -138,19 +143,17 @@ public class EditEventDialog extends JDialog{
             this.setLocationRelativeTo(null);
             this.add(new TitlePanel(event), BorderLayout.NORTH);
             this.add(new EventMainPanel(event, timeStart, timeEnd), BorderLayout.CENTER);
-            this.add(new EditBtn(event), BorderLayout.SOUTH);
+            this.add(new EditBtn(event, this), BorderLayout.SOUTH);
             this.setResizable(false);
             this.setVisible(true);
         }
     }
 
-    class TitlePanel extends JPanel
-    {
+    static class TitlePanel extends JPanel {
         static JTextField titleField = new JTextField(50);
 
         // Constructor for edit event
-        TitlePanel(Event event)
-        {
+        TitlePanel(Event event) {
             this.setLayout(new FlowLayout());
             JLabel titleLabel = new JLabel("Title");
             titleField.setText(event.getTitle());
@@ -174,8 +177,7 @@ public class EditEventDialog extends JDialog{
         }
     }
 
-    class EventMainPanel extends JPanel
-    {
+    class EventMainPanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
 
         EventMainPanel(Event event, String timeStart, String timeEnd) {
@@ -186,28 +188,28 @@ public class EditEventDialog extends JDialog{
             gbc.gridy = 1;
             this.add(datetime, gbc);
 
-            /*FriendField friendField = new FriendField();
+            FriendField friendField = new FriendField(event);
             gbc.gridx = 0;
             gbc.gridy = 2;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.weightx = 0.5;
-            this.add(friendField, gbc); */
+            this.add(friendField, gbc);
 
-             LocationField locationField = new LocationField(event);
+            LocationField locationField = new LocationField(event);
             gbc.gridx = 0;
             gbc.gridy = 3;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.weightx = 0.5;
             this.add(locationField, gbc);
 
-             Description description = new Description(event);
+            Description description = new Description(event);
             gbc.gridx = 0;
             gbc.gridy = 4;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.weightx = 0.5;
-            this.add(description, gbc); 
+            this.add(description, gbc);
 
-             Reminder reminder = new Reminder(event);
+            Reminder reminder = new Reminder(event);
             gbc.gridx = 0;
             gbc.gridy = 5;
             this.add(reminder, gbc);
@@ -215,13 +217,12 @@ public class EditEventDialog extends JDialog{
             Priority priority = new Priority(event);
             gbc.gridx = 0;
             gbc.gridy = 6;
-            this.add(priority, gbc); 
+            this.add(priority, gbc);
         }
 
     }
 
-    class DateTime extends JPanel
-    {
+    static class DateTime extends JPanel {
         JLabel dateLabel = new JLabel();
         JLabel timeLabel = new JLabel();
         static Event event;
@@ -259,7 +260,7 @@ public class EditEventDialog extends JDialog{
             p.put("text.month", "Month");
             p.put("text.today", "Today");
             p.put("text.year", "Year");
-            model.setDate(event.getDate().getYear() + 1900, event.getDate().getMonth() + 1, event.getDate().getDate());
+            model.setDate(event.getDate().getYear() + 1900, event.getDate().getMonth(), event.getDate().getDate());
             model.setSelected(true);
             JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
             datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
@@ -287,13 +288,13 @@ public class EditEventDialog extends JDialog{
             Date before = startTime.getPickedTime();
             Date after = endTime.getPickedTime();
             /*
-            * try {
-            * before = format.parse(before);
-            * after = format.parse(after);
-            * } catch (ParseException e) {
-            * e.printStackTrace();
-            * }
-            */
+             * try {
+             * before = format.parse(before);
+             * after = format.parse(after);
+             * } catch (ParseException e) {
+             * e.printStackTrace();
+             * }
+             */
             long diff = after.getTime() - before.getTime();
             // convert diff time to minutes
             int minutes = (int) TimeUnit.MILLISECONDS.toMinutes(diff);
@@ -306,7 +307,7 @@ public class EditEventDialog extends JDialog{
             int h = startTime.getPickedTime().getHours();
             int m = startTime.getPickedTime().getMinutes();
             Date temp = getDateTime();
-            int month = temp.getMonth();
+            int month = temp.getMonth() + 1;
             int date = temp.getDate();
             int year = temp.getYear() + 1900;
             String string = String.format("%d-%d-%d %d:%d", date, month, year, h, m);
@@ -315,7 +316,97 @@ public class EditEventDialog extends JDialog{
         }
     }
 
-    class LocationField extends JPanel {
+    static class FriendField extends JPanel {
+        static JTextField friendField = new JTextField(50);
+        ImageIcon icon;
+        JLabel iconLabel;
+        static ArrayList<String> participants = new ArrayList<String>();
+        static JList<String> list = new JList<String>();
+        private JButton deleteParticipantButton = new JButton("remove");
+
+        // private static JLabel participantsLabel = new JLabel();
+        FriendField(Event event) {
+            this.setLayout(new FlowLayout());
+            try {
+                icon = new ImageIcon(getClass().getResource("Images/friendsicon.jpg"));
+                Image image = icon.getImage();
+                Image newing = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+                icon = new ImageIcon(newing);
+                iconLabel = new JLabel(icon);
+                this.add(iconLabel);
+            } catch (Exception e) {
+                System.out.print("Image can not be found");
+            }
+            this.add(friendField);
+            friendField.addKeyListener(new KeyListener() {
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                        if (RegisterValidator.isValidEmail(friendField.getText())) {
+                            System.out.println("Participant: " + friendField.getText());
+                            if (participants.contains(friendField.getText())) {
+                                JOptionPane.showMessageDialog(e.getComponent(),
+                                        "You have already added this participant");
+                            } else {
+                                participants.add(friendField.getText());
+                                updateParticipants(friendField.getText());
+                                list.setListData(participants.toArray(new String[participants.size()]));
+                                friendField.setText("");
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Invalid email address");
+                        }
+                    }
+                }
+
+                public void keyTyped(KeyEvent e) {
+                }
+
+                public void keyReleased(KeyEvent e) {
+                }
+            });
+
+            deleteParticipantButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (list.getSelectedIndex() != -1) {
+                        participants.remove(list.getSelectedIndex());
+                        updateParticipants(null);
+                        list.setListData(participants.toArray(new String[participants.size()]));
+                    }
+                }
+            });
+            if (event.getParticipants() != null) {
+                participants = event.getParticipants();
+                list.setListData(participants.toArray(new String[participants.size()]));
+                deleteParticipantButton.setVisible(true);
+            } else {
+                participants = new ArrayList<String>();
+                list.setListData(participants.toArray(new String[participants.size()]));
+                deleteParticipantButton.setVisible(false);
+            }
+            this.add(list);
+            this.add(deleteParticipantButton);
+        }
+
+        public static ArrayList<String> getParticipants() {
+            return participants;
+        }
+
+        public void updateParticipants(String participant) {
+            System.out.println("Participant label: " + participant);
+            JLabel participantLabel = new JLabel(participant);
+            list.add(participantLabel);
+            if (list.getModel().getSize() >= 0) {
+                deleteParticipantButton.setEnabled(true);
+                deleteParticipantButton.setVisible(true);
+            } else {
+                deleteParticipantButton.setEnabled(false);
+                deleteParticipantButton.setVisible(false);
+            }
+        }
+    }
+
+    static class LocationField extends JPanel {
         static JTextField locationField = new JTextField(50);
         ImageIcon icon;
         JLabel iconLabel;
@@ -352,7 +443,7 @@ public class EditEventDialog extends JDialog{
                 }
             });
             this.add(locationField);
-        
+
         }
 
         static String getLoc() {
@@ -360,7 +451,7 @@ public class EditEventDialog extends JDialog{
         }
     }
 
-    class Description extends JPanel {
+    static class Description extends JPanel {
         static JTextField descripField = new JTextField(50);
         ImageIcon icon;
         JLabel iconLabel;
@@ -405,13 +496,12 @@ public class EditEventDialog extends JDialog{
         }
     }
 
-    class Reminder extends JPanel {
+    static class Reminder extends JPanel {
         JLabel reminderLabel = new JLabel("Remind before: ");
         static String[] arr = { "No remind", "1 minute", "3 hour", "3 days", "1 week" };
         static JComboBox<String> reminderComboBox = new JComboBox<String>(arr);
 
-        Reminder(Event event)
-        {
+        Reminder(Event event) {
             this.add(reminderLabel);
             this.add(reminderComboBox);
         }
@@ -447,7 +537,7 @@ public class EditEventDialog extends JDialog{
     static class TimeComboBox extends JPanel {
         JComboBox<Date> cb;
         int index = 0;
-        
+
         TimeComboBox(Event event, String time) {
             setLayout(new GridBagLayout());
             int index = 0;
@@ -455,7 +545,8 @@ public class EditEventDialog extends JDialog{
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
-            String string = String.format("%d-%d-%d %s", cal.getTime().getDate(), cal.getTime().getMonth() + 1, cal.getTime().getYear() + 1900, time);
+            String string = String.format("%d-%d-%d %s", cal.getTime().getDate(), cal.getTime().getMonth() + 1,
+                    cal.getTime().getYear() + 1900, time);
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
             try {
                 Date sTime = sdf.parse(string);
@@ -478,7 +569,6 @@ public class EditEventDialog extends JDialog{
                 }
             } while (calendar.getTime().before(end.getTime()));
 
-
             cb = new JComboBox<Date>(model);
             cb.setRenderer(new DateComboBoxRenderer());
             cb.setSelectedIndex(index + 2);
@@ -491,7 +581,7 @@ public class EditEventDialog extends JDialog{
         }
     }
 
-    class Priority extends JPanel {
+    static class Priority extends JPanel {
         JLabel priorityLabel = new JLabel("Priority");
         static String[] arr = { "High", "Medium", "Low" };
         static JComboBox<String> priorityComboBox = new JComboBox<String>(arr);
@@ -507,22 +597,17 @@ public class EditEventDialog extends JDialog{
         }
     }
 
-    class EditBtn extends JPanel
-    {
+    class EditBtn extends JPanel {
         JButton editBtn = new JButton("Save");
-        EditBtn(Event event)
-        {
+
+        EditBtn(Event event, MainPanel mainPanel) {
             try {
-                editBtn.addActionListener(e -> 
-                {
-                    if (DateTime.getDuration() <= 0)
-                    {
+                editBtn.addActionListener(e -> {
+                    if (DateTime.getDuration() <= 0) {
                         JOptionPane.showMessageDialog((JButton) e.getSource(),
                                 "Please select end time greater than start time!");
                         return;
-                    }
-                    else
-                    {
+                    } else {
                         System.out.println("Duration: " + DateTime.getDuration());
                         System.out.println("Title: " + TitlePanel.getTitle());
                         System.out.println("DateTime: " + DateTime.getDateTime());
@@ -541,21 +626,33 @@ public class EditEventDialog extends JDialog{
                         }
                         try {
                             Event newEvent = new Event(event.getID(), event.getUserID(),
-                                TitlePanel.getTitle(),
-                                Description.getDescription(),
-                                DateTime.getDate(),
-                                Reminder.getRemind(),
-                                LocationField.getLoc(),
-                                DateTime.getDuration(),
-                                Priority.getPriority());
-                            if (Database.updateEvent(newEvent))
-                            {
+                                    TitlePanel.getTitle(),
+                                    Description.getDescription(),
+                                    DateTime.getDate(),
+                                    Reminder.getRemind(),
+                                    LocationField.getLoc(),
+                                    DateTime.getDuration(),
+                                    Priority.getPriority());
+                            newEvent.setParticipants(FriendField.getParticipants());
+                            if (Database.updateEvent(newEvent)) {
                                 JOptionPane.showMessageDialog((JButton) e.getSource(), "Event updated successfully!");
-                                // Mail.sendRemindEmail(user, event); // send email right after event is created
-                                /* if (event.getRemind().compareTo(event.getDate()) < 0) {
-                                    System.out.println("Remind set");
-                                    SchedulerJava.scheduleMail(user, event);
-                                } */
+                                swingCalendar.cal.add(Calendar.MONTH, +1);
+                                swingCalendar.update();
+                                swingCalendar.cal.add(Calendar.MONTH, -1);
+                                swingCalendar.update();
+                                if (event.getRemind().compareTo(event.getDate()) < 0) {
+                                    SchedulerJava.unscheduleMail(event);
+                                }
+                                if (newEvent.getRemind().compareTo(newEvent.getDate()) < 0) {
+                                    SchedulerJava.scheduleMail(user, newEvent);
+                                }
+                                new Thread(new Runnable() {
+                                    public void run() {
+                                        // send email right after event is edited
+                                        Mail.sendEditEmail(user, event, newEvent);
+                                    }
+                                }).start();
+                                mainPanel.dispose();
                             }
                         } catch (Exception e2) {
                             e2.printStackTrace();
@@ -585,7 +682,7 @@ public class EditEventDialog extends JDialog{
     }
 
     // Format for JDateTimePicker
-    class DateLabelFormatter extends AbstractFormatter {
+    static class DateLabelFormatter extends AbstractFormatter {
 
         private String datePattern = "dd-MM-yyyy";
         private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
