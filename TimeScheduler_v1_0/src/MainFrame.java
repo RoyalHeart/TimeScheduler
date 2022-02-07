@@ -20,7 +20,8 @@ public class MainFrame extends JFrame {
 
     MainFrame(User user) {
         panel = this.getContentPane();
-        AddEventDialog addEventDialog = new AddEventDialog(user, panel);
+        SwingCalendar calendar = new SwingCalendar(user);
+        AddEventDialog addEventDialog = new AddEventDialog(user, calendar);
         SchedulerJava.createScheduler();
         SchedulerJava.setFutureRemind(user);
         this.setIconImage(icon.getImage());
@@ -31,7 +32,7 @@ public class MainFrame extends JFrame {
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.setTitle("Time Scheduler");
         this.setLayout(new BorderLayout());
-        this.add(new Navigation(this, user), BorderLayout.WEST);
+        this.add(new Navigation(this, user, calendar), BorderLayout.WEST);
         JButton addButton = new JButton("+");
         addButton.addActionListener(new ActionListener() {
 
