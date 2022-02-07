@@ -295,6 +295,15 @@ public class Mail {
         }
     }
 
+    /**
+     * Send an email to the user and participants about the edited {@link Event}
+     *
+     * @param user     the {@code user} that edit the event
+     * @param event    the {@code event} before editing
+     * @param newEvent the {@code event} after editing
+     * @return {@code true} if the message is sent successfully
+     *         {@code false} if the message is not sent successfully
+     */
     public static boolean sendEditEmail(User user, Event event, Event newEvent) {
         Session session = createSession();
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -452,6 +461,14 @@ public class Mail {
         }
     }
 
+    /**
+     * Send an email to the user and participants about the deleted {@link Event}
+     *
+     * @param user  the {@code user} that delete the event
+     * @param event the {@code event} that was deleted
+     * @return {@code true} if the message is sent successfully
+     *         {@code false} if the message is not sent successfully
+     */
     public static boolean sendDeletedEmail(User user, Event event) {
         Session session = createSession();
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
