@@ -24,7 +24,7 @@ public class FileChoose extends JPanel implements ActionListener {
     JFrame frame = new JFrame(); // just to get the icon of the frame to set to the chooser
     ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
 
-    public FileChoose(User user, Calendar cal, String view) {
+    FileChoose(User user, Calendar cal, String view) {
         this.user = user;
         this.cal = cal;
         this.view = view;
@@ -34,13 +34,15 @@ public class FileChoose extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         chooser = new JFileChooser();
         chooser.setCurrentDirectory(new java.io.File("."));
-        chooser.setDialogTitle("Export this week to a PDF file");
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        //
+        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        if (view == "Week") {
+            chooser.setDialogTitle("Choose a location to save the weekly export file");
+        } else if (view == "Month") {
+            chooser.setDialogTitle("Choose a location to save the monthly export file");
+        }
+
         // disable the "All files" option.
-        //
         chooser.setAcceptAllFileFilterUsed(false);
-        //
         if (chooser.showDialog(frame, "Export to PDF") == JFileChooser.APPROVE_OPTION) {
             System.out.println("getCurrentDirectory(): "
                     + chooser.getCurrentDirectory());
