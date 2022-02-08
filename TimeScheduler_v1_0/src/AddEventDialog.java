@@ -3,7 +3,6 @@ package src;
 // import oracle.jdbc.proxy.annotation.OnError;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -45,7 +44,6 @@ import javax.swing.event.MouseInputAdapter;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
-import org.w3c.dom.events.MouseEvent;
 
 /**
  * {@code AddEventDialog} is used to contain all panels for adding {@link Event}
@@ -183,8 +181,8 @@ class EventMainPanel extends JPanel {
 class DateTime extends JPanel {
     JLabel dateLabel = new JLabel();
     JLabel timeLabel = new JLabel();
-    static TestPane startTime = new TestPane();
-    static TestPane endTime = new TestPane();
+    static TimeComboBox startTime = new TimeComboBox();
+    static TimeComboBox endTime = new TimeComboBox();
     JLabel iconLabel;
     ImageIcon icon;
     UtilDateModel model = new UtilDateModel();
@@ -693,11 +691,11 @@ class SetBtn extends JPanel {
  * 
  * @author Sang Doan Tan 1370137 
  */
-class TestPane extends JPanel {
+class TimeComboBox extends JPanel {
     JComboBox<Date> cb;
     int index = 0;
 
-    public TestPane() {
+    public TimeComboBox() {
         setLayout(new GridBagLayout());
         Calendar cal = Calendar.getInstance();
         Calendar calendar = Calendar.getInstance();
@@ -787,3 +785,4 @@ class DateLabelFormatter extends AbstractFormatter {
     }
 
 }
+
