@@ -6,6 +6,28 @@ import java.awt.*;
 // import java.awt.event.*;
 import javax.swing.*;
 
+/**
+ * {@code Profile} is used to display the user properties like username, email and phone number.
+ * User can also edit their properties in this class too.
+ * 
+ * <p>
+ * This class contains:
+ * <p>
+ * - A panel to display all user's properties
+ * <p>
+ * - A label for username
+ * <p>
+ * - A label for email addr
+ * <p>
+ * - A label for phone number
+ * <p>
+ * - A button to change password
+ * <p>
+ * - A User
+ * 
+ * @author Sang Doan Tan 1370137
+ * @author Tam Thai Hoang 1370674 (display properties of user)
+ */
 public class Profile extends JPanel {
     JPanel panel = new JPanel();
     JLabel nameLabel = new JLabel("Name: ");
@@ -15,6 +37,11 @@ public class Profile extends JPanel {
     JPanel editPanel = new JPanel();
     User user;
 
+    /**
+     * Constructor that creates {@code Profile} object.
+     * 
+     * @param user  the user that logins in to the app
+     */
     Profile(User user) {
         this.user = user;
         this.setLayout(new BorderLayout());
@@ -24,17 +51,9 @@ public class Profile extends JPanel {
         label.setHorizontalAlignment(SwingConstants.CENTER);
         this.add(label, BorderLayout.NORTH);
         panel.setLayout(new GridLayout(3, 0));
-        /*
-         * panel.add(nameLabel);
-         * panel.add(name);
-         * panel.add(emailLabel);
-         * panel.add(email);
-         * panel.add(phoneLabel);
-         * panel.add(phone);
-         */
-        panel.add(new namePanel(user));
-        panel.add(new emailPanel(user));
-        panel.add(new phonePanel(user));
+        panel.add(new NamePanel(user));
+        panel.add(new EmailPanel(user));
+        panel.add(new PhonePanel(user));
         editPanel.setLayout(new FlowLayout());
         editPanel.add(chPasswBtn);
         this.add(panel, BorderLayout.CENTER);
@@ -53,7 +72,7 @@ public class Profile extends JPanel {
                 {
                     if (Database.existUser(user.getUsername(), new String(pf.getPassword())))
                     {
-                        new passwDialog(new passwEditPanel());
+                        new PasswDialog(new PasswEditPanel());
                     }
                     else
                     {
@@ -66,50 +85,45 @@ public class Profile extends JPanel {
         }
     }
 
+    /**
+     * Repaint again the display panel when updated user's properties successfully.
+     * 
+     * @param user user that need to change information
+     */
     void updatePanel(User user) {
         panel.removeAll();
 
-        panel.add(new namePanel(user));
-        panel.add(new emailPanel(user));
-        panel.add(new phonePanel(user));
+        panel.add(new NamePanel(user));
+        panel.add(new EmailPanel(user));
+        panel.add(new PhonePanel(user));
         panel.revalidate();
         panel.repaint();
     }
 
-    class profilePanel extends JPanel {
-        JTextField emailField = new JTextField(20);
-        JTextField phoneField = new JTextField(20);
-        JPanel editPanel = new JPanel();
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        profilePanel() {
-            editPanel.setLayout(new GridBagLayout());
-
-            // add namePanel to gridbaglayout
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            editPanel.add(new namePanel(user), gbc);
-
-            // add emailPanel to gridbaglayout
-            gbc.gridx = 0;
-            gbc.gridy = 1;
-            editPanel.add(new emailPanel(user), gbc);
-
-            // add phonePanel to gridbaglayout
-            gbc.gridx = 0;
-            gbc.gridy = 2;
-            editPanel.add(new phonePanel(user), gbc);
-
-            this.add(editPanel, BorderLayout.CENTER);
-        }
-    }
-
-    class namePanel extends JPanel {
+    /**
+     * {@code NamePanel} is used to contain name label and edit button for name.
+     * <p>
+     * This class contains:
+     * <p>
+     * - A name label to display name
+     * <p>
+     * - A button to edit name
+     * <p>
+     * - An edit dialog 
+     * 
+     * @author Sang Doan Tan 1370137
+     */
+    class NamePanel extends JPanel {
         JButton nameEditBtn = new JButton("Edit");
         JLabel name = new JLabel(user.getName());
-        editDialog edit;
+        EditDialog edit;
 
-        namePanel(User user) {
+        /**
+         * Constructor that creates {@code NamePanel} object.
+         * 
+         * @param user the user that need to change information
+         */
+        NamePanel(User user) {
             name = new JLabel(user.getName());
             this.setLayout(new FlowLayout());
             this.add(nameLabel);
@@ -118,7 +132,7 @@ public class Profile extends JPanel {
             try {
                 nameEditBtn.addActionListener(e -> {
                     if (edit == null || !edit.isShowing()) {
-                        edit = new editDialog(new nameEditPanel(), 0);
+                        edit = new EditDialog(new NameEditPanel(), 0);
                     }
                 });
             } catch (Exception e) {
@@ -127,12 +141,30 @@ public class Profile extends JPanel {
         }
     }
 
-    class emailPanel extends JPanel {
+    /**
+     * {@code EmailPanel} is used to contain the email label and edit button for email.
+     * <p>
+     * This class contains:
+     * <p>
+     * - A label to display email
+     * <p>
+     * - A button to edit email
+     * <p>
+     * - An edit dialog
+     * 
+     * @author Sang Doan Tan 1370137
+     */
+    class EmailPanel extends JPanel {
         JButton emailEditBtn = new JButton("Edit");
         JLabel email = new JLabel(user.getEmail());
-        editDialog edit;
+        EditDialog edit;
 
-        emailPanel(User user) {
+        /**
+         * Constructor that creates {@code EmailPanel} object.
+         * 
+         * @param user the user that need to change information
+         */
+        EmailPanel(User user) {
             email = new JLabel(user.getEmail());
             this.setLayout(new FlowLayout());
             this.add(emailLabel);
@@ -141,7 +173,7 @@ public class Profile extends JPanel {
             try {
                 emailEditBtn.addActionListener(e -> {
                     if (edit == null || !edit.isShowing()) {
-                        edit = new editDialog(new emailEditPanel(), 1);
+                        edit = new EditDialog(new EmailEditPanel(), 1);
                     }
                 });
             } catch (Exception e) {
@@ -150,12 +182,31 @@ public class Profile extends JPanel {
         }
     }
 
-    class phonePanel extends JPanel {
+    /**
+     * {@code PhonePanel} is used to contain the phone number label and edit button for phone number.
+     * 
+     * <p>
+     * This class contains:
+     * <p>
+     * - A label for phone number
+     * <p>
+     * - A button to edit phone number
+     * <p>
+     * - An edit dialog
+     * 
+     * @author Sang Doan Tan 1370137
+     * 
+     */
+    class PhonePanel extends JPanel {
         JButton phoneEditButton = new JButton("Edit");
         JLabel phone = new JLabel(user.getPhone());
-        editDialog edit;
+        EditDialog edit;
 
-        phonePanel(User user) {
+        /**
+         * Constructor that creates {@code PhonePanel} object.
+         * @param user The user that need to change information
+         */
+        PhonePanel(User user) {
             phone = new JLabel(user.getPhone());
             this.setLayout(new FlowLayout());
             this.add(phoneLabel);
@@ -164,7 +215,7 @@ public class Profile extends JPanel {
             try {
                 phoneEditButton.addActionListener(e -> {
                     if (edit == null || !edit.isShowing()) {
-                        edit = new editDialog(new phoneEditPanel(), 2);
+                        edit = new EditDialog(new PhoneEditPanel(), 2);
                     }
                 });
             } catch (Exception e) {
@@ -174,8 +225,17 @@ public class Profile extends JPanel {
     }
 
     // base dialog for edit name, email, phone, password...
-    class baseDialog extends JDialog {
-        baseDialog() {
+    /**
+     * {@code BaseDialog} is used as the parent class for {@link EditDialog} and for {@link PasswDialog}
+     * so they will have the same setting for dialog.
+     * 
+     * @author Sang Doan Tan 1370137
+     */
+    class BaseDialog extends JDialog {
+        /**
+         * Constructor that creates {@code BaseDialog} object.
+         */
+        BaseDialog() {
             super(SwingUtilities.windowForComponent(panel));
             this.setLayout(new BorderLayout());
             this.setSize(600, 400);
@@ -187,23 +247,61 @@ public class Profile extends JPanel {
     }
 
     // dialog for edit name, email, phone, ...
-    class editDialog extends baseDialog {
-        editDialog(basePanel edit, int flag) {
+    /**
+     *  {@code EditDialog} is used to contain the {@link BasePanel} and the {@link BtnPanel}
+     * 
+     * @author Sang Doan Tan 1370137
+     */
+    class EditDialog extends BaseDialog {
+        /**
+         * Constructor that creates {@code EditDialog} object.
+         * 
+         * @param edit the edit panel of username, phone or email
+         * @param flag used to determine what information is going to change
+         */
+        EditDialog(BasePanel edit, int flag) {
             this.add(edit, BorderLayout.CENTER);
-            this.add(new btnPanel(this, edit, flag, null), BorderLayout.SOUTH);
+            this.add(new BtnPanel(this, edit, flag, null), BorderLayout.SOUTH);
         }
     }
 
     // dialog for edit password
-    class passwDialog extends baseDialog {
-        passwDialog(passwEditPanel passwEdit) {
+    /**
+     * {@code PasswDialog} is used to contain to {@link PasswEditPanel} and the {@link BtnPanel}
+     */
+    class PasswDialog extends BaseDialog {
+        /**
+         * Constructor that creates {@code PasswDialog} object.
+         * 
+         * @param passwEdit the panel for editing password.
+         */
+        PasswDialog(PasswEditPanel passwEdit) {
             this.add(passwEdit, BorderLayout.CENTER);
-            this.add(new btnPanel(this, null, 3, passwEdit), BorderLayout.SOUTH);
+            this.add(new BtnPanel(this, null, 3, passwEdit), BorderLayout.SOUTH);
         }
     }
 
     // base panel for edit panel
-    class basePanel extends JPanel {
+    /**
+     * {@code BasePanel} is used as the parent class for {@link NameEditPanel}, {@link EmailEditPanel} and {@link PhoneEditPanel}
+     * <p>
+     * This class contains:
+     * <p>
+     * - A {@code JLabel} for new information
+     * <p>
+     * - A {@code JLabel} for confirm new information
+     * <p>
+     * - A {@code JTextField} to enter new information
+     * <p>
+     * - A {@code JTextField} to confirm new information
+     * <p>
+     * - A {@code JLabel} for current information
+     * <p>
+     * - A {@code JLabel} to display current information
+     * 
+     * @author Sang Doan Tan 1370137
+     */
+    class BasePanel extends JPanel {
         // label for new name, email, phone, ...
         protected JLabel newLabel = new JLabel();
         // label for confirm new name, email, phone, ...
@@ -221,7 +319,7 @@ public class Profile extends JPanel {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        basePanel() {
+        BasePanel() {
             this.setLayout(new GridBagLayout());
 
             currentPanel.setLayout(new FlowLayout());
@@ -249,8 +347,13 @@ public class Profile extends JPanel {
         }
     }
 
-    class nameEditPanel extends basePanel {
-        nameEditPanel() {
+    /**
+     * {@code NameEditPanel} is inherited from {@link BasePanel} to change the name of {@link User}
+     * 
+     * @author Sang Doan Tan 1370137
+     */
+    class NameEditPanel extends BasePanel {
+        NameEditPanel() {
             currentLabel.setText("Current name: ");
             currentDisplayLabel.setText(user.getName());
             newLabel.setText("New name: ");
@@ -258,8 +361,13 @@ public class Profile extends JPanel {
         }
     }
 
-    class emailEditPanel extends basePanel {
-        emailEditPanel() {
+    /**
+     * {@code EmailEditPanel} is inherited from {@link BasePanel} to change the email of {@link User}
+     * 
+     * @author Sang Doan Tan 1370137
+     */
+    class EmailEditPanel extends BasePanel {
+        EmailEditPanel() {
             currentLabel.setText("Current email address: ");
             currentDisplayLabel.setText(user.getEmail());
             newLabel.setText("New email address: ");
@@ -267,8 +375,13 @@ public class Profile extends JPanel {
         }
     }
 
-    class phoneEditPanel extends basePanel {
-        phoneEditPanel() {
+    /**
+     * {@code PhoneEditPanel} is inherited from {@link BasePanel} to change the phone number of {@link User}
+     * 
+     * @author Sang Doan Tan 1370137
+     */
+    class PhoneEditPanel extends BasePanel {
+        PhoneEditPanel() {
             currentLabel.setText("Current phone number: ");
             currentDisplayLabel.setText(user.getPhone());
             newLabel.setText("New phone number: ");
@@ -277,7 +390,22 @@ public class Profile extends JPanel {
     }
 
     // panel for change password
-    class passwEditPanel extends JPanel {
+    /**
+     * {@code PassWEditPanel} is used to contain label and password field that needed to change the password of {@code User}
+     * <p>
+     * This class contains:
+     * <p>
+     * - A label for new password
+     * <p>
+     * - A label for confirm new password
+     * <p>
+     * - A password field for new password
+     * <p>
+     * - A password field for confirm new password
+     * 
+     * @author Sang Doan Tan 1370137
+     */
+    class PasswEditPanel extends JPanel {
         // label for new password
         JLabel newLabel = new JLabel("New Password: ");
         // label for confirm new password
@@ -289,7 +417,7 @@ public class Profile extends JPanel {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        passwEditPanel() {
+        PasswEditPanel() {
             this.setLayout(new GridBagLayout());
             gbc.gridx = 0;
             gbc.gridy = 0;
@@ -310,13 +438,28 @@ public class Profile extends JPanel {
     }
 
     // panel for confirm and cancel btn in edit dialog
-    class btnPanel extends JPanel {
+    /**
+     * {@code BtnPanel} is used to contain the cancel button and confirm button when editing user's informaiton
+     * <p>
+     * This class contains:
+     * <p>
+     * - A {@code JButton} cancelBtn to cancel edit information
+     * <p>
+     * - A {@code JButton} confirmBtn to confirm edit information
+     * <p>
+     * - A {@code String[]} to display name, email and phone
+     * <p>
+     * - A {@link BasePanel} to access information from {@code BasePanel}
+     * 
+     * @author Sang Doan Tan 1370137
+     */
+    class BtnPanel extends JPanel {
         JButton cancelBtn = new JButton("Cancel");
         JButton confirmBtn = new JButton("Confirm");
         // String array to easy display message dialog
         String[] arr = {"Name", "Email", "Phone"};
         // Variable to reference to BasePanel
-        basePanel base;
+        BasePanel base;
 
         void showNotMatchMessage(int flag)
         {
@@ -331,6 +474,13 @@ public class Profile extends JPanel {
         }
 
         // Function to check validation of name, email and phone
+        /**
+         * Check if name, email or phone matches the condition 
+         * 
+         * @param flag determines name, email or phone
+         * @return true if matches,
+         *         false if does not match
+         */
         boolean checkInvalid(int flag)
         {
             switch (flag) 
@@ -369,7 +519,17 @@ public class Profile extends JPanel {
 
         // baseD to reference to baseDialog, baseP to reference basePanel, passwP to
         // reference to passwEditPanel
-        btnPanel(baseDialog baseD, basePanel baseP, int flag, passwEditPanel passwP) {
+        /**
+         * Constructor that creates {@code BtnPanel} object.
+         * 
+         * @param baseD     is the parent class for edit dialog and password dialog
+         * @param baseP     determines if edit panel is opened
+         * @param flag      determines name, email or phone is being edited
+         * @param passwP    determines if password edit panel is opened
+         * 
+         * @author Sang Doan Tan 1370137
+         */
+        BtnPanel(BaseDialog baseD, BasePanel baseP, int flag, PasswEditPanel passwP) {
             this.setLayout(new FlowLayout());
             this.add(confirmBtn);
             this.add(cancelBtn);
@@ -423,6 +583,13 @@ public class Profile extends JPanel {
         }
     }
 }
+
+
+
+
+
+
+
 
 
 
