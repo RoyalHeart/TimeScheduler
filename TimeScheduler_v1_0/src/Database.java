@@ -31,7 +31,7 @@ import org.jasypt.properties.EncryptableProperties;
  * 
  * @author Tam Thai Hoang 1370674
  * @author Huy Truong Quang (get list of user)
- * @author Sang Doan Tan (update user profile)
+ * @author Sang Doan Tan 1370137 (update user profile, update event)
  */
 public class Database {
     /**
