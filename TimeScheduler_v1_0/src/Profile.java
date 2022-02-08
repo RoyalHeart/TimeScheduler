@@ -25,7 +25,7 @@ import javax.swing.*;
  * <p>
  * - A User
  * 
- * @author Sang Doan Tan 1370137
+ * @author Sang Doan Tan 1370137 (edit user's properties)
  * @author Tam Thai Hoang 1370674 (display properties of user)
  */
 public class Profile extends JPanel {
@@ -583,6 +583,10 @@ public class Profile extends JPanel {
         }
     }
 }
+
+
+
+
 
 
 
