@@ -186,6 +186,16 @@ public class EditEventDialog extends JDialog {
      * @author Sang Doan Tan 1370137
      */
     class MainPanel extends JDialog {
+
+        /**
+         * Constructor that creates {@code MainPanel} object.
+         * 
+         * @param event         the event that will be edited
+         * @param panel         the panel that opened this dialog
+         * @param timeStart     the start time of event
+         * @param timeEnd       the end time of event
+         * @param user          the user of the event
+         */
         MainPanel(Event event, JPanel panel, String timeStart, String timeEnd, User user) {
             super(SwingUtilities.windowForComponent(panel));
             this.setTitle("Event");
@@ -937,3 +947,6 @@ public class EditEventDialog extends JDialog {
         }
     }
 }
+
+
+
