@@ -22,6 +22,18 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+/**
+ * A {@code WeekCell} has all the information to display a week cell.
+ * The {@code WeekCell} contains:
+ * <ul>
+ * <li>{@code date} - the date of the month cell</li>
+ * <li>{@code events} - the events of the month cell</li>
+ * <li>{@code times} - the times of the events</li>
+ * <li>{@code titles} - the titles of the events</li>
+ * </ul>
+ * 
+ * @author Tam Thai Hoang
+ */
 class WeekCell {
     public String date;
     public ArrayList<String> timesStart = new ArrayList<String>();
@@ -70,6 +82,10 @@ class WeekCell {
     }
 }
 
+/**
+ * {@code WeekTableModel} extends {@link DefaultTableModel} to be the table
+ * model for the week view.
+ */
 class WeekTableModel extends DefaultTableModel {
     private ArrayList<WeekCell> data;
     private String[] columns = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
@@ -106,6 +122,11 @@ class WeekTableModel extends DefaultTableModel {
         return true;
     }
 
+    /**
+     * update the data of the week table model
+     * 
+     * @param data the new data to be updated
+     */
     public void update(ArrayList<WeekCell> data) {
         this.data = data;
     }
@@ -125,10 +146,10 @@ class WeekCellComponent extends JPanel {
      * Constructor for WeekCellComponent class. Creates a new WeekCellComponent
      * object.
      * 
-     * @param myClass  the week cell that has all information for the cell
+     * @param weekCell the week cell that has all information for the cell
      * @param table    the table that the cell is in
      * @param user     the user that is logged in
-     * @param calendar the calendar that the user is viewing
+     * @param calendar the {@link SwingCalendar} that the user is viewing
      */
     public WeekCellComponent(WeekCell weekCell, JTable table, User user, SwingCalendar calendar) {
         // initialize components (labels, buttons, etc.)
