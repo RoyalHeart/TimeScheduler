@@ -8,8 +8,6 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,8 +31,8 @@ import javax.swing.table.TableColumnModel;
 
 /**
  * <p>
- * {@code SwingCalendar} implements a calendar and extends {@link JPanel},
- * so it can be shown in a {@code JFrame}.
+ * {@code SwingCalendar} extends {@code JPanel}, and is used to display the
+ * calendar, which can be shown in a {@code JFrame}.
  * <p>
  * <p>
  * This {@code SwingCalendar} has two different view:
@@ -264,7 +262,6 @@ public class SwingCalendar extends JPanel {
      */
     void update() {
         today = new Date();
-        System.out.println(cal.getTime());
         if (view == "Month") {
             this.remove(pane);
             if (exportButton.getActionListeners().length == 0) {
