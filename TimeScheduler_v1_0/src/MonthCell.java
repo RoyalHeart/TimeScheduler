@@ -19,7 +19,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
@@ -107,10 +106,16 @@ class MonthCell {
 /**
  * {@code MonthTableModel} extends {@link DefaultTableModel} to be the table
  * model for the month view.
- * 
  */
 class MonthTableModel extends DefaultTableModel {
+    /**
+     * The 2D array of {@code MonthCell}s.
+     */
     private ArrayList<List<MonthCell>> data;
+
+    /**
+     * String list of the days of the week.
+     */
     private String[] columns = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 
     /**
@@ -168,7 +173,6 @@ class MonthTableModel extends DefaultTableModel {
 /**
  * {@code MonthTableCellComponent} extends {@link JPanel} to show all events
  * inside a month cell.
- * 
  */
 class MonthCellComponent extends JPanel {
     private JLabel dateLabel;
@@ -186,6 +190,8 @@ class MonthCellComponent extends JPanel {
      * 
      * @param monthCell the {@link MonthCell} class that has all the information to
      *                  display a month cell.
+     * @param user      the {@link User} that is logged in.
+     * @param calendar  the {@link SwingCalendar} that is being displayed.
      */
     public MonthCellComponent(MonthCell monthCell, User user, SwingCalendar calendar) {
         // initialize components (labels, buttons, etc.)
