@@ -399,8 +399,12 @@ class RegisterInfo extends JFrame {
             if (RegisterValidator.isValidEmail(email)) {
                 System.out.println("Email is valid");
                 // send verify code to user email
+                new Thread(new Runnable() {
+                    public void run() {
+                        Mail.sendVerifyCode(user);
+                    }
+                }).start();
                 JOptionPane.showMessageDialog(null, "Verification code has been sent to your email");
-                Mail.sendVerifyCode(user);
             } else {
                 System.out.println("Email is not valid");
                 JOptionPane.showMessageDialog(null, "Email is not valid");
