@@ -1,7 +1,5 @@
 package src;
 
-import java.awt.Component;
-import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,20 +10,16 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-
 // import com.itextpdf.awt.geom.Shape;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
 
 /**
- * PDF
+ * PDF class to export the monthly and weekly events information to PDF.
+ * 
+ * @author Tam Thai Hoang
  */
 public class PDF {
     private static Document document;
@@ -239,13 +233,4 @@ public class PDF {
             return false;
         }
     }
-
-    public static void main(String[] args) throws Exception {
-        Database.createConnection();
-        Calendar cal = new GregorianCalendar();
-        cal.set(2022, 0, 30);
-        User user = Database.getUser("admin", "admin");
-        PDF.exportWeeklyEvents(user, cal);
-    }
-
 }
