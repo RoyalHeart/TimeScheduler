@@ -13,7 +13,6 @@ import javax.swing.JPanel;
  * Make a {@link JFileChooser} to choose a location to save export {@link PDF}.
  * 
  * @author Tam Thai Hoang
- *
  */
 public class FileChoose extends JPanel implements ActionListener {
     JFileChooser chooser;
@@ -24,6 +23,14 @@ public class FileChoose extends JPanel implements ActionListener {
     JFrame frame = new JFrame(); // just to get the icon of the frame to set to the chooser
     ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
 
+    /**
+     * Construct a {@link JFileChooser} to choose a location to save export
+     * {@link PDF}.
+     * 
+     * @param user the user who is using the application
+     * @param cal  the calendar to export
+     * @param view the current view of the calendar
+     */
     FileChoose(User user, Calendar cal, String view) {
         this.user = user;
         this.cal = cal;
@@ -34,7 +41,7 @@ public class FileChoose extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         chooser = new JFileChooser();
         chooser.setCurrentDirectory(new java.io.File("."));
-        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (view == "Week") {
             chooser.setDialogTitle("Choose a location to save the weekly export file");
         } else if (view == "Month") {
