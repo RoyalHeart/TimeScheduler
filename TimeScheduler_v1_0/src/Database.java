@@ -30,7 +30,7 @@ import org.jasypt.properties.EncryptableProperties;
  * </p>
  * 
  * @author Tam Thai Hoang 1370674
- * @author Huy Truong Quang (get list of user)
+ * @author Huy Truong Quang 1370713 (get user list, check admin, get user, delete user)
  * @author Sang Doan Tan 1370137 (update user profile, update event)
  */
 public class Database {
@@ -727,7 +727,7 @@ public class Database {
 
     }
 
-    /**
+     /**
      * Get all user to make a list of all users from the database
      * 
      * @return a list of all users in the database
@@ -735,7 +735,7 @@ public class Database {
     static Vector<Vector> getUserList() {
         try {
             Statement stm = con.createStatement();
-            String sql = "SELECT ID, USERNAME, USERFULLNAME, USEREMAIL FROM TISCH_USER";
+            String sql = "SELECT ID, USERNAME, USERFULLNAME, USEREMAIL FROM TISCH_USER ORDER BY ID ASC";
             ResultSet rs = stm.executeQuery(sql);
 
             Vector<Vector> data = new Vector<Vector>();
@@ -757,5 +757,85 @@ public class Database {
             e.printStackTrace();
             return null;
         }
+    }
+    
+    /**
+     * check if the input userID is the ID of an Administrator
+     * 
+     * @param userID
+     * @return true if the input userID is the ID of an Administrator
+     * 		   false in other cases 
+     */
+    static boolean isAdminID(String userID) {
+    	try {
+            Statement stm = con.createStatement();
+            String sql = "SELECT 1 FROM ADMINISTRATOR WHERE ID = " + userID;
+            ResultSet rs = stm.executeQuery(sql);
+            
+            if(rs.next())
+            	return true;
+            else {
+            	return false;
+            }
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    		return false;
+    	}
+    }
+    
+    /**
+     * Get the {@code User} object from the database
+     * 
+     * @param userID the ID of the user
+     * @return the user object from the database,
+     *         or null if user does not exist
+     */
+    static User getUser(String userID) {
+        try {
+            Statement stm = con.createStatement();
+            String sql = "SELECT * FROM TISCH_USER WHERE ID = " + userID;
+            ResultSet rs = stm.executeQuery(sql);
+            
+            if (rs.next()) {
+                String username = rs.getString(2);
+                String name = rs.getString(4);
+                String email = rs.getString(5);
+                String phone = rs.getString(6);
+
+                return new User(userID, username, name, email, phone);
+            } else {
+                return null; 
+            }
+            
+        } catch (Exception e) {
+        	e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * delete user by ID
+     * 
+     * @param userID
+     * @return true if it can delete the user successfully
+     * 		   false if it can not
+     */
+    static boolean deleteUser(String userID) {
+    	try {
+            Statement stm = con.createStatement();
+            String sql = "DELETE FROM TISCH_USER WHERE ID = " + userID;
+            ResultSet rs = stm.executeQuery(sql);
+            
+            if(rs.next())
+            	return true;
+            else {
+            	return false;
+            }
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    		return false;
+    	}
     }
 }
