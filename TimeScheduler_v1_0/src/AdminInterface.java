@@ -6,6 +6,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -21,6 +22,8 @@ import java.sql.ResultSet;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
+import javax.swing.ScrollPaneConstants;
+import java.awt.Font;
 
 /**
  * {@code AdminInterface} class provide an interface for the Administrator to manage the User
@@ -58,17 +61,19 @@ public class AdminInterface extends JFrame {
 	 * Create the frame.
 	 */
 	public AdminInterface() {
+		setResizable(false);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(AdminInterface.class.getResource("/lib/TimeSchedulerIcon.png")));
 		setTitle("Admin Interface");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 551, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("User List");
-		lblNewLabel.setBounds(20, 11, 65, 14);
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblNewLabel.setBounds(20, 11, 83, 14);
 		contentPane.add(lblNewLabel);
 		
 		Database.createConnection();
@@ -83,37 +88,48 @@ public class AdminInterface extends JFrame {
 			
 		tableModel  = new DefaultTableModel(data, columnNames);
 		table = new JTable(tableModel);
+		table.setDefaultEditor(Object.class, null);
+		table.getColumnModel().getColumn(0).setMaxWidth(35);
+		table.getColumnModel().getColumn(1).setPreferredWidth(120);
+		table.getColumnModel().getColumn(1).setMaxWidth(120);
+		table.getColumnModel().getColumn(2).setPreferredWidth(150);
+		table.getColumnModel().getColumn(2).setMaxWidth(150);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		
 		
 		JScrollPane scrollPane = new JScrollPane(table);
-		scrollPane.setBounds(20, 34, 392, 200);
+		scrollPane.setBounds(20, 34, 507, 200);
 		contentPane.add(scrollPane);
 		
 		JButton btnView = new JButton("View");
+		btnView.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btnView.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				processView();
 			}
 		});
-		btnView.setBounds(125, 7, 89, 23);
+		btnView.setBounds(240, 7, 89, 23);
 		contentPane.add(btnView);
 		
 		btnEdit = new JButton("Edit");
+		btnEdit.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btnEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				processEdit();
 			}
 		});
-		btnEdit.setBounds(224, 7, 89, 23);
+		btnEdit.setBounds(339, 7, 89, 23);
 		contentPane.add(btnEdit);
 		
 		btnDelete = new JButton("Delete");
+		btnDelete.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				processDelete();
 			}
 		});
 	
-		btnDelete.setBounds(323, 7, 89, 23);
+		btnDelete.setBounds(438, 7, 89, 23);
 		contentPane.add(btnDelete);
 		
 		
