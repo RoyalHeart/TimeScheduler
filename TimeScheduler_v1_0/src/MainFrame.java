@@ -29,7 +29,7 @@ public class MainFrame extends JFrame {
         this.setPreferredSize(new Dimension(700, 700));
         this.setMinimumSize(new Dimension(580, 280));
         this.setLocationRelativeTo(null);
-        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        // this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.setTitle("Time Scheduler");
         this.setLayout(new BorderLayout());
         this.add(new Navigation(this, user, calendar), BorderLayout.WEST);
@@ -43,6 +43,65 @@ public class MainFrame extends JFrame {
 
         });
         this.add(addButton, BorderLayout.EAST);
+        
+         // Minimize to hide on system tray code - Added by Huy to test new feature
+         if(SystemTray.isSupported()){
+            tray = SystemTray.getSystemTray();
+
+            Image image = Toolkit.getDefaultToolkit().getImage("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
+            ActionListener exitListener=new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    System.exit(0);
+                }
+            };
+            PopupMenu popup = new PopupMenu();
+            MenuItem item1 = new MenuItem("Exit");
+            item1.addActionListener(exitListener);
+            MenuItem item2 = new MenuItem("Show");
+            item2.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    setVisible(true);
+                    setExtendedState(JFrame.NORMAL);
+                }
+            });
+            popup.add(item2);
+            popup.add(item1);
+            trayIcon = new TrayIcon(image, "TISCH", popup);
+            trayIcon.setImageAutoSize(true);
+        }else{
+            System.out.println("System Tray is not supported");
+        }
+        addWindowStateListener(new WindowStateListener() {
+            public void windowStateChanged(WindowEvent e) {
+                if(e.getNewState() == ICONIFIED){
+                    try {
+                        tray.add(trayIcon);
+                        setVisible(false);
+                    } catch (AWTException exc) {
+                    	exc.printStackTrace();
+                    }
+                }
+        if(e.getNewState() == 7){
+            try{
+            	tray.add(trayIcon);
+            	setVisible(false);
+            } catch(AWTException exc){
+            	exc.printStackTrace();
+            }
+        }
+        if(e.getNewState() == MAXIMIZED_BOTH){
+                    tray.remove(trayIcon);
+                    setVisible(true);
+                }
+                if(e.getNewState() == NORMAL){
+                    tray.remove(trayIcon);
+                    setVisible(true);
+                }
+            }
+        });
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Code for the feature "Minimize to hide on System Tray" ends here
+        
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
