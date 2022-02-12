@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -25,6 +24,8 @@ import javax.swing.UIManager;
 public class MainFrame extends JFrame {
     ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
     Container panel = new Container();
+    SystemTray tray;
+    TrayIcon trayIcon;
 
     MainFrame(User user) {
         panel = this.getContentPane();
@@ -37,7 +38,6 @@ public class MainFrame extends JFrame {
         this.setPreferredSize(new Dimension(700, 700));
         this.setMinimumSize(new Dimension(580, 280));
         this.setLocationRelativeTo(null);
-        // this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.setTitle("Time Scheduler");
         this.setLayout(new BorderLayout());
         this.add(new Navigation(this, user, calendar), BorderLayout.WEST);
@@ -52,76 +52,57 @@ public class MainFrame extends JFrame {
         });
         this.add(addButton, BorderLayout.EAST);
         
-         // Minimize to hide on system tray code - Added by Huy to test new feature
-         if(SystemTray.isSupported()){
+        if(SystemTray.isSupported()){
             tray = SystemTray.getSystemTray();
-
             Image image = Toolkit.getDefaultToolkit().getImage("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
-            ActionListener exitListener=new ActionListener() {
+            
+            ActionListener exitListener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     System.exit(0);
                 }
+            };
+            ActionListener showListener = new ActionListener() {
+            	public void actionPerformed(ActionEvent e) {
+            		tray.remove(trayIcon);
+                    setVisible(true);
+                    setExtendedState(JFrame.NORMAL);
+            	}
             };
             PopupMenu popup = new PopupMenu();
             MenuItem item1 = new MenuItem("Exit");
             item1.addActionListener(exitListener);
             MenuItem item2 = new MenuItem("Show");
-            item2.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    setVisible(true);
-                    setExtendedState(JFrame.NORMAL);
-                }
-            });
+            item2.addActionListener(showListener);
             popup.add(item2);
             popup.add(item1);
             trayIcon = new TrayIcon(image, "TISCH", popup);
             trayIcon.setImageAutoSize(true);
-        }else{
+        } else {
             System.out.println("System Tray is not supported");
         }
-        addWindowStateListener(new WindowStateListener() {
-            public void windowStateChanged(WindowEvent e) {
-                if(e.getNewState() == ICONIFIED){
-                    try {
+        
+        
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); 
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+            	String[] options = {"Yes", "Hide on System Task"};
+                int respone = JOptionPane.showOptionDialog(null,
+                        "Do you want to exit?\nIf you exit no reminder will be sent", "Exit",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                if (respone == 0) {
+                	System.out.println("0");
+                    Database.closeConnection();
+                    SchedulerJava.closeScheduler();
+                    System.exit(0);
+                    
+                } else if (respone == 1) {
+                	try {
                         tray.add(trayIcon);
                         setVisible(false);
                     } catch (AWTException exc) {
                     	exc.printStackTrace();
                     }
-                }
-        if(e.getNewState() == 7){
-            try{
-            	tray.add(trayIcon);
-            	setVisible(false);
-            } catch(AWTException exc){
-            	exc.printStackTrace();
-            }
-        }
-        if(e.getNewState() == MAXIMIZED_BOTH){
-                    tray.remove(trayIcon);
-                    setVisible(true);
-                }
-                if(e.getNewState() == NORMAL){
-                    tray.remove(trayIcon);
-                    setVisible(true);
-                }
-            }
-        });
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // Code for the feature "Minimize to hide on System Tray" ends here
-        
-        this.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int respone = JOptionPane.showOptionDialog(null,
-                        "Are you sure you want to exit?\nIf you exit no reminder will be sent", "Exit",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-                if (respone == JOptionPane.YES_OPTION) {
-                    Database.closeConnection();
-                    SchedulerJava.closeScheduler();
-                    System.exit(0);
-                } else if (respone == JOptionPane.NO_OPTION) {
-                    // do nothing
                 } else {
                     // do nothing
                 }
