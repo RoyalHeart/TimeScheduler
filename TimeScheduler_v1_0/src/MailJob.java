@@ -7,9 +7,21 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+/**
+ * This class is used to create a remind email jobs.
+ * 
+ * @author Tam Thai Hoang
+ */
 public class MailJob implements Job {
 
+    /**
+     * The {@link User} that will receive remind email.
+     */
     private static User user;
+
+    /**
+     * The {@link Event} to get information to send remind email.
+     */
     private static Event event;
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
