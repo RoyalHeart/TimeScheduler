@@ -21,12 +21,23 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+/**
+ * Main frame of user interface.
+ * 
+ * @author Tam Thai Hoang
+ * @author Huy Truong Quang
+ */
 public class MainFrame extends JFrame {
     ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
     Container panel = new Container();
     SystemTray tray;
     TrayIcon trayIcon;
 
+    /**
+     * Constructor of MainFrame.
+     * 
+     * @param user the {@code user} who is logged in.
+     */
     MainFrame(User user) {
         panel = this.getContentPane();
         SwingCalendar calendar = new SwingCalendar(user);
@@ -51,22 +62,22 @@ public class MainFrame extends JFrame {
 
         });
         this.add(addButton, BorderLayout.EAST);
-        
-        if(SystemTray.isSupported()){
+
+        if (SystemTray.isSupported()) {
             tray = SystemTray.getSystemTray();
             Image image = Toolkit.getDefaultToolkit().getImage("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
-            
+
             ActionListener exitListener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     System.exit(0);
                 }
             };
             ActionListener showListener = new ActionListener() {
-            	public void actionPerformed(ActionEvent e) {
-            		tray.remove(trayIcon);
+                public void actionPerformed(ActionEvent e) {
+                    tray.remove(trayIcon);
                     setVisible(true);
                     setExtendedState(JFrame.NORMAL);
-            	}
+                }
             };
             PopupMenu popup = new PopupMenu();
             MenuItem item1 = new MenuItem("Exit");
@@ -80,28 +91,27 @@ public class MainFrame extends JFrame {
         } else {
             System.out.println("System Tray is not supported");
         }
-        
-        
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); 
+
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-            	String[] options = {"Yes", "Hide on System Task"};
+                String[] options = { "Yes", "Hide on System Task" };
                 int respone = JOptionPane.showOptionDialog(null,
                         "Do you want to exit?\nIf you exit no reminder will be sent", "Exit",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
                 if (respone == 0) {
-                	System.out.println("0");
+                    System.out.println("0");
                     Database.closeConnection();
                     SchedulerJava.closeScheduler();
                     System.exit(0);
-                    
+
                 } else if (respone == 1) {
-                	try {
+                    try {
                         tray.add(trayIcon);
                         setVisible(false);
                     } catch (AWTException exc) {
-                    	exc.printStackTrace();
+                        exc.printStackTrace();
                     }
                 } else {
                     // do nothing
@@ -117,7 +127,6 @@ public class MainFrame extends JFrame {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             new MainFrame(
                     Database.getUser("admin", "admin"));
-            // SchedulerJava.createScheduler();
         } catch (Exception e) {
             e.printStackTrace();
         }
