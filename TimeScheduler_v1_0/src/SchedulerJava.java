@@ -1,9 +1,6 @@
 package src;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -84,10 +81,10 @@ public class SchedulerJava {
     }
 
     /**
-     * This method is used to schedule all the emails of event.
+     * This method is used to schedule all the emails of event that will happen in
+     * the future.
      * 
      * @param user to get {@link User} information to send remind email.
-     * @return list of all the scheduled jobs.
      */
     public static void setFutureRemind(User user) {
         ArrayList<Event> remindEvents = LoadEvents.getRemindEvents(user);
@@ -100,49 +97,4 @@ public class SchedulerJava {
             e.printStackTrace();
         }
     }
-
-    public static void main(String[] args) throws Exception {
-        Database.createConnection();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        String dateString = "20/01/2022 09:57";
-        String dateRemindString = "20/01/2022 10:00";
-        Date date = dateFormat.parse(dateString);
-        Date remind = dateFormat.parse(dateRemindString);
-        Event event = new Event("0", "Test Reminder", new Date(), 3);
-        event.setRemind(remind);
-        event.setDate(date);
-        User user = Database.getUser("admin", "admin");
-        // event.getDate().setMinutes(45);
-        // create the scheduler
-        Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-        JobDetail jobDetail = JobBuilder.newJob(MailJob.class).build();
-        jobDetail.getJobDataMap().put("user", user);
-        jobDetail.getJobDataMap().put("event", event);
-        Trigger trigger = TriggerBuilder.newTrigger().withIdentity("trigger1", "group1")
-                // .withSchedule(CronScheduleBuilder.cronSchedule("0 0 0 * * ?"))
-                .startAt(event.getRemind())
-                .build();
-        scheduler.start();
-        scheduler.scheduleJob(jobDetail, trigger);
-        // new Thread(new Runnable() {
-        // public void run() {
-        // try {
-        // SchedulerJava.main(args);
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
-        // }
-        // }).start();
-
-        // new Thread(new Runnable() {
-        // public void run() {
-        // try {
-        // MainFrame.main(args);
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
-        // }
-        // }).start();
-    }
-
 }
