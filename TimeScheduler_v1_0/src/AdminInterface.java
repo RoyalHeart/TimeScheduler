@@ -1,31 +1,23 @@
 package src;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
-import java.beans.Statement;
-import java.security.PublicKey;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
-import javax.swing.ScrollPaneConstants;
 import java.awt.Font;
 
-/**
+/** 
  * {@code AdminInterface} class provide an interface for the Administrator to manage the User
  * 
  * @author Huy Truong Quang 1370713
@@ -42,7 +34,7 @@ public class AdminInterface extends JFrame {
 	
 
 	/**
-	 * Launch the application.
+	 * Test Code
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -57,9 +49,9 @@ public class AdminInterface extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
+     /**
+     * Constructor of {@code AdminInterface} class 
+     */
 	public AdminInterface() {
 		setResizable(false);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(AdminInterface.class.getResource("/lib/TimeSchedulerIcon.png")));
