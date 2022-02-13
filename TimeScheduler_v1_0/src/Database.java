@@ -23,14 +23,15 @@ import org.jasypt.properties.EncryptableProperties;
 /**
  * <p>
  * {@code Database} is used to connect to the database and perform CRUD.
+ * </p>
  * <p>
- * <p>
- * It is used to store the information of the {@link User}s, administrators and
+ * It is used to store and get the information of the {@link User}s and
  * {@link Event}s.
  * </p>
  * 
  * @author Tam Thai Hoang 1370674
- * @author Huy Truong Quang 1370713 (get user list, check admin, get user, delete user)
+ * @author Huy Truong Quang 1370713 (get user list, check admin, get user,
+ *         delete user)
  * @author Sang Doan Tan 1370137 (update user profile, update event)
  */
 public class Database {
@@ -157,7 +158,7 @@ public class Database {
     }
 
     /**
-     * add user to database and return if the user is added successfully
+     * Add user to database and return {@code true} if the user is added successfully
      * 
      * @param username     username of the user
      * @param hashPassword hash(password+username) of the user
@@ -166,8 +167,6 @@ public class Database {
      * @param phone        phone number of the user
      * @return true if the user is added successfully,
      *         false otherwise
-     * 
-     * 
      */
     public static boolean addUser(String username, String hashPassword, String name,
             String email, String phone) {
@@ -233,9 +232,9 @@ public class Database {
     /**
      * <p>
      * Check if the user exists in the database and return true if it does
+     * </p>
      * <p>
-     * <p>
-     * Using for login purpose
+     * Using for {@link LoginScreen} to check if the user exists in the database
      * </p>
      * 
      * @param username username of the user
@@ -268,7 +267,7 @@ public class Database {
     /**
      * <p>
      * Check if the user is admin or not
-     * <p>
+     * </p>
      * <p>
      * Using for login purpose
      * </p>
@@ -358,8 +357,8 @@ public class Database {
     /**
      * Get the admin as a {@code User} object from the database
      * 
-     * @param username     username of the admin
-     * @param hashPassword the hashed password
+     * @param username username of the admin
+     * @param password the plain password of the admin
      * @return admin as a {@code User} object,
      *         or null if user does not exist
      */
@@ -727,7 +726,7 @@ public class Database {
 
     }
 
-     /**
+    /**
      * Get all user to make a list of all users from the database
      * 
      * @return a list of all users in the database
@@ -758,32 +757,31 @@ public class Database {
             return null;
         }
     }
-    
+
     /**
-     * check if the input userID is the ID of an Administrator
+     * Check if the input userID is the ID of an Administrator
      * 
      * @param userID
      * @return true if the input userID is the ID of an Administrator
-     * 		   false in other cases 
+     *         false in other cases
      */
     static boolean isAdminID(String userID) {
-    	try {
+        try {
             Statement stm = con.createStatement();
             String sql = "SELECT 1 FROM ADMINISTRATOR WHERE ID = " + userID;
             ResultSet rs = stm.executeQuery(sql);
-            
-            if(rs.next())
-            	return true;
+
+            if (rs.next())
+                return true;
             else {
-            	return false;
+                return false;
             }
-    	}
-    	catch (Exception e) {
-    		e.printStackTrace();
-    		return false;
-    	}
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
-    
+
     /**
      * Get the {@code User} object from the database
      * 
@@ -796,7 +794,7 @@ public class Database {
             Statement stm = con.createStatement();
             String sql = "SELECT * FROM TISCH_USER WHERE ID = " + userID;
             ResultSet rs = stm.executeQuery(sql);
-            
+
             if (rs.next()) {
                 String username = rs.getString(2);
                 String name = rs.getString(4);
@@ -805,37 +803,36 @@ public class Database {
 
                 return new User(userID, username, name, email, phone);
             } else {
-                return null; 
+                return null;
             }
-            
+
         } catch (Exception e) {
-        	e.printStackTrace();
+            e.printStackTrace();
             return null;
         }
     }
-    
+
     /**
      * delete user by ID
      * 
      * @param userID
      * @return true if it can delete the user successfully
-     * 		   false if it can not
+     *         false if it can not
      */
     static boolean deleteUser(String userID) {
-    	try {
+        try {
             Statement stm = con.createStatement();
             String sql = "DELETE FROM TISCH_USER WHERE ID = " + userID;
             ResultSet rs = stm.executeQuery(sql);
-            
-            if(rs.next())
-            	return true;
+
+            if (rs.next())
+                return true;
             else {
-            	return false;
+                return false;
             }
-    	}
-    	catch (Exception e) {
-    		e.printStackTrace();
-    		return false;
-    	}
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
