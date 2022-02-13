@@ -2,11 +2,11 @@ package src;
 
 /**
  * <p>
- * This class is used to create a {@link User} object.
- * <p>
+ * This class is used to create a {@code User} object.
+ * </p>
  * <p>
  * The user object contains the following:
- * <p>
+ * </p>
  * <ul>
  * <li>A unique ID</li>
  * <li>An username</li>
@@ -18,10 +18,29 @@ package src;
  * @author Tam Thai Hoang
  */
 public class User {
+    /**
+     * The unique ID of the user.
+     */
     private String id;
+
+    /**
+     * The unique username of the user.
+     */
     private String username;
+
+    /**
+     * The display name of the user.
+     */
     private String name;
+
+    /**
+     * The email address of the user.
+     */
     private String email;
+
+    /**
+     * The phone number of the user.
+     */
     private String phone;
 
     /**
