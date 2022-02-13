@@ -24,7 +24,7 @@ import org.jasypt.iv.RandomIvGenerator;
 import org.jasypt.properties.EncryptableProperties;
 
 /**
- * {@code Mail} class is used to sending mail to user and participants.
+ * {@code Mail} class is used to send emails to user and participants.
  * 
  * @author Tam Thai Hoang
  */
@@ -59,20 +59,6 @@ public class Mail {
     }
 
     /**
-     * Create a mailProperties object to store host information
-     * 
-     * @return a {@link Properties} object containing host information
-     */
-    // private static Properties createProperty() {
-    // Properties prop = new Properties();
-    // prop.put("mail.smtp.auth", "true");
-    // prop.put("mail.smtp.starttls.enable", "true"); // using TLS
-    // prop.put("mail.smtp.host", "smtp.gmail.com"); // using gmail
-    // prop.put("mail.smtp.port", "587"); // port for gmail
-    // return prop;
-    // }
-
-    /**
      * Get a the mail configuration as a {@code Properties} file that store host
      * information.
      * The properties password is decrypt with the jasyptPassword.
@@ -96,7 +82,6 @@ public class Mail {
 
     /**
      * Create a mail session with {@code mailProperties} to send mail.
-     * 
      * 
      * @return a {@link Session} object
      */
@@ -132,7 +117,7 @@ public class Mail {
     }
 
     /**
-     * generate a random 6 number code to verify the user's email
+     * Generate a random 6 number code to verify the user's email
      * 
      * @return the {@code verifyCode} as a {@code String}
      */
@@ -149,6 +134,7 @@ public class Mail {
      * Send a mail to the user to verify the user's email
      * 
      * @param user the {@code User} object
+     * @return the {@code verifyCode} as a {@code String}
      */
     public static String sendVerifyCode(User user) {
         Session session = createSession();
@@ -569,25 +555,4 @@ public class Mail {
             return false;
         }
     }
-    // public static void sendEmail(String to, String subject, String body) {
-
-    // Properties prop = createProperty();
-
-    // Session session = createSession(prop);
-
-    // try {
-    // Message message = new MimeMessage(session);
-    // message.setFrom(new InternetAddress(USERNAME)); // sent from
-    // notification.tisch@gmail.com
-    // message.setRecipients(
-    // Message.RecipientType.TO,
-    // InternetAddress.parse(to));
-    // message.setSubject(subject);
-    // message.setText(body);
-    // Transport.send(message);
-    // System.out.println("Message sent to " + to);
-    // } catch (MessagingException e) {
-    // e.printStackTrace();
-    // }
-    // }
 }
