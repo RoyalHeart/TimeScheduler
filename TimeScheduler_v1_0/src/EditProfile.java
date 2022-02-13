@@ -8,9 +8,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -30,13 +27,13 @@ public class EditProfile extends JDialog {
 	private User selectUser;
 
 	/**
-	 * Launch the application.
+	 * Test Code
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					EditProfile dialog = new EditProfile("83    ");
+					EditProfile dialog = new EditProfile("1     ");
 					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 					dialog.setVisible(true);
 				} catch (Exception e) {
@@ -47,7 +44,9 @@ public class EditProfile extends JDialog {
 	}
 
 	/**
-	 * Create the dialog.
+	 * Constructor of {@code EditProfile} class
+	 * 
+	 * @param userID the ID of the user
 	 */
 	public EditProfile(String userID) {
 		setTitle("Admin Interface - Edit Profile");
@@ -161,6 +160,9 @@ public class EditProfile extends JDialog {
 		
 	}
 	
+	/**
+	 * validate and update new user's profile
+	 */
 	boolean processUpdate() {
 		String newName = tfName.getText();
 		String newEmail = tfEmail.getText();
