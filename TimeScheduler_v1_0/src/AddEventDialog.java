@@ -76,14 +76,19 @@ public class AddEventDialog extends JDialog {
  * {@code TitlePanel} is used to contain label and text field of title for the {@link Event}
  * <p>
  * This class contains:
+ * </p>
  * <p>
  * - A static titleField
+ * </p>
  * 
  * @author Sang Doan Tan 1370137
  */
 class TitlePanel extends JPanel {
     static JTextField titleField = new JTextField(50);
 
+    /**
+     * Constructor that creates {@code TitlePanel} object
+     */
     TitlePanel() {
         this.setLayout(new FlowLayout());
         JLabel titleLabel = new JLabel("Title");
@@ -103,6 +108,11 @@ class TitlePanel extends JPanel {
         this.add(titleField);
     }
 
+    /**
+     * Get the title of the {@code Event}
+     * 
+     * @return title of {@code Event}
+     */
     static String getTitle() {
         return titleField.getText();
     }
@@ -117,6 +127,9 @@ class TitlePanel extends JPanel {
 class EventMainPanel extends JPanel {
     GridBagConstraints gbc = new GridBagConstraints();
 
+    /**
+     * Constructor that creates {@code EventMailPanel} object
+     */
     EventMainPanel() {
         this.setLayout(new GridBagLayout());
 
@@ -163,20 +176,28 @@ class EventMainPanel extends JPanel {
  * {@code DateTime} is used to contain all labels, text fields that relates to {@code DateTime} and {@code TimeComboBox}.
  * <p>
  * This class contains:
+ * </p>
  * <p>
  * - A date label
+ * </p>
  * <p>
  * - A time label
+ * </p>
  * <p>
  * - A {@code TimeComboBox} for start time
+ * </p>
  * <p>
  * - A {@code TimeComboBox} for end time
+ * </p>
  * <p>
  * - A icon label for {@code Calendar}
+ * </p>
  * <p>
  * - A image icon 
+ * </p>
  * <p>
  * @author Sang Doan Tan 1370137
+ * </p>
  */
 class DateTime extends JPanel {
     JLabel dateLabel = new JLabel();
@@ -192,6 +213,9 @@ class DateTime extends JPanel {
     Date date;
     static JDatePickerImpl datePicker;
 
+    /**
+     * Constructor that creates {@code DateTime} object
+     */
     DateTime() {
         this.setLayout(new FlowLayout());
         try {
@@ -284,6 +308,31 @@ class DateTime extends JPanel {
     }
 }
 
+/**
+ * {@code FriendField} is used to contains icon, text field, list of friends of the {@code Event}
+ * 
+ * <p>
+ * This class contains:
+ * </p>
+ * <p>
+ * - A static friendField
+ * </p>
+ * - A icon
+ * <p>
+ * - A icon label
+ * </p>
+ * <p>
+ * - A static {@code ArrayList} participants
+ * </p>
+ * <p>
+ * - A stati {@code JList} list
+ * </p>
+ * <p>
+ * - A {@code JButton} 
+ * </p>
+ * 
+ * @author Tam Thai Hoang 1370674
+ */
 class FriendField extends JPanel {
     static JTextField friendField = new JTextField(50);
     ImageIcon icon;
@@ -293,6 +342,9 @@ class FriendField extends JPanel {
     private JButton deleteParticipantButton = new JButton("remove");
 
     // private static JLabel participantsLabel = new JLabel();
+    /**
+     * Constructor that creates {@code FriendField} object.
+     */
     FriendField() {
         this.setLayout(new FlowLayout());
         try {
@@ -366,10 +418,20 @@ class FriendField extends JPanel {
         deleteParticipantButton.setVisible(false);
     }
 
+    /**
+     * Get all the participants of the {@code Event}
+     * 
+     * @return list of participants of the {@code Event}
+     */
     public static ArrayList<String> getParticipants() {
         return participants;
     }
 
+    /**
+     * Add the participant to the {@code Event}
+     * 
+     * @param participant the participant that is added to the {@code Event}
+     */
     public void updateParticipants(String participant) {
         System.out.println("Participant label: " + participant);
         JLabel participantLabel = new JLabel(participant);
@@ -402,6 +464,9 @@ class LocationField extends JPanel {
     ImageIcon icon;
     JLabel iconLabel;
 
+    /**
+     * Constructor that creates {@code LocationField} object
+     */
     LocationField() {
         this.setLayout(new FlowLayout());
         try {
@@ -466,6 +531,9 @@ class Reminder extends JPanel {
     static String[] arr = { "No remind", "1 minute", "3 hour", "3 days", "1 week" };
     static JComboBox<String> reminderComboBox = new JComboBox<String>(arr);
 
+    /**
+     * Constructor that creates {@code Reminder} object
+     */
     Reminder() {
         this.add(reminderLabel);
         this.add(reminderComboBox);
@@ -522,6 +590,9 @@ class Priority extends JPanel {
     static String[] arr = { "High", "Medium", "Low" };
     static JComboBox<String> priorityComboBox = new JComboBox<String>(arr);
 
+    /**
+     * Constructor that creates {@code Priority} object
+     */
     Priority() {
         this.add(priorityLabel);
         this.add(priorityComboBox);
@@ -555,6 +626,9 @@ class Description extends JPanel {
     ImageIcon icon;
     JLabel iconLabel;
 
+    /**
+     * Constructor that creats {@code Description} object
+     */
     Description() {
         this.setLayout(new FlowLayout());
         try {
@@ -785,4 +859,6 @@ class DateLabelFormatter extends AbstractFormatter {
     }
 
 }
+
+
 
