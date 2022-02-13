@@ -6,9 +6,6 @@ import javax.swing.JDialog;
 import java.awt.Toolkit;
 import javax.swing.JLabel;
 import java.awt.Font;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
 /**
  * {@code ViewProfile} class display the user's profile
@@ -19,13 +16,13 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 public class ViewProfile extends JDialog {
 
 	/**
-	 * Launch the application.
+	 * Test Code
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ViewProfile dialog = new ViewProfile("83    ");
+					ViewProfile dialog = new ViewProfile("1     ");
 					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 					dialog.setVisible(true);
 				} catch (Exception e) {
@@ -36,7 +33,9 @@ public class ViewProfile extends JDialog {
 	}
 
 	/**
-	 * Create the dialog.
+	 * Constructor of {@code ViewProfile} class
+	 * 
+	 * @param userID the ID of the user
 	 */
 	public ViewProfile(String userID) {
 		setTitle("Admin Interface - View Profile");
