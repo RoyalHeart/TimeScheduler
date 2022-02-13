@@ -33,13 +33,14 @@ import javax.swing.table.TableColumnModel;
  * <p>
  * {@code SwingCalendar} extends {@code JPanel}, and is used to display the
  * calendar, which can be shown in a {@code JFrame}.
- * <p>
+ * </p>
  * <p>
  * This {@code SwingCalendar} has two different view:
+ * </p>
  * <ul>
  * <li>{@code Month}</li>
  * <li>{@code Week}</li>
- * </ul/>
+ * </ul>
  * 
  * @author Tam Thai Hoang
  */
