@@ -6,6 +6,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+/**
+ * The settings panel of the user. It will contains the settings of the user.
+ * Now it is only a test feature.
+ * 
+ * @author Tam Thai Hoang
+ */
 public class Settings extends JPanel {
     Settings(User user) {
         JLabel label = new JLabel("Settings");
