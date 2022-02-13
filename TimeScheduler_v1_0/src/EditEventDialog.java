@@ -95,7 +95,7 @@ public class EditEventDialog extends JDialog {
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.setLayout(new BorderLayout());
-        this.add(new displayPanel(), BorderLayout.CENTER);
+        this.add(new DisplayPanel(), BorderLayout.CENTER);
         this.add(new Btn(), BorderLayout.SOUTH);
     }
 
@@ -110,12 +110,15 @@ public class EditEventDialog extends JDialog {
      * 
      * @author Sang Doan Tan 1370137 
      */
-    class displayPanel extends JPanel {
+    class DisplayPanel extends JPanel {
         JLabel title = new JLabel();
         JLabel time = new JLabel();
         GridBagConstraints gbc = new GridBagConstraints();
 
-        displayPanel() {
+        /**
+         * Constructor that creates {@code DisplayPanel} object
+         */
+        DisplayPanel() {
             this.setLayout(new GridBagLayout());
             title.setText(event.getTitle());
             gbc.gridx = 0;
@@ -145,6 +148,7 @@ public class EditEventDialog extends JDialog {
         JButton editBtn = new JButton("Edit");
         JButton delBtn = new JButton("Delete");
 
+        /**Constructor that creates {@code Btn} object */
         Btn() {
             this.setLayout(new FlowLayout());
             this.add(editBtn);
@@ -248,6 +252,11 @@ public class EditEventDialog extends JDialog {
             this.add(titleField);
         }
 
+        /**
+         * Get the title of the {@code Event}
+         * 
+         * @return title of the {@code Event}
+         */
         static String getTitle() {
             return titleField.getText();
         }
@@ -452,6 +461,31 @@ public class EditEventDialog extends JDialog {
         }
     }
 
+    /**
+    * {@code FriendField} is used to contains icon, text field, list of friends of the {@code Event}
+    * 
+    * <p>
+    * This class contains:
+    * </p>
+    * <p>
+    * - A static friendField
+    * </p>
+    * - A icon
+    * <p>
+    * - A icon label
+    * </p>
+    * <p>
+    * - A static {@code ArrayList} participants
+    * </p>
+    * <p>
+    * - A stati {@code JList} list
+    * </p>
+    * <p>
+    * - A {@code JButton} 
+    * </p>
+    * 
+    * @author Tam Thai Hoang 1370674
+    */
     static class FriendField extends JPanel {
         static JTextField friendField = new JTextField(50);
         ImageIcon icon;
@@ -461,6 +495,11 @@ public class EditEventDialog extends JDialog {
         private JButton deleteParticipantButton = new JButton("remove");
 
         // private static JLabel participantsLabel = new JLabel();
+        /**
+         * Constructor that creates {@code FriendField} object
+         * 
+         * @param event the event that needed to edit
+         */
         FriendField(Event event) {
             this.setLayout(new FlowLayout());
             try {
@@ -524,10 +563,21 @@ public class EditEventDialog extends JDialog {
             this.add(deleteParticipantButton);
         }
 
+
+        /**
+         * Get all the participants of the {@code Event}
+         * 
+         * @return list of participants of the {@code Event}
+         */
         public static ArrayList<String> getParticipants() {
             return participants;
         }
 
+        /**
+         * Add the participant to the {@code Event}
+         * 
+         * @param participant the participant that is added to the {@code Event}
+         */
         public void updateParticipants(String participant) {
             System.out.println("Participant label: " + participant);
             JLabel participantLabel = new JLabel(participant);
@@ -600,6 +650,11 @@ public class EditEventDialog extends JDialog {
 
         }
 
+        /**
+         * Get the location of the {@code Event}
+         * 
+         * @return location of {@code Event}
+         */
         static String getLoc() {
             return locationField.getText();
         }
@@ -663,6 +718,11 @@ public class EditEventDialog extends JDialog {
             this.add(descripField);
         }
 
+        /**
+         * Get the description of the {@code Event}
+         * 
+         * @return description of {@code Event}
+         */
         static String getDescription() {
             return descripField.getText();
         }
@@ -686,6 +746,11 @@ public class EditEventDialog extends JDialog {
         static String[] arr = { "No remind", "1 minute", "3 hour", "3 days", "1 week" };
         static JComboBox<String> reminderComboBox = new JComboBox<String>(arr);
 
+        /**
+         * Constructor that creates {@code Reminder} object
+         * 
+         * @param event the event that will be edited
+         */
         Reminder(Event event) {
             this.add(reminderLabel);
             this.add(reminderComboBox);
@@ -734,6 +799,12 @@ public class EditEventDialog extends JDialog {
         JComboBox<Date> cb;
         int index = 0;
 
+        /**
+         * Constructor that creates {@code TimeComboBox} object
+         * 
+         * @param event the event that will be edited
+         * @param time the start time or end time of {@code Event}
+         */
         TimeComboBox(Event event, String time) {
             setLayout(new GridBagLayout());
             int index = 0;
@@ -772,6 +843,11 @@ public class EditEventDialog extends JDialog {
             add(cb);
         }
 
+        /**
+         * Get the time that the {@code User} has picked
+         * 
+         * @return time that is picked
+         */
         Date getPickedTime() {
             return (Date) cb.getSelectedItem();
         }
@@ -806,6 +882,11 @@ public class EditEventDialog extends JDialog {
             this.add(priorityComboBox);
         }
 
+        /**
+         * Get the priority of the {@code Event}
+         * 
+         * @return priority of {@code Event}
+         */
         static int getPriority() {
             return priorityComboBox.getSelectedIndex();
         }
@@ -947,6 +1028,10 @@ public class EditEventDialog extends JDialog {
         }
     }
 }
+
+
+
+
 
 
 
