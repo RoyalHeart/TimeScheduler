@@ -97,4 +97,19 @@ public class SchedulerJava {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Refresh connection to the database every 15 minutes.
+     */
+    public static void refreshConnection() {
+        try {
+            JobDetail jobDetail = JobBuilder.newJob(RefreshConnection.class).withIdentity("RefreshConnection")
+                    .build();
+            Trigger trigger = TriggerBuilder.newTrigger().withIdentity("RefreshConnection").startNow()
+                    .withSchedule(org.quartz.CronScheduleBuilder.cronSchedule("0 0/15 * * * ?")).build();
+            scheduler.scheduleJob(jobDetail, trigger);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
