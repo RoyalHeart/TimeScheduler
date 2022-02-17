@@ -743,7 +743,7 @@ public class EditEventDialog extends JDialog {
      */
     static class Reminder extends JPanel {
         JLabel reminderLabel = new JLabel("Remind before: ");
-        static String[] arr = { "No remind", "1 minute", "3 hour", "3 days", "1 week" };
+        static String[] arr = { "No remind", "10 minute", "3 hour", "3 days", "1 week" };
         static JComboBox<String> reminderComboBox = new JComboBox<String>(arr);
 
         /**
@@ -770,7 +770,7 @@ public class EditEventDialog extends JDialog {
                 case 0:
                     return DateTime.getDate();
                 case 1:
-                    temp = temp.minusMinutes(1);
+                    temp = temp.minusMinutes(10);
                     break;
                 case 2:
                     temp = temp.minusHours(3);
@@ -1028,6 +1028,14 @@ public class EditEventDialog extends JDialog {
         }
     }
 }
+
+
+
+
+
+
+
+
 
 
 
