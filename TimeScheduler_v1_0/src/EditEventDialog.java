@@ -46,7 +46,8 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 /**
- * {@code EditEventDialog} is used to contains the title, time and button to delete and edit event of {@code Event}.
+ * {@code EditEventDialog} is used to contains the title, time and button to
+ * delete and edit event of {@code Event}.
  * <p>
  * This class contains:
  * <p>
@@ -74,10 +75,10 @@ public class EditEventDialog extends JDialog {
     /**
      * Constructor that creates {@code EditEventDialog} object.
      * 
-     * @param event         The event that needed to be edit
-     * @param timeStart     The start time of event
-     * @param timeEnd       The end time of event
-     * @param panel         The panel that opened this dialog
+     * @param event     The event that needed to be edit
+     * @param timeStart The start time of event
+     * @param timeEnd   The end time of event
+     * @param panel     The panel that opened this dialog
      */
     EditEventDialog(Event event, String timeStart, String timeEnd, JPanel panel, User user, SwingCalendar calendar) {
         super(SwingUtilities.windowForComponent(panel));
@@ -100,7 +101,8 @@ public class EditEventDialog extends JDialog {
     }
 
     /**
-     * {@code DisplayPanel} is used to contain the title and the time of {@code Event}.
+     * {@code DisplayPanel} is used to contain the title and the time of
+     * {@code Event}.
      * <p>
      * This class contains:
      * <p>
@@ -108,7 +110,7 @@ public class EditEventDialog extends JDialog {
      * <p>
      * - A duration of {@code Event}
      * 
-     * @author Sang Doan Tan 1370137 
+     * @author Sang Doan Tan 1370137
      */
     class DisplayPanel extends JPanel {
         JLabel title = new JLabel();
@@ -148,7 +150,7 @@ public class EditEventDialog extends JDialog {
         JButton editBtn = new JButton("Edit");
         JButton delBtn = new JButton("Delete");
 
-        /**Constructor that creates {@code Btn} object */
+        /** Constructor that creates {@code Btn} object */
         Btn() {
             this.setLayout(new FlowLayout());
             this.add(editBtn);
@@ -158,6 +160,9 @@ public class EditEventDialog extends JDialog {
                 delBtn.addActionListener(e -> {
                     if (Database.delEvent(event)) {
                         SchedulerJava.unscheduleMail(event);
+                        swingCalendar.cal.add(Calendar.MONTH, +1);
+                        swingCalendar.update();
+                        swingCalendar.cal.add(Calendar.MONTH, -1);
                         swingCalendar.update();
                         new Thread(new Runnable() {
                             public void run() {
@@ -185,7 +190,8 @@ public class EditEventDialog extends JDialog {
     }
 
     /**
-     * {@code MainPanel} is used to contain all panels that needed to edit for {@code Event}
+     * {@code MainPanel} is used to contain all panels that needed to edit for
+     * {@code Event}
      * 
      * @author Sang Doan Tan 1370137
      */
@@ -194,11 +200,11 @@ public class EditEventDialog extends JDialog {
         /**
          * Constructor that creates {@code MainPanel} object.
          * 
-         * @param event         the event that will be edited
-         * @param panel         the panel that opened this dialog
-         * @param timeStart     the start time of event
-         * @param timeEnd       the end time of event
-         * @param user          the user of the event
+         * @param event     the event that will be edited
+         * @param panel     the panel that opened this dialog
+         * @param timeStart the start time of event
+         * @param timeEnd   the end time of event
+         * @param user      the user of the event
          */
         MainPanel(Event event, JPanel panel, String timeStart, String timeEnd, User user) {
             super(SwingUtilities.windowForComponent(panel));
@@ -216,7 +222,8 @@ public class EditEventDialog extends JDialog {
     }
 
     /**
-     * {@code TitlePanel} is used to contain the label and the text field of title for editing {@code Event}.
+     * {@code TitlePanel} is used to contain the label and the text field of title
+     * for editing {@code Event}.
      * <p>
      * This class contains:
      * <p>
@@ -263,8 +270,10 @@ public class EditEventDialog extends JDialog {
     }
 
     /**
-     * {@code EventMainPanel} is used to contain {@link DateTime} panel, {@link FiendField} panel, 
-     * {@link LocationField} panel, {@link Description} panel, {@link Reminder} panel and {@link Priority} panel for editing {@code Event}.
+     * {@code EventMainPanel} is used to contain {@link DateTime} panel,
+     * {@link FiendField} panel,
+     * {@link LocationField} panel, {@link Description} panel, {@link Reminder}
+     * panel and {@link Priority} panel for editing {@code Event}.
      * 
      * @author Sang Doan Tan 1370137
      */
@@ -274,9 +283,9 @@ public class EditEventDialog extends JDialog {
         /**
          * Constructor that creates {@code EventMainPanel} object.
          * 
-         * @param event         The event that will be edited.
-         * @param timeStart     The start time of event.
-         * @param timeEnd       The end time of event.
+         * @param event     The event that will be edited.
+         * @param timeStart The start time of event.
+         * @param timeEnd   The end time of event.
          */
         EventMainPanel(Event event, String timeStart, String timeEnd) {
             this.setLayout(new GridBagLayout());
@@ -321,7 +330,8 @@ public class EditEventDialog extends JDialog {
     }
 
     /**
-     * {@code DateTime} is used to contain all labels, text fields that relates to {@code DateTime} and {@code TimeComboBox} for editing event.
+     * {@code DateTime} is used to contain all labels, text fields that relates to
+     * {@code DateTime} and {@code TimeComboBox} for editing event.
      * <p>
      * This class contains:
      * <p>
@@ -335,7 +345,7 @@ public class EditEventDialog extends JDialog {
      * <p>
      * - A icon label for {@code Calendar}
      * <p>
-     * - A image icon 
+     * - A image icon
      * <p>
      * - A static start time of {@code Event}
      * <p>
@@ -362,9 +372,9 @@ public class EditEventDialog extends JDialog {
         /**
          * Constructor that creates {@code DateTime} object for editing {@code Event}.
          * 
-         * @param event         The event that will be deleted.
-         * @param timeStart     The start time of event.
-         * @param timeEnd       The end time of event.
+         * @param event     The event that will be deleted.
+         * @param timeStart The start time of event.
+         * @param timeEnd   The end time of event.
          */
         DateTime(Event event, String timeStart, String timeEnd) {
             this.setLayout(new FlowLayout());
@@ -402,9 +412,10 @@ public class EditEventDialog extends JDialog {
         }
 
         /**
-         * This method will take the {@code Date} that the user has picked from the {@link Calendar}.
+         * This method will take the {@code Date} that the user has picked from the
+         * {@link Calendar}.
          * 
-         * @return  The selected {@code Date} or current {@code Date} if not selected
+         * @return The selected {@code Date} or current {@code Date} if not selected
          */
         static Date getDateTime() {
             // if Date is not selected will take current date
@@ -416,11 +427,11 @@ public class EditEventDialog extends JDialog {
         }
 
         // return diff between from and to time
-         /**
-         * Calculate the difference between the start time of the {@code Event} and 
+        /**
+         * Calculate the difference between the start time of the {@code Event} and
          * the end time of the {@code Event} to find duration.
          * 
-         * @return  Duration of the {@link Event}
+         * @return Duration of the {@link Event}
          */
         static int getDuration() {
             // SimpleDateFormat format = new SimpleDateFormat("HH:mm");
@@ -442,8 +453,9 @@ public class EditEventDialog extends JDialog {
         }
 
         // combine date and startTime to 1 variable Date
-         /**
-         * Combine selected {@code Date} of the {@code Event} and the start time of the {@code Event} into 1 variable {@code Date}.
+        /**
+         * Combine selected {@code Date} of the {@code Event} and the start time of the
+         * {@code Event} into 1 variable {@code Date}.
          * 
          * @return the {@code Date} and the start time of the {@link Event}
          * @throws ParseException
@@ -462,30 +474,31 @@ public class EditEventDialog extends JDialog {
     }
 
     /**
-    * {@code FriendField} is used to contains icon, text field, list of friends of the {@code Event}
-    * 
-    * <p>
-    * This class contains:
-    * </p>
-    * <p>
-    * - A static friendField
-    * </p>
-    * - A icon
-    * <p>
-    * - A icon label
-    * </p>
-    * <p>
-    * - A static {@code ArrayList} participants
-    * </p>
-    * <p>
-    * - A stati {@code JList} list
-    * </p>
-    * <p>
-    * - A {@code JButton} 
-    * </p>
-    * 
-    * @author Tam Thai Hoang 1370674
-    */
+     * {@code FriendField} is used to contains icon, text field, list of friends of
+     * the {@code Event}
+     * 
+     * <p>
+     * This class contains:
+     * </p>
+     * <p>
+     * - A static friendField
+     * </p>
+     * - A icon
+     * <p>
+     * - A icon label
+     * </p>
+     * <p>
+     * - A static {@code ArrayList} participants
+     * </p>
+     * <p>
+     * - A stati {@code JList} list
+     * </p>
+     * <p>
+     * - A {@code JButton}
+     * </p>
+     * 
+     * @author Tam Thai Hoang 1370674
+     */
     static class FriendField extends JPanel {
         static JTextField friendField = new JTextField(50);
         ImageIcon icon;
@@ -563,7 +576,6 @@ public class EditEventDialog extends JDialog {
             this.add(deleteParticipantButton);
         }
 
-
         /**
          * Get all the participants of the {@code Event}
          * 
@@ -593,7 +605,8 @@ public class EditEventDialog extends JDialog {
     }
 
     /**
-     * {@code LocationField} is used to contains icon, label and text field of location of {@code Event} for editing {@code Event}.
+     * {@code LocationField} is used to contains icon, label and text field of
+     * location of {@code Event} for editing {@code Event}.
      * <p>
      * The class contains:
      * <p>
@@ -661,7 +674,8 @@ public class EditEventDialog extends JDialog {
     }
 
     /**
-     * {@code Description} is used to contain icon, label and text field of description of {@code Event} for editing {@code Event}.
+     * {@code Description} is used to contain icon, label and text field of
+     * description of {@code Event} for editing {@code Event}.
      * <p>
      * This class contains:
      * <p>
@@ -679,7 +693,8 @@ public class EditEventDialog extends JDialog {
         JLabel iconLabel;
 
         /**
-         * Constructor that creates {@code Description} object for editing {@code Event}.
+         * Constructor that creates {@code Description} object for editing
+         * {@code Event}.
          * 
          * @param event The event that will be edited.
          */
@@ -729,7 +744,8 @@ public class EditEventDialog extends JDialog {
     }
 
     /**
-     * {@code Reminder} is used to contains a {@code JComboBox} for user to select remind options for editing {@code Event}.
+     * {@code Reminder} is used to contains a {@code JComboBox} for user to select
+     * remind options for editing {@code Event}.
      * <p>
      * This class contains:
      * <p>
@@ -756,9 +772,10 @@ public class EditEventDialog extends JDialog {
             this.add(reminderComboBox);
         }
 
-         /**
-         * This method will take the {@code Date} of the {@code Event} 
-         * and then minus the selected remind option to find the {@code Date} that need to remind to user.
+        /**
+         * This method will take the {@code Date} of the {@code Event}
+         * and then minus the selected remind option to find the {@code Date} that need
+         * to remind to user.
          * 
          * @return {@code Date} of the remind time.
          */
@@ -791,9 +808,10 @@ public class EditEventDialog extends JDialog {
 
     // Combobox display time
     /**
-     * {@code TimeComboBox} is used to contains the {@code JComboBox} to select the time of the {@code Event} for editing {@code Event}.
+     * {@code TimeComboBox} is used to contains the {@code JComboBox} to select the
+     * time of the {@code Event} for editing {@code Event}.
      * 
-     * @author Sang Doan Tan 1370137 
+     * @author Sang Doan Tan 1370137
      */
     static class TimeComboBox extends JPanel {
         JComboBox<Date> cb;
@@ -803,7 +821,7 @@ public class EditEventDialog extends JDialog {
          * Constructor that creates {@code TimeComboBox} object
          * 
          * @param event the event that will be edited
-         * @param time the start time or end time of {@code Event}
+         * @param time  the start time or end time of {@code Event}
          */
         TimeComboBox(Event event, String time) {
             setLayout(new GridBagLayout());
@@ -854,7 +872,8 @@ public class EditEventDialog extends JDialog {
     }
 
     /**
-     * {@code Priority} is used to contains a {@code JComboBox} for user to select the priority for editing {@code Event}.
+     * {@code Priority} is used to contains a {@code JComboBox} for user to select
+     * the priority for editing {@code Event}.
      * <p>
      * This class contains:
      * <p>
@@ -893,7 +912,8 @@ public class EditEventDialog extends JDialog {
     }
 
     /**
-     * {@code EdiBtn} is used to contain the button to save the change of editing {@code Event} to database.
+     * {@code EdiBtn} is used to contain the button to save the change of editing
+     * {@code Event} to database.
      * 
      * <p>
      * This class contains:
@@ -906,7 +926,7 @@ public class EditEventDialog extends JDialog {
     class EditBtn extends JPanel {
         JButton editBtn = new JButton("Save");
 
-         /**
+        /**
          * Constructor that creates {@code EditBtn} object.
          * 
          * @param event The event that will be edited.
@@ -979,11 +999,12 @@ public class EditEventDialog extends JDialog {
 
     // Render combobox to display HH:mm
     /**
-     * {@code DateComboBoxRenderer} is used to render {@code TimeComboBox} to display ("HH::mm") format.
+     * {@code DateComboBoxRenderer} is used to render {@code TimeComboBox} to
+     * display ("HH::mm") format.
      * <p>
      * This class contains:
      * <p>
-     * - A date format 
+     * - A date format
      * 
      * @author Sang Doan Tan 1370137
      */
@@ -1028,18 +1049,3 @@ public class EditEventDialog extends JDialog {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
