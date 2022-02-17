@@ -44,6 +44,7 @@ public class MainFrame extends JFrame {
         AddEventDialog addEventDialog = new AddEventDialog(user, calendar);
         SchedulerJava.createScheduler();
         SchedulerJava.setFutureRemind(user);
+        SchedulerJava.refreshConnection();
         this.setIconImage(icon.getImage());
         this.setSize(700, 700);
         this.setPreferredSize(new Dimension(700, 700));
