@@ -1,0 +1,18 @@
+{
+  "java.project.referencedLibraries": [
+    "library/**/*.jar",
+    "/home/username/lib/foo.jar",
+    "jar_files/activation-1.1.1.jar",
+    "jar_files/commons-codec-1.15.jar",
+    "jar_files/javax.mail-1.6.2.jar",
+    "jar_files/jdatepicker-1.3.4.jar",
+    "jar_files/ojdbc11.jar",
+    "jar_files/quartz-2.3.2.jar",
+    "jar_files/slf4j-api-1.7.7.jar",
+    "jar_files/slf4j-simple-1.7.7.jar",
+    "jar_files/log4j-1.2.16.jar",
+    "jar_files/jasypt-1.9.3.jar",
+    "jar_files/gson-2.8.2.jar",
+    "jar_files/itextpdf-5.5.13.2.jar"
+  ]
+}

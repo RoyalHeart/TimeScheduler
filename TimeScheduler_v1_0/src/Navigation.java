@@ -12,19 +12,19 @@ import java.awt.*;
  * @author Tam Thai Hoang
  */
 public class Navigation extends JPanel {
-    private ImageIcon homeImageIcon = new ImageIcon("TimeScheduler_v1_0/src/Images/homeIconTransparent.png");
+    private ImageIcon homeImageIcon = new ImageIcon("/src/Images/homeIconTransparent.png");
     private Image homeImage = homeImageIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
     private Icon homeIcon = new ImageIcon(homeImage);
 
-    private ImageIcon profileImageIcon = new ImageIcon("TimeScheduler_v1_0/src/Images/profileIconTransparent.png");
+    private ImageIcon profileImageIcon = new ImageIcon("/src/Images/profileIconTransparent.png");
     private Image profileImage = profileImageIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
     private Icon profileIcon = new ImageIcon(profileImage);
 
-    private ImageIcon logoutImageIcon = new ImageIcon("TimeScheduler_v1_0/src/Images/logoutIconTransparent.png");
+    private ImageIcon logoutImageIcon = new ImageIcon("/src/Images/logoutIconTransparent.png");
     private Image logoutImage = logoutImageIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
     private Icon logoutIcon = new ImageIcon(logoutImage);
 
-    private ImageIcon settingsImageIcon = new ImageIcon("TimeScheduler_v1_0/src/Images/settingsIconTransparent.png");
+    private ImageIcon settingsImageIcon = new ImageIcon("/src/Images/settingsIconTransparent.png");
     private Image settingsImage = settingsImageIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
     private Icon settingsIcon = new ImageIcon(settingsImage);
     private Dimension size = new Dimension(40, 30);

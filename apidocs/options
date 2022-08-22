@@ -4,14 +4,14 @@
 'UTF-8'
 -private
 -sourcepath
-'D:/Bon/VSCode/ProgramJava/Learn/Tisch/src/main/java'
+'D:/Bon/VSCode/Java/Learn/Tisch/src/main/java'
 -author
 -bottom
 'Copyright &#169; 2022. All rights reserved.'
 -charset
 'UTF-8'
 -d
-'D:/Bon/VSCode/ProgramJava/Learn/Tisch/target/site/apidocs'
+'D:/Bon/VSCode/Java/Learn/Tisch/target/site/apidocs'
 -docencoding
 'UTF-8'
 -doctitle

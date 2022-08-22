@@ -54,8 +54,8 @@ public class AddEventDialog extends JDialog {
     /**
      * Constructor that creates {@code AddEventDialog} object.
      * 
-     * @param user    The user that open this dialog
-     * @param panel   The parent container of this dialog
+     * @param user  The user that open this dialog
+     * @param panel The parent container of this dialog
      */
     AddEventDialog(User user, SwingCalendar calendar) {
         super(SwingUtilities.windowForComponent(calendar));
@@ -73,7 +73,8 @@ public class AddEventDialog extends JDialog {
 }
 
 /**
- * {@code TitlePanel} is used to contain label and text field of title for the {@link Event}
+ * {@code TitlePanel} is used to contain label and text field of title for the
+ * {@link Event}
  * <p>
  * This class contains:
  * </p>
@@ -119,8 +120,10 @@ class TitlePanel extends JPanel {
 }
 
 /**
- * {@code EventMainPanel} is used to contain {@link DateTime} panel, {@link FiendField} panel, 
- * {@link LocationField} panel, {@link Description} panel, {@link Reminder} panel and {@link Priority} panel.
+ * {@code EventMainPanel} is used to contain {@link DateTime} panel,
+ * {@link FiendField} panel,
+ * {@link LocationField} panel, {@link Description} panel, {@link Reminder}
+ * panel and {@link Priority} panel.
  * 
  * @author Sang Doan Tan 1370137
  */
@@ -173,7 +176,8 @@ class EventMainPanel extends JPanel {
 }
 
 /**
- * {@code DateTime} is used to contain all labels, text fields that relates to {@code DateTime} and {@code TimeComboBox}.
+ * {@code DateTime} is used to contain all labels, text fields that relates to
+ * {@code DateTime} and {@code TimeComboBox}.
  * <p>
  * This class contains:
  * </p>
@@ -193,11 +197,12 @@ class EventMainPanel extends JPanel {
  * - A icon label for {@code Calendar}
  * </p>
  * <p>
- * - A image icon 
+ * - A image icon
  * </p>
  * <p>
+ * 
  * @author Sang Doan Tan 1370137
- * </p>
+ *         </p>
  */
 class DateTime extends JPanel {
     JLabel dateLabel = new JLabel();
@@ -249,10 +254,11 @@ class DateTime extends JPanel {
     }
 
     /**
-    * This method will take the {@code Date} that the user has picked from the {@link Calendar}.
-    * 
-    * @return  The selected {@code Date} or current {@code Date} if not selected
-    */
+     * This method will take the {@code Date} that the user has picked from the
+     * {@link Calendar}.
+     * 
+     * @return The selected {@code Date} or current {@code Date} if not selected
+     */
     static Date getDateTime() {
         // if Date is not selected will take current date
         if ((Date) datePicker.getModel().getValue() == null) {
@@ -264,11 +270,11 @@ class DateTime extends JPanel {
 
     // return diff between from and to time
     /**
-    * Calculate the difference between the start time of the {@code Event} and 
-    * the end time of the {@code Event} to find duration.
-    * 
-    * @return  Duration of the {@link Event}
-    */
+     * Calculate the difference between the start time of the {@code Event} and
+     * the end time of the {@code Event} to find duration.
+     * 
+     * @return Duration of the {@link Event}
+     */
     static int getDuration() {
         // SimpleDateFormat format = new SimpleDateFormat("HH:mm");
         Date before = startTime.getPickedTime();
@@ -290,11 +296,12 @@ class DateTime extends JPanel {
 
     // combine date and startTime to 1 variable Date
     /**
-    * Combine selected {@code Date} of the {@code Event} and the start time of the {@code Event} into 1 variable {@code Date}.
-    * 
-    * @return the {@code Date} and the start time of the {@link Event}
-    * @throws ParseException
-    */
+     * Combine selected {@code Date} of the {@code Event} and the start time of the
+     * {@code Event} into 1 variable {@code Date}.
+     * 
+     * @return the {@code Date} and the start time of the {@link Event}
+     * @throws ParseException
+     */
     static Date getDate() throws ParseException {
         int h = startTime.getPickedTime().getHours();
         int m = startTime.getPickedTime().getMinutes();
@@ -309,7 +316,8 @@ class DateTime extends JPanel {
 }
 
 /**
- * {@code FriendField} is used to contains icon, text field, list of friends of the {@code Event}
+ * {@code FriendField} is used to contains icon, text field, list of friends of
+ * the {@code Event}
  * 
  * <p>
  * This class contains:
@@ -328,7 +336,7 @@ class DateTime extends JPanel {
  * - A stati {@code JList} list
  * </p>
  * <p>
- * - A {@code JButton} 
+ * - A {@code JButton}
  * </p>
  * 
  * @author Tam Thai Hoang 1370674
@@ -447,7 +455,8 @@ class FriendField extends JPanel {
 }
 
 /**
- * {@code LocationField} is used to contains icon, label and text field of location of {@code Event}.
+ * {@code LocationField} is used to contains icon, label and text field of
+ * location of {@code Event}.
  * <p>
  * The class contains:
  * <p>
@@ -500,10 +509,10 @@ class LocationField extends JPanel {
     }
 
     /**
-    * Takes location that {@code User} enters in the {@code Event}.
-    * 
-    * @return Location of {@code Event}
-    */
+     * Takes location that {@code User} enters in the {@code Event}.
+     * 
+     * @return Location of {@code Event}
+     */
     static String getLoc() {
         if (locationField.getText().equals("Location")) {
             return "";
@@ -514,7 +523,8 @@ class LocationField extends JPanel {
 }
 
 /**
- * {@code Reminder} is used to contains a {@code JComboBox} for user to select remind options.
+ * {@code Reminder} is used to contains a {@code JComboBox} for user to select
+ * remind options.
  * <p>
  * This class contains:
  * <p>
@@ -540,11 +550,12 @@ class Reminder extends JPanel {
     }
 
     /**
-    * This method will take the {@code Date} of the {@code Event} 
-    * and then minus the selected remind option to find the {@code Date} that need to remind to user.
-    * 
-    * @return {@code Date} of the remind time.
-    */
+     * This method will take the {@code Date} of the {@code Event}
+     * and then minus the selected remind option to find the {@code Date} that need
+     * to remind to user.
+     * 
+     * @return {@code Date} of the remind time.
+     */
     static Date getRemind() throws ParseException {
         // convert date to localdatetime
         LocalDateTime temp = DateTime.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -573,7 +584,8 @@ class Reminder extends JPanel {
 }
 
 /**
- * {@code Priority} is used to contains a {@code JComboBox} for user to select the priority.
+ * {@code Priority} is used to contains a {@code JComboBox} for user to select
+ * the priority.
  * <p>
  * This class contains:
  * <p>
@@ -599,17 +611,19 @@ class Priority extends JPanel {
     }
 
     /**
-    * Takes the priority that {@code User} has selected when creating {@code Event}.
-    * 
-    * @return The selected priority
-    */
+     * Takes the priority that {@code User} has selected when creating
+     * {@code Event}.
+     * 
+     * @return The selected priority
+     */
     static int getPriority() {
         return priorityComboBox.getSelectedIndex();
     }
 }
 
 /**
- * {@code Description} is used to contain icon, label and text field of description of {@code Event}.
+ * {@code Description} is used to contain icon, label and text field of
+ * description of {@code Event}.
  * <p>
  * This class contains:
  * <p>
@@ -663,10 +677,10 @@ class Description extends JPanel {
     }
 
     /**
-    * Takes description that {@code User} has entered in the {@code Event}.
-    * 
-    * @return Description of {@code Event}
-    */
+     * Takes description that {@code User} has entered in the {@code Event}.
+     * 
+     * @return Description of {@code Event}
+     */
     static String getDescription() {
         if (descripField.getText().equals("Description")) {
             return "";
@@ -685,7 +699,7 @@ class Description extends JPanel {
 class SetBtn extends JPanel {
     JButton setBtn = new JButton("Set");
 
-     /**
+    /**
      * Constructor that creates {@code SetBtn} object.
      * 
      * @param user The user that created event.
@@ -761,9 +775,10 @@ class SetBtn extends JPanel {
 
 // Combobox display time
 /**
- * {@code TimeComboBox} is used to contains the {@code JComboBox} to select the time of the {@code Event}.
+ * {@code TimeComboBox} is used to contains the {@code JComboBox} to select the
+ * time of the {@code Event}.
  * 
- * @author Sang Doan Tan 1370137 
+ * @author Sang Doan Tan 1370137
  */
 class TimeComboBox extends JPanel {
     JComboBox<Date> cb;
@@ -798,10 +813,10 @@ class TimeComboBox extends JPanel {
     }
 
     /**
-    * Takes the time that {@code User} has selected in the {@code TimeComboBox}.
-    * 
-    * @return Selected time
-    */
+     * Takes the time that {@code User} has selected in the {@code TimeComboBox}.
+     * 
+     * @return Selected time
+     */
     Date getPickedTime() {
         return (Date) cb.getSelectedItem();
     }
@@ -809,11 +824,12 @@ class TimeComboBox extends JPanel {
 
 // Render combobox to display HH:mm
 /**
- * {@code DateComboBoxRenderer} is used to render {@code TimeComboBox} to display ("HH::mm") format.
+ * {@code DateComboBoxRenderer} is used to render {@code TimeComboBox} to
+ * display ("HH::mm") format.
  * <p>
  * This class contains:
  * <p>
- * - A date format 
+ * - A date format
  * 
  * @author Sang Doan Tan 1370137
  */
@@ -859,10 +875,3 @@ class DateLabelFormatter extends AbstractFormatter {
     }
 
 }
-
-
-
-
-
-
-

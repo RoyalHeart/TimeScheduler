@@ -3,6 +3,7 @@ package src;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -15,6 +16,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Vector;
+
+import javax.swing.JOptionPane;
+
+import com.itextpdf.text.pdf.codec.Base64.InputStream;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.iv.RandomIvGenerator;
@@ -126,7 +131,8 @@ public class Database {
             encryptor.setAlgorithm("PBEWithHMACSHA512AndAES_256");
             encryptor.setIvGenerator(new RandomIvGenerator());
             Properties properties = new EncryptableProperties(encryptor);
-            properties.load(new FileInputStream("TimeScheduler_v1_0/lib/databaseconfig.properties"));
+            // Load the directory as a resource
+            properties.load(Database.class.getResourceAsStream("/lib/databaseconfig.properties"));
             return properties;
         } catch (Exception e) {
             e.printStackTrace();
@@ -142,15 +148,16 @@ public class Database {
      * @return the jasypt password as a {@code String}
      */
     private static String getJasyptPassword() {
-        File myObj = new File("TimeScheduler_v1_0/lib/DatabaseLoginInfo.txt");
         try {
+            File myObj = new File(
+                    Database.class.getResource("/lib/DatabaseLoginInfo.txt").getFile());
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
                 jasyptPassword = myReader.nextLine();
             }
             myReader.close();
             return jasyptPassword;
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
             return null;
@@ -158,7 +165,8 @@ public class Database {
     }
 
     /**
-     * Add user to database and return {@code true} if the user is added successfully
+     * Add user to database and return {@code true} if the user is added
+     * successfully
      * 
      * @param username     username of the user
      * @param hashPassword hash(password+username) of the user
@@ -244,6 +252,7 @@ public class Database {
      */
     static boolean existUser(String username, String password) {
         try {
+            JOptionPane.showMessageDialog(null, username + " " + password);
             // create statement object
             // con = createConnection();
             Statement stmt = con.createStatement();
