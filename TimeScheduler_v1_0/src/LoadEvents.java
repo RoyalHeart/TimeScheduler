@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import src.database.Database;
+
 /**
  * This class is used to get {@link Event} from the {@link Database}
  * and change the events to corresponding datatype.

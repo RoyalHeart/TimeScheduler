@@ -23,6 +23,8 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.iv.RandomIvGenerator;
 import org.jasypt.properties.EncryptableProperties;
 
+import src.database.Database;
+
 /**
  * {@code Mail} class is used to send emails to user and participants.
  * 

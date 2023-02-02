@@ -45,6 +45,8 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import src.database.Database;
+
 /**
  * {@code EditEventDialog} is used to contains the title, time and button to
  * delete and edit event of {@code Event}.
@@ -1011,8 +1013,8 @@ public class EditEventDialog extends JDialog {
     static class DateComboBoxRenderer extends DefaultListCellRenderer {
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
 
-        public Component getListCellRendererComponent(JList list, Object value,
-                int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+                boolean cellHasFocus) {
             Object item = value;
             if (item instanceof Date) {
                 item = dateFormat.format((Date) item);

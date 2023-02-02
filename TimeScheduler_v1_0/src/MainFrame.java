@@ -2,6 +2,7 @@ package src;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.MenuItem;
@@ -9,7 +10,6 @@ import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
-import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -20,6 +20,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+
+import src.database.Database;
 
 /**
  * Main frame of user interface.

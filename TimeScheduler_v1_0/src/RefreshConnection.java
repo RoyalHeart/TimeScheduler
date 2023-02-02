@@ -6,6 +6,8 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import src.database.Database;
+
 /**
  * This class is used as a job to refresh database connection.
  * 

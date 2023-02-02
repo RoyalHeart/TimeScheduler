@@ -1,9 +1,8 @@
-package src;
+package src.database;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.net.URL;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -19,11 +18,14 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-import com.itextpdf.text.pdf.codec.Base64.InputStream;
-
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.iv.RandomIvGenerator;
 import org.jasypt.properties.EncryptableProperties;
+
+import src.Event;
+import src.Hash;
+import src.LoginScreen;
+import src.User;
 
 /**
  * <p>
@@ -82,10 +84,11 @@ public class Database {
      * 
      * @return {@link Connection} to the database
      */
-    static Connection createConnection() {
+    public static Connection createConnection() {
         try {
             // step1 load the driver class
             Class.forName(databaseProperties.getProperty("dbconfig.driver"));
+            System.out.println(databaseProperties.getProperty("dbconfig.driver"));
 
             // step2 create the connection object
             con = DriverManager.getConnection(
@@ -107,7 +110,7 @@ public class Database {
      * @return {@code true} if the {@link Connection} is closed successfully,
      *         {@code false} otherwise
      */
-    static boolean closeConnection() {
+    public static boolean closeConnection() {
         try {
             System.out.println("Closing connection to database");
             con.close();
@@ -132,7 +135,8 @@ public class Database {
             encryptor.setIvGenerator(new RandomIvGenerator());
             Properties properties = new EncryptableProperties(encryptor);
             // Load the directory as a resource
-            properties.load(Database.class.getResourceAsStream("/lib/databaseconfig.properties"));
+            String databaseConfigPath = "/src/config/databaseconfig.properties";
+            properties.load(Database.class.getResourceAsStream(databaseConfigPath));
             return properties;
         } catch (Exception e) {
             e.printStackTrace();
@@ -211,7 +215,7 @@ public class Database {
      * @return true if username exists in database
      *         , false otherwise
      */
-    static boolean existUsername(String username) {
+    public static boolean existUsername(String username) {
         try {
             // create the connection object
             // Connection con = createConnection();
@@ -250,7 +254,7 @@ public class Database {
      * @return true if user is exist in the database,
      *         false if user is not exist in the database
      */
-    static boolean existUser(String username, String password) {
+    public static boolean existUser(String username, String password) {
         try {
             JOptionPane.showMessageDialog(null, username + " " + password);
             // create statement object
@@ -286,7 +290,7 @@ public class Database {
      * @return true if user is admin,
      *         false if user is not admin
      */
-    static boolean existAdmin(String username, String password) {
+    public static boolean existAdmin(String username, String password) {
         try {
             // create the connection object
             // Connection con = createConnection();
@@ -329,7 +333,7 @@ public class Database {
      * @return the user object from the database,
      *         or null if user does not exist
      */
-    static User getUser(String username, String password) {
+    public static User getUser(String username, String password) {
         try {
             // create the connection object
             // Connection con = createConnection();
@@ -371,7 +375,7 @@ public class Database {
      * @return admin as a {@code User} object,
      *         or null if user does not exist
      */
-    static User getAdmin(String username, String password) {
+    public static User getAdmin(String username, String password) {
         try {
 
             // create the connection object
@@ -415,7 +419,7 @@ public class Database {
      * @return true if event is added successfully
      *         false if event is not added successfully
      */
-    static boolean addEvent(Event event) {
+    public static boolean addEvent(Event event) {
         try {
             // create the statement object
             java.sql.Date eventDate = new java.sql.Date(event.getDate().getTime());
@@ -465,7 +469,7 @@ public class Database {
      * @param user the {@code User} to get the events from
      * @return an array list of all events from a user
      */
-    static ArrayList<Event> getEvents(User user) {
+    public static ArrayList<Event> getEvents(User user) {
         ArrayList<Event> events = new ArrayList<>();
         try {
             // create the statement object
@@ -550,7 +554,7 @@ public class Database {
      * @return true if name is updated successfully,
      *         false if name is not updated successfully
      */
-    static boolean updateName(String name, User user) {
+    public static boolean updateName(String name, User user) {
         // Create the statement object, statement object allows you to sends SQL
         // statement to database
         try {
@@ -578,7 +582,7 @@ public class Database {
      * @return true if email is updated successfully,
      *         false if email is not updated successfully
      */
-    static boolean updateEmail(String email, User user) {
+    public static boolean updateEmail(String email, User user) {
         try {
             Statement stmt = con.createStatement();
             if (stmt.executeUpdate(
@@ -603,7 +607,7 @@ public class Database {
      * @return true if phone is updated successfully,
      *         false if phone is not updated succesfully
      */
-    static boolean updatePhone(String phone, User user) {
+    public static boolean updatePhone(String phone, User user) {
         try {
             Statement stmt = con.createStatement();
             if (stmt.executeUpdate(
@@ -628,7 +632,7 @@ public class Database {
      * @return true if password is updated succesfully,
      *         false if password is not updated succesffuly
      */
-    static boolean updatePassword(String password, User user) {
+    public static boolean updatePassword(String password, User user) {
         try {
             Statement stmt = con.createStatement();
             if (stmt.executeUpdate(
@@ -653,7 +657,7 @@ public class Database {
      * @return true if delete event succsessfully,
      *         false if does not delete event successfully
      */
-    static boolean delEvent(Event event) {
+    public static boolean delEvent(Event event) {
         try {
             Statement stmt = con.createStatement();
             if (stmt.executeUpdate(
@@ -680,7 +684,7 @@ public class Database {
      * @return true if updated event successfully,
      *         false if can not update event
      */
-    static boolean updateEvent(Event event) {
+    public static boolean updateEvent(Event event) {
         try {
             // create the statement object
             java.sql.Date eventDate = new java.sql.Date(event.getDate().getTime());
@@ -740,7 +744,7 @@ public class Database {
      * 
      * @return a list of all users in the database
      */
-    static Vector<Vector> getUserList() {
+    public static Vector<Vector> getUserList() {
         try {
             Statement stm = con.createStatement();
             String sql = "SELECT ID, USERNAME, USERFULLNAME, USEREMAIL FROM TISCH_USER ORDER BY ID ASC";
@@ -774,7 +778,7 @@ public class Database {
      * @return true if the input userID is the ID of an Administrator
      *         false in other cases
      */
-    static boolean isAdminID(String userID) {
+    public static boolean isAdminID(String userID) {
         try {
             Statement stm = con.createStatement();
             String sql = "SELECT 1 FROM ADMINISTRATOR WHERE ID = " + userID;
@@ -798,7 +802,7 @@ public class Database {
      * @return the user object from the database,
      *         or null if user does not exist
      */
-    static User getUser(String userID) {
+    public static User getUser(String userID) {
         try {
             Statement stm = con.createStatement();
             String sql = "SELECT * FROM TISCH_USER WHERE ID = " + userID;
@@ -828,7 +832,7 @@ public class Database {
      * @return true if it can delete the user successfully
      *         false if it can not
      */
-    static boolean deleteUser(String userID) {
+    public static boolean deleteUser(String userID) {
         try {
             Statement stm = con.createStatement();
             String sql = "DELETE FROM TISCH_USER WHERE ID = " + userID;

@@ -23,6 +23,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import src.database.Database;
+
 /**
  * {@link LoginScreen} is used for user login.
  * 
@@ -86,7 +88,8 @@ public class LoginScreen extends JFrame {
                     dispose();
                     new AdminInterface();
                 } else if (Database.existUser(usernamePanel.getUsername(), passwordPanel.getPassword())) {
-                    User user = Database.getUser(usernamePanel.getUsername(), passwordPanel.getPassword());
+                    User user = Database.getUser(usernamePanel.getUsername(),
+                            passwordPanel.getPassword());
                     System.out.println("Login Success");
                     dispose();
                     new MainFrame(user);

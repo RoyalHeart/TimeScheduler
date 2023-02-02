@@ -45,6 +45,8 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import src.database.Database;
+
 /**
  * {@code AddEventDialog} is used to contain all panels for adding {@link Event}
  * 
