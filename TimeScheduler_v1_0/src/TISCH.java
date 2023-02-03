@@ -4,8 +4,6 @@ import javax.swing.UIManager;
 
 import src.database.Database;
 
-// import src.database.Database;
-
 /**
  * Main class for the Time Scheduler.
  *

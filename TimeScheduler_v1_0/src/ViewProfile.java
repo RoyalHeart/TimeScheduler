@@ -1,14 +1,13 @@
 package src;
 
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Toolkit;
 
 import javax.swing.JDialog;
-import java.awt.Toolkit;
 import javax.swing.JLabel;
 
 import src.database.Database;
-
-import java.awt.Font;
 
 /**
  * {@code ViewProfile} class display the user's profile
