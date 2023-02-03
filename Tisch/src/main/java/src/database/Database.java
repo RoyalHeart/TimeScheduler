@@ -14,8 +14,6 @@ import java.util.Properties;
 import java.util.Scanner;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
-
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.iv.RandomIvGenerator;
 import org.jasypt.properties.EncryptableProperties;
@@ -103,7 +101,7 @@ public class Database {
     // };
 
     public static Connection createConnection() {
-        final String url = "jdbc:sqlite:TimeScheduler_v1_0/src/database/tisch.db";
+        final String url = "jdbc:sqlite:src/main/resources/database/tisch.db";
         try {
             con = DriverManager.getConnection(url);
             System.out.println("Connected to SQLite database");
@@ -145,7 +143,7 @@ public class Database {
             encryptor.setIvGenerator(new RandomIvGenerator());
             Properties properties = new EncryptableProperties(encryptor);
             // Load the directory as a resource
-            String databaseConfigPath = "/src/config/databaseconfig.properties";
+            String databaseConfigPath = "/config/databaseconfig.properties";
             properties.load(Database.class.getResourceAsStream(databaseConfigPath));
             return properties;
         } catch (Exception e) {
@@ -164,7 +162,7 @@ public class Database {
     private static String getJasyptPassword() {
         try {
             File myObj = new File(
-                    Database.class.getResource("/lib/DatabaseLoginInfo.txt").getFile());
+                    Database.class.getResource("/DatabaseLoginInfo.txt").getFile());
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
                 jasyptPassword = myReader.nextLine();
@@ -858,4 +856,4 @@ public class Database {
             return false;
         }
     }
-}>>>>>>>>main:Tisch/src/main/java/src/database/Database.java
+}

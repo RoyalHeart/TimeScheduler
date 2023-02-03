@@ -32,8 +32,8 @@ import src.database.Database;
  */
 public class LoginScreen extends JFrame {
     InputStream stream = this.getClass()
-            .getResourceAsStream("/lib/TimeSchedulerIcon.png");
-    InputStream stream2 = this.getClass().getResourceAsStream("/lib/TimeSchedulerIcon.png");
+            .getResourceAsStream("/TimeSchedulerIcon.png");
+    InputStream stream2 = this.getClass().getResourceAsStream("/TimeSchedulerIcon.png");
     private Username usernamePanel = new Username();
     private Password passwordPanel = new Password();
     private JPanel buttonPanel = new JPanel();
@@ -183,7 +183,7 @@ public class LoginScreen extends JFrame {
  * @author Tam Thai Hoang
  */
 class Register extends JFrame {
-    private ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
+    private ImageIcon icon = new ImageIcon("TimeScheduler_v1_0TimeSchedulerIcon.png");
     private static JTextField usernameTextField = new JTextField(10);
     private static JPasswordField passwordField = new JPasswordField(10);
     private static GridBagConstraints gbc = new GridBagConstraints();
@@ -339,7 +339,7 @@ class Register extends JFrame {
  * @author Tam Thai Hoang
  */
 class RegisterInfo extends JFrame {
-    private ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
+    private ImageIcon icon = new ImageIcon("TimeScheduler_v1_0TimeSchedulerIcon.png");
     private static GridBagConstraints gbc = new GridBagConstraints();
     private static JPanel registerInfoPanel = new JPanel(new GridBagLayout());
     private Font defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 16);

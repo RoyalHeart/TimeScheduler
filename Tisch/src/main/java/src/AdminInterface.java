@@ -74,7 +74,7 @@ public class AdminInterface extends JFrame {
 		Database.createConnection();
 		// Initialize the table
 		Vector<String> columnNames = new Vector<String>();
-		var data = Database.getUserList();
+		Vector<Vector> data = Database.getUserList();
 
 		columnNames.addElement("ID");
 		columnNames.addElement("Username");
