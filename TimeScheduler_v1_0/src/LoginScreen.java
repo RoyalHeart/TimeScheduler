@@ -81,15 +81,15 @@ public class LoginScreen extends JFrame {
         loginButton.setOpaque(false);
         try {
             loginButton.addActionListener(e -> {
-                JOptionPane.showMessageDialog(null, usernamePanel.getUsername() + passwordPanel.getPassword());
-                if (Database.existAdmin(usernamePanel.getUsername(), passwordPanel.getPassword())) {
-                    User admin = Database.getAdmin(usernamePanel.getUsername(), passwordPanel.getPassword());
+                final String username = usernamePanel.getUsername();
+                final String password = passwordPanel.getPassword();
+                if (Database.existAdmin(username, password)) {
+                    User admin = Database.getAdmin(username, password);
                     System.out.println("Login Success as Administrator");
                     dispose();
                     new AdminInterface();
-                } else if (Database.existUser(usernamePanel.getUsername(), passwordPanel.getPassword())) {
-                    User user = Database.getUser(usernamePanel.getUsername(),
-                            passwordPanel.getPassword());
+                } else if (Database.existUser(username, password)) {
+                    User user = Database.getUser(username, password);
                     System.out.println("Login Success");
                     dispose();
                     new MainFrame(user);

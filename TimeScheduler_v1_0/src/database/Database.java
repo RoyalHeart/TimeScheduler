@@ -82,25 +82,37 @@ public class Database {
      * 
      * @return {@link Connection} to the database
      */
-    public static Connection createConnection() {
-        try {
-            // step1 load the driver class
-            Class.forName(databaseProperties.getProperty("dbconfig.driver"));
-            System.out.println(databaseProperties.getProperty("dbconfig.driver"));
+    // public static Connection createConnection() {
+    // try {
+    // // step1 load the driver class
+    // Class.forName(databaseProperties.getProperty("dbconfig.driver"));
+    // System.out.println(databaseProperties.getProperty("dbconfig.driver"));
 
-            // step2 create the connection object
-            con = DriverManager.getConnection(
-                    databaseProperties.getProperty("dbconfig.url"),
-                    databaseProperties.getProperty("dbconfig.username"),
-                    databaseProperties.getProperty("dbconfig.password"));
-            System.out.println("Connected to database");
+    // // step2 create the connection object
+    // con = DriverManager.getConnection(
+    // databaseProperties.getProperty("dbconfig.url"),
+    // databaseProperties.getProperty("dbconfig.username"),
+    // databaseProperties.getProperty("dbconfig.password"));
+    // System.out.println("Connected to database");
+    // return con;
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // System.out.println("Error");
+    // return null;
+    // }
+    // };
+
+    public static Connection createConnection() {
+        final String url = "jdbc:sqlite:TimeScheduler_v1_0/src/database/tisch.db";
+        try {
+            con = DriverManager.getConnection(url);
+            System.out.println("Connected to SQLite database");
             return con;
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Error");
             return null;
         }
-    };
+    }
 
     /**
      * This method is used to close the {@link Connection} to the database.
@@ -254,7 +266,6 @@ public class Database {
      */
     public static boolean existUser(String username, String password) {
         try {
-            JOptionPane.showMessageDialog(null, username + " " + password);
             // create statement object
             // con = createConnection();
             Statement stmt = con.createStatement();
@@ -263,7 +274,8 @@ public class Database {
             ResultSet rs = stmt.executeQuery("SELECT * FROM TISCH_USER WHERE USERNAME = '" + username + "'");
             String hashPassword = Hash.hashPassword(password + username).toUpperCase();
             // execute query
-            if (rs.next() && rs.getString("PASSWORD").equals(hashPassword)) {
+            if (rs.next() &&
+                    rs.getString("PASSWORD").equalsIgnoreCase(hashPassword)) {
                 return true; // user exists
             } else {
                 return false; // user does not exist
@@ -301,7 +313,7 @@ public class Database {
             String hashPassword = Hash.hashPassword(password + username).toUpperCase();
             // process the result set
             if (rs.next()) {
-                if (rs.getString("PASSWORD").equals(hashPassword)) {
+                if (rs.getString("PASSWORD").equalsIgnoreCase(hashPassword)) {
                     rs = stmt.executeQuery("SELECT 1 FROM ADMINISTRATOR WHERE ID = '" + rs.getString("ID") + "'");
                     if (rs.next()) {
                         return true; // admin exists
@@ -349,7 +361,7 @@ public class Database {
                 String email = rs.getString(5);
                 String phone = rs.getString(6);
 
-                if (rs.getString(3).equals(hashPassword)) {
+                if (rs.getString(3).equalsIgnoreCase(hashPassword)) {
                     return new User(userID, username, name, email, phone);
                 } else {
                     return null; // password is wrong for this user
@@ -387,7 +399,7 @@ public class Database {
             String hashPassword = Hash.hashPassword(password + username).toUpperCase();
             // process the result set
             if (rs.next()) {
-                if (rs.getString(3).equals(hashPassword)) {
+                if (rs.getString(3).equalsIgnoreCase(hashPassword)) {
                     String userID = rs.getString(1);
                     String name = rs.getString(4);
                     String email = rs.getString(5);

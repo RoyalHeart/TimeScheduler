@@ -126,6 +126,7 @@ public class MainFrame extends JFrame {
 
     public static void main(String[] args) throws Exception {
         try {
+            System.out.println("11a49523df95839188846cd5a5f87100473e51d84745072b6043375409d95459".toUpperCase());
             Database.createConnection();
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             new MainFrame(
