@@ -247,7 +247,7 @@ class MonthCellComponent extends JPanel {
                 dialog.setAlwaysOnTop(true); // always on top
                 dialog.setTitle(dateLabel.getText());
                 dialog.setIconImage(null);
-                dialog.setSize(100, 40 * monthCell.events.size());
+                dialog.setSize(100, 50 * monthCell.events.size());
                 dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 dialog.setLocationRelativeTo(button);
                 dialog.setVisible(true);

@@ -45,6 +45,8 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import src.database.Database;
+
 /**
  * {@code AddEventDialog} is used to contain all panels for adding {@link Event}
  * 
@@ -224,7 +226,7 @@ class DateTime extends JPanel {
     DateTime() {
         this.setLayout(new FlowLayout());
         try {
-            icon = new ImageIcon(getClass().getResource("Tisch/src/main/resources/Images/icondatetime.png"));
+            icon = new ImageIcon(getClass().getResource("Images/icondatetime.png"));
             Image image = icon.getImage();
             Image newing = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
             icon = new ImageIcon(newing);
@@ -356,7 +358,7 @@ class FriendField extends JPanel {
     FriendField() {
         this.setLayout(new FlowLayout());
         try {
-            icon = new ImageIcon(getClass().getResource("Tisch/src/main/resources/Images/friendsicon.jpg"));
+            icon = new ImageIcon(getClass().getResource("Images/friendsicon.jpg"));
             Image image = icon.getImage();
             Image newing = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
             icon = new ImageIcon(newing);
@@ -479,7 +481,7 @@ class LocationField extends JPanel {
     LocationField() {
         this.setLayout(new FlowLayout());
         try {
-            icon = new ImageIcon(getClass().getResource("Tisch/src/main/resources/Images/locationicon.jpg"));
+            icon = new ImageIcon(getClass().getResource("Images/locationicon.jpg"));
             Image image = icon.getImage();
             Image newing = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
             icon = new ImageIcon(newing);
@@ -538,7 +540,7 @@ class LocationField extends JPanel {
  */
 class Reminder extends JPanel {
     JLabel reminderLabel = new JLabel("Remind before: ");
-    static String[] arr = { "No remind", "1 minute", "3 hour", "3 days", "1 week" };
+    static String[] arr = { "No remind", "10 minute", "3 hour", "3 days", "1 week" };
     static JComboBox<String> reminderComboBox = new JComboBox<String>(arr);
 
     /**
@@ -564,7 +566,7 @@ class Reminder extends JPanel {
             case 0:
                 return DateTime.getDate();
             case 1:
-                temp = temp.minusMinutes(1);
+                temp = temp.minusMinutes(10);
                 break;
             case 2:
                 temp = temp.minusHours(3);
@@ -646,7 +648,7 @@ class Description extends JPanel {
     Description() {
         this.setLayout(new FlowLayout());
         try {
-            icon = new ImageIcon(getClass().getResource("Tisch/src/main/resources/Images/descriptionicon.png"));
+            icon = new ImageIcon(getClass().getResource("Images/descriptionicon.png"));
             Image image = icon.getImage();
             Image newing = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
             icon = new ImageIcon(newing);

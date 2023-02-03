@@ -1,21 +1,23 @@
 package src;
 
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
-import javax.swing.JButton;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
-import java.awt.event.ActionEvent;
-import java.awt.Toolkit;
-import java.awt.Font;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import src.database.Database;
 
 /**
  * {@code AdminInterface} class provide an interface for the Administrator to
@@ -54,8 +56,8 @@ public class AdminInterface extends JFrame {
 	 */
 	public AdminInterface() {
 		setResizable(false);
-		setIconImage(Toolkit.getDefaultToolkit()
-				.getImage(AdminInterface.class.getResource("Tisch/src/main/resources/TimeSchedulerIcon.png")));
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(AdminInterface.class.getResource("/lib/TimeSchedulerIcon.png")));
 		setTitle("Admin Interface");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 551, 300);
@@ -72,7 +74,7 @@ public class AdminInterface extends JFrame {
 		Database.createConnection();
 		// Initialize the table
 		Vector<String> columnNames = new Vector<String>();
-		Vector<Vector> data = Database.getUserList();
+		var data = Database.getUserList();
 
 		columnNames.addElement("ID");
 		columnNames.addElement("Username");

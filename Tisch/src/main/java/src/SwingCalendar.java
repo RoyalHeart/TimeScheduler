@@ -104,7 +104,7 @@ public class SwingCalendar extends JPanel {
 
     private JButton todayButton = new JButton("Today");
 
-    private ImageIcon exportImageIcon = new ImageIcon("Tisch/src/main/resources/Images/exportIcon.png");
+    private ImageIcon exportImageIcon = new ImageIcon("TimeScheduler_v1_0/src/Images/exportIcon.png");
     private Image exportImage = exportImageIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private Icon exportIcon = new ImageIcon(exportImage);
 

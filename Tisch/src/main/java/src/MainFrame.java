@@ -21,6 +21,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import src.database.Database;
+
 /**
  * Main frame of user interface.
  * 
@@ -28,7 +30,7 @@ import javax.swing.UIManager;
  * @author Huy Truong Quang
  */
 public class MainFrame extends JFrame {
-    ImageIcon icon = new ImageIcon("Tisch/src/main/resources/TimeSchedulerIcon.png");
+    ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
     Container panel = new Container();
     SystemTray tray;
     TrayIcon trayIcon;
@@ -44,6 +46,7 @@ public class MainFrame extends JFrame {
         AddEventDialog addEventDialog = new AddEventDialog(user, calendar);
         SchedulerJava.createScheduler();
         SchedulerJava.setFutureRemind(user);
+        SchedulerJava.refreshConnection();
         this.setIconImage(icon.getImage());
         this.setSize(700, 700);
         this.setPreferredSize(new Dimension(700, 700));
@@ -65,7 +68,7 @@ public class MainFrame extends JFrame {
 
         if (SystemTray.isSupported()) {
             tray = SystemTray.getSystemTray();
-            Image image = Toolkit.getDefaultToolkit().getImage("Tisch/src/main/resources/TimeSchedulerIcon.png");
+            Image image = Toolkit.getDefaultToolkit().getImage("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
 
             ActionListener exitListener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -123,6 +126,7 @@ public class MainFrame extends JFrame {
 
     public static void main(String[] args) throws Exception {
         try {
+            System.out.println("11a49523df95839188846cd5a5f87100473e51d84745072b6043375409d95459".toUpperCase());
             Database.createConnection();
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             new MainFrame(

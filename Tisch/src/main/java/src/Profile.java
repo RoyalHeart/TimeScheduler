@@ -6,8 +6,11 @@ import java.awt.*;
 // import java.awt.event.*;
 import javax.swing.*;
 
+import src.database.Database;
+
 /**
- * {@code Profile} is used to display the user properties like username, email and phone number.
+ * {@code Profile} is used to display the user properties like username, email
+ * and phone number.
  * User can also edit their properties in this class too.
  * 
  * <p>
@@ -40,7 +43,7 @@ public class Profile extends JPanel {
     /**
      * Constructor that creates {@code Profile} object.
      * 
-     * @param user  the user that logins in to the app
+     * @param user the user that logins in to the app
      */
     Profile(User user) {
         this.user = user;
@@ -63,21 +66,18 @@ public class Profile extends JPanel {
             chPasswBtn.addActionListener(e -> {
                 // Create JOptionPane with passwordfield
                 JPasswordField pf = new JPasswordField();
-                String[] options = {"OK", "Cancel"};
-                // If you want to focus first on passwordfield when open JOptionPane, you must use your own option type
+                String[] options = { "OK", "Cancel" };
+                // If you want to focus first on passwordfield when open JOptionPane, you must
+                // use your own option type
                 int option = JOptionPane.showOptionDialog(null, pf, "Enter password",
-                         JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-                         null, options, pf);
-                if (option == 0)
-                {
-                    if (Database.existUser(user.getUsername(), new String(pf.getPassword())))
-                    {
+                        JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                        null, options, pf);
+                if (option == 0) {
+                    if (Database.existUser(user.getUsername(), new String(pf.getPassword()))) {
                         new PasswDialog(new PasswEditPanel());
-                    }
-                    else
-                    {
+                    } else {
                         JOptionPane.showMessageDialog(null, "Password is wrong.");
-                    } 
+                    }
                 }
             });
         } catch (Exception e) {
@@ -109,7 +109,7 @@ public class Profile extends JPanel {
      * <p>
      * - A button to edit name
      * <p>
-     * - An edit dialog 
+     * - An edit dialog
      * 
      * @author Sang Doan Tan 1370137
      */
@@ -142,7 +142,8 @@ public class Profile extends JPanel {
     }
 
     /**
-     * {@code EmailPanel} is used to contain the email label and edit button for email.
+     * {@code EmailPanel} is used to contain the email label and edit button for
+     * email.
      * <p>
      * This class contains:
      * <p>
@@ -183,7 +184,8 @@ public class Profile extends JPanel {
     }
 
     /**
-     * {@code PhonePanel} is used to contain the phone number label and edit button for phone number.
+     * {@code PhonePanel} is used to contain the phone number label and edit button
+     * for phone number.
      * 
      * <p>
      * This class contains:
@@ -204,6 +206,7 @@ public class Profile extends JPanel {
 
         /**
          * Constructor that creates {@code PhonePanel} object.
+         * 
          * @param user The user that need to change information
          */
         PhonePanel(User user) {
@@ -226,7 +229,8 @@ public class Profile extends JPanel {
 
     // base dialog for edit name, email, phone, password...
     /**
-     * {@code BaseDialog} is used as the parent class for {@link EditDialog} and for {@link PasswDialog}
+     * {@code BaseDialog} is used as the parent class for {@link EditDialog} and for
+     * {@link PasswDialog}
      * so they will have the same setting for dialog.
      * 
      * @author Sang Doan Tan 1370137
@@ -248,7 +252,8 @@ public class Profile extends JPanel {
 
     // dialog for edit name, email, phone, ...
     /**
-     *  {@code EditDialog} is used to contain the {@link BasePanel} and the {@link BtnPanel}
+     * {@code EditDialog} is used to contain the {@link BasePanel} and the
+     * {@link BtnPanel}
      * 
      * @author Sang Doan Tan 1370137
      */
@@ -267,7 +272,8 @@ public class Profile extends JPanel {
 
     // dialog for edit password
     /**
-     * {@code PasswDialog} is used to contain to {@link PasswEditPanel} and the {@link BtnPanel}
+     * {@code PasswDialog} is used to contain to {@link PasswEditPanel} and the
+     * {@link BtnPanel}
      */
     class PasswDialog extends BaseDialog {
         /**
@@ -283,7 +289,8 @@ public class Profile extends JPanel {
 
     // base panel for edit panel
     /**
-     * {@code BasePanel} is used as the parent class for {@link NameEditPanel}, {@link EmailEditPanel} and {@link PhoneEditPanel}
+     * {@code BasePanel} is used as the parent class for {@link NameEditPanel},
+     * {@link EmailEditPanel} and {@link PhoneEditPanel}
      * <p>
      * This class contains:
      * <p>
@@ -348,7 +355,8 @@ public class Profile extends JPanel {
     }
 
     /**
-     * {@code NameEditPanel} is inherited from {@link BasePanel} to change the name of {@link User}
+     * {@code NameEditPanel} is inherited from {@link BasePanel} to change the name
+     * of {@link User}
      * 
      * @author Sang Doan Tan 1370137
      */
@@ -362,7 +370,8 @@ public class Profile extends JPanel {
     }
 
     /**
-     * {@code EmailEditPanel} is inherited from {@link BasePanel} to change the email of {@link User}
+     * {@code EmailEditPanel} is inherited from {@link BasePanel} to change the
+     * email of {@link User}
      * 
      * @author Sang Doan Tan 1370137
      */
@@ -376,7 +385,8 @@ public class Profile extends JPanel {
     }
 
     /**
-     * {@code PhoneEditPanel} is inherited from {@link BasePanel} to change the phone number of {@link User}
+     * {@code PhoneEditPanel} is inherited from {@link BasePanel} to change the
+     * phone number of {@link User}
      * 
      * @author Sang Doan Tan 1370137
      */
@@ -391,7 +401,8 @@ public class Profile extends JPanel {
 
     // panel for change password
     /**
-     * {@code PassWEditPanel} is used to contain label and password field that needed to change the password of {@code User}
+     * {@code PassWEditPanel} is used to contain label and password field that
+     * needed to change the password of {@code User}
      * <p>
      * This class contains:
      * <p>
@@ -439,7 +450,8 @@ public class Profile extends JPanel {
 
     // panel for confirm and cancel btn in edit dialog
     /**
-     * {@code BtnPanel} is used to contain the cancel button and confirm button when editing user's informaiton
+     * {@code BtnPanel} is used to contain the cancel button and confirm button when
+     * editing user's informaiton
      * <p>
      * This class contains:
      * <p>
@@ -457,37 +469,32 @@ public class Profile extends JPanel {
         JButton cancelBtn = new JButton("Cancel");
         JButton confirmBtn = new JButton("Confirm");
         // String array to easy display message dialog
-        String[] arr = {"Name", "Email", "Phone"};
+        String[] arr = { "Name", "Email", "Phone" };
         // Variable to reference to BasePanel
         BasePanel base;
 
-        void showNotMatchMessage(int flag)
-        {
+        void showNotMatchMessage(int flag) {
             String showString = arr[flag] + " does not match.";
             JOptionPane.showMessageDialog(null, showString);
         }
 
-        void showInvalidMessage(int flag)
-        {
+        void showInvalidMessage(int flag) {
             String showString = arr[flag] + " is invalid.";
             JOptionPane.showMessageDialog(null, showString);
         }
 
         // Function to check validation of name, email and phone
         /**
-         * Check if name, email or phone matches the condition 
+         * Check if name, email or phone matches the condition
          * 
          * @param flag determines name, email or phone
          * @return true if matches,
          *         false if does not match
          */
-        boolean checkInvalid(int flag)
-        {
-            switch (flag) 
-            {
+        boolean checkInvalid(int flag) {
+            switch (flag) {
                 case 0:
-                    if (RegisterValidator.isValidName(base.newField.getText())) 
-                    {
+                    if (RegisterValidator.isValidName(base.newField.getText())) {
                         user.setName(base.newField.getText());
                         Database.updateName(base.newField.getText(), user);
                         JOptionPane.showMessageDialog(null, "Updated name successfully.");
@@ -495,8 +502,7 @@ public class Profile extends JPanel {
                     }
 
                 case 1:
-                    if (RegisterValidator.isValidEmail(base.newField.getText()))
-                    {
+                    if (RegisterValidator.isValidEmail(base.newField.getText())) {
                         // String code = JOptionPane.showInputDialog(null, "Enter verifed code");
 
                         user.setEmail(base.newField.getText());
@@ -506,8 +512,7 @@ public class Profile extends JPanel {
                     }
 
                 case 2:
-                    if (RegisterValidator.isValidPhone(base.newField.getText()))
-                    {
+                    if (RegisterValidator.isValidPhone(base.newField.getText())) {
                         user.setPhone(base.newField.getText());
                         Database.updatePhone(base.newField.getText(), user);
                         JOptionPane.showMessageDialog(null, "Updated phone successfully.");
@@ -522,10 +527,10 @@ public class Profile extends JPanel {
         /**
          * Constructor that creates {@code BtnPanel} object.
          * 
-         * @param baseD     is the parent class for edit dialog and password dialog
-         * @param baseP     determines if edit panel is opened
-         * @param flag      determines name, email or phone is being edited
-         * @param passwP    determines if password edit panel is opened
+         * @param baseD  is the parent class for edit dialog and password dialog
+         * @param baseP  determines if edit panel is opened
+         * @param flag   determines name, email or phone is being edited
+         * @param passwP determines if password edit panel is opened
          * 
          * @author Sang Doan Tan 1370137
          */
@@ -541,34 +546,28 @@ public class Profile extends JPanel {
                     // baseP is opened
                     if (baseP != null) {
                         this.base = baseP;
-                        if (baseP.newField.getText().equals(baseP.confirmField.getText()))
-                        {
-                            // Check if new field and confirm field = 
-                            if (checkInvalid(flag))
-                            {
+                        if (baseP.newField.getText().equals(baseP.confirmField.getText())) {
+                            // Check if new field and confirm field =
+                            if (checkInvalid(flag)) {
                                 updatePanel(user);
                                 baseD.dispose();
-                            }
-                            else 
-                            {
+                            } else {
                                 showInvalidMessage(flag);
-                                /* Using JOptionPane will freeze the main frame
-                                ** Set modal(true) in editDialog makes this problem
-                                ** Solve 
-                                */
+                                /*
+                                 * Using JOptionPane will freeze the main frame
+                                 ** Set modal(true) in editDialog makes this problem
+                                 ** Solve
+                                 */
                             }
-                        } 
-                        else 
-                        {
+                        } else {
                             showNotMatchMessage(flag);
                             // Using JOptionPane will freeze the main frame
                         }
                     }
                     // passwP is opened
-                    else  {
+                    else {
                         if (new String(passwP.newPassw.getPassword())
                                 .equals(new String(passwP.confirmNewPassw.getPassword()))) {
-
                             Database.updatePassword(new String(passwP.newPassw.getPassword()), user);
                             JOptionPane.showMessageDialog(null, "Updated password successfully.");
                             baseD.dispose();
@@ -583,17 +582,3 @@ public class Profile extends JPanel {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

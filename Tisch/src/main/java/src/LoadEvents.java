@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import src.database.Database;
+
 /**
  * This class is used to get {@link Event} from the {@link Database}
  * and change the events to corresponding datatype.
@@ -14,7 +16,7 @@ import java.util.List;
  * @author Tam Thai Hoang
  */
 public class LoadEvents {
-    private static DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    // private static DateFormat timeFormat = new SimpleDateFormat("HH:mm");
     private static DateFormat weekFormat = new SimpleDateFormat("ww");
     private static DateFormat monthFormat = new SimpleDateFormat("MM");
     private static DateFormat yearFormat = new SimpleDateFormat("yyyy");
@@ -257,7 +259,6 @@ public class LoadEvents {
      * Get the {@link Event}s that will be reminded in the future.
      * 
      * @param user The {@link User} to get the events from
-     * @param cal  The {@link Calendar} to get
      * @return The list of {@link Event}s that will be reminded
      */
     public static ArrayList<Event> getRemindEvents(User user) {

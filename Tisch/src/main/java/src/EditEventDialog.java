@@ -45,6 +45,8 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import src.database.Database;
+
 /**
  * {@code EditEventDialog} is used to contains the title, time and button to
  * delete and edit event of {@code Event}.
@@ -160,6 +162,9 @@ public class EditEventDialog extends JDialog {
                 delBtn.addActionListener(e -> {
                     if (Database.delEvent(event)) {
                         SchedulerJava.unscheduleMail(event);
+                        swingCalendar.cal.add(Calendar.MONTH, +1);
+                        swingCalendar.update();
+                        swingCalendar.cal.add(Calendar.MONTH, -1);
                         swingCalendar.update();
                         new Thread(new Runnable() {
                             public void run() {
@@ -380,7 +385,7 @@ public class EditEventDialog extends JDialog {
             DateTime.startTime = new TimeComboBox(event, timeStart);
             DateTime.endTime = new TimeComboBox(event, timeEnd);
             try {
-                icon = new ImageIcon(getClass().getResource("Tisch/src/main/resources/Images/icondatetime.png"));
+                icon = new ImageIcon(getClass().getResource("Images/icondatetime.png"));
                 Image image = icon.getImage();
                 Image newing = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
                 icon = new ImageIcon(newing);
@@ -513,7 +518,7 @@ public class EditEventDialog extends JDialog {
         FriendField(Event event) {
             this.setLayout(new FlowLayout());
             try {
-                icon = new ImageIcon(getClass().getResource("Tisch/src/main/resources/Images/friendsicon.jpg"));
+                icon = new ImageIcon(getClass().getResource("Images/friendsicon.jpg"));
                 Image image = icon.getImage();
                 Image newing = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
                 icon = new ImageIcon(newing);
@@ -629,7 +634,7 @@ public class EditEventDialog extends JDialog {
             this.setLayout(new FlowLayout());
 
             try {
-                icon = new ImageIcon(getClass().getResource("Tisch/src/main/resources/Images/locationicon.jpg"));
+                icon = new ImageIcon(getClass().getResource("Images/locationicon.jpg"));
                 Image image = icon.getImage();
                 Image newing = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
                 icon = new ImageIcon(newing);
@@ -756,7 +761,7 @@ public class EditEventDialog extends JDialog {
      */
     static class Reminder extends JPanel {
         JLabel reminderLabel = new JLabel("Remind before: ");
-        static String[] arr = { "No remind", "1 minute", "3 hour", "3 days", "1 week" };
+        static String[] arr = { "No remind", "10 minute", "3 hour", "3 days", "1 week" };
         static JComboBox<String> reminderComboBox = new JComboBox<String>(arr);
 
         /**
@@ -784,7 +789,7 @@ public class EditEventDialog extends JDialog {
                 case 0:
                     return DateTime.getDate();
                 case 1:
-                    temp = temp.minusMinutes(1);
+                    temp = temp.minusMinutes(10);
                     break;
                 case 2:
                     temp = temp.minusHours(3);
@@ -1008,8 +1013,8 @@ public class EditEventDialog extends JDialog {
     static class DateComboBoxRenderer extends DefaultListCellRenderer {
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
 
-        public Component getListCellRendererComponent(JList list, Object value,
-                int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+                boolean cellHasFocus) {
             Object item = value;
             if (item instanceof Date) {
                 item = dateFormat.format((Date) item);

@@ -1,17 +1,18 @@
 package src;
 
 import java.awt.EventQueue;
-
-import javax.swing.JDialog;
+import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
-import java.awt.Font;
 import javax.swing.JTextField;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+
+import src.database.Database;
 
 /**
  * {@code EditProfile} class provide an interface for the Administrator to edit
@@ -51,8 +52,7 @@ public class EditProfile extends JDialog {
 	 */
 	public EditProfile(String userID) {
 		setTitle("Admin Interface - Edit Profile");
-		setIconImage(Toolkit.getDefaultToolkit()
-				.getImage(EditProfile.class.getResource("Tisch/src/main/resources/TimeSchedulerIcon.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(EditProfile.class.getResource("/lib/TimeSchedulerIcon.png")));
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 357, 285);
 

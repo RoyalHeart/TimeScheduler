@@ -8,7 +8,9 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.io.InputStream;
 
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,13 +23,17 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import src.database.Database;
+
 /**
  * {@link LoginScreen} is used for user login.
  * 
  * @author Tam Thai Hoang
  */
 public class LoginScreen extends JFrame {
-    private ImageIcon icon = new ImageIcon("Tisch/src/main/resources//TimeSchedulerIcon.png");
+    InputStream stream = this.getClass()
+            .getResourceAsStream("/lib/TimeSchedulerIcon.png");
+    InputStream stream2 = this.getClass().getResourceAsStream("/lib/TimeSchedulerIcon.png");
     private Username usernamePanel = new Username();
     private Password passwordPanel = new Password();
     private JPanel buttonPanel = new JPanel();
@@ -52,6 +58,13 @@ public class LoginScreen extends JFrame {
      * Contructor for {@link LoginScreen} Frame
      */
     LoginScreen() {
+        try {
+            Image image = ImageIO.read(stream);
+            ImageIcon icon = new ImageIcon(image);
+            this.setIconImage(icon.getImage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         this.setTitle("Login");
         this.setSize(450, 300);
         this.setPreferredSize(new Dimension(450, 300));
@@ -59,7 +72,6 @@ public class LoginScreen extends JFrame {
         this.setLayout(new GridBagLayout());
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
-        this.setIconImage(icon.getImage());
         loginPanel.setLayout(new GridBagLayout());
         loginPanel.setBackground(Color.PINK);
 
@@ -69,13 +81,15 @@ public class LoginScreen extends JFrame {
         loginButton.setOpaque(false);
         try {
             loginButton.addActionListener(e -> {
-                if (Database.existAdmin(usernamePanel.getUsername(), passwordPanel.getPassword())) {
-                    User admin = Database.getAdmin(usernamePanel.getUsername(), passwordPanel.getPassword());
+                final String username = usernamePanel.getUsername();
+                final String password = passwordPanel.getPassword();
+                if (Database.existAdmin(username, password)) {
+                    User admin = Database.getAdmin(username, password);
                     System.out.println("Login Success as Administrator");
                     dispose();
                     new AdminInterface();
-                } else if (Database.existUser(usernamePanel.getUsername(), passwordPanel.getPassword())) {
-                    User user = Database.getUser(usernamePanel.getUsername(), passwordPanel.getPassword());
+                } else if (Database.existUser(username, password)) {
+                    User user = Database.getUser(username, password);
                     System.out.println("Login Success");
                     dispose();
                     new MainFrame(user);
@@ -102,7 +116,7 @@ public class LoginScreen extends JFrame {
         buttonPanel.setOpaque(false);
         JLabel iconLabel = new JLabel();
         try {
-            Image loginImage = icon.getImage().getScaledInstance(200, 200, Image.SCALE_AREA_AVERAGING);
+            Image loginImage = ImageIO.read(stream2).getScaledInstance(200, 200, Image.SCALE_AREA_AVERAGING);
             Icon loginIcon = new ImageIcon(loginImage);
             iconLabel = new JLabel(loginIcon);
         } catch (Exception e) {
@@ -169,7 +183,7 @@ public class LoginScreen extends JFrame {
  * @author Tam Thai Hoang
  */
 class Register extends JFrame {
-    private ImageIcon icon = new ImageIcon("Tisch/src/main/resources//TimeSchedulerIcon.png");
+    private ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
     private static JTextField usernameTextField = new JTextField(10);
     private static JPasswordField passwordField = new JPasswordField(10);
     private static GridBagConstraints gbc = new GridBagConstraints();
@@ -325,7 +339,7 @@ class Register extends JFrame {
  * @author Tam Thai Hoang
  */
 class RegisterInfo extends JFrame {
-    private ImageIcon icon = new ImageIcon("Tisch/src/main/resources/TimeSchedulerIcon.png");
+    private ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
     private static GridBagConstraints gbc = new GridBagConstraints();
     private static JPanel registerInfoPanel = new JPanel(new GridBagLayout());
     private Font defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 16);

@@ -23,6 +23,8 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.iv.RandomIvGenerator;
 import org.jasypt.properties.EncryptableProperties;
 
+import src.database.Database;
+
 /**
  * {@code Mail} class is used to send emails to user and participants.
  * 
@@ -43,7 +45,7 @@ public class Mail {
      * @return the jasypt password as a {@code String}
      */
     private static String getJasyptPassword() {
-        File myObj = new File("Tisch/src/main/resources/DatabaseLoginInfo.txt");
+        File myObj = new File("TimeScheduler_v1_0/lib/DatabaseLoginInfo.txt");
         try {
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
@@ -72,7 +74,7 @@ public class Mail {
             encryptor.setAlgorithm("PBEWithHMACSHA512AndAES_256");
             encryptor.setIvGenerator(new RandomIvGenerator());
             Properties properties = new EncryptableProperties(encryptor);
-            properties.load(new FileInputStream("Tisch/src/main/resources/mailConfig.properties"));
+            properties.load(new FileInputStream("TimeScheduler_v1_0/lib/mailConfig.properties"));
             return properties;
         } catch (Exception e) {
             e.printStackTrace();

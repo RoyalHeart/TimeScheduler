@@ -1,11 +1,13 @@
 package src;
 
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Toolkit;
 
 import javax.swing.JDialog;
-import java.awt.Toolkit;
 import javax.swing.JLabel;
-import java.awt.Font;
+
+import src.database.Database;
 
 /**
  * {@code ViewProfile} class display the user's profile
@@ -39,8 +41,7 @@ public class ViewProfile extends JDialog {
 	 */
 	public ViewProfile(String userID) {
 		setTitle("Admin Interface - View Profile");
-		setIconImage(Toolkit.getDefaultToolkit()
-				.getImage(ViewProfile.class.getResource("Tisch/src/main/resources//TimeSchedulerIcon.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewProfile.class.getResource("/lib/TimeSchedulerIcon.png")));
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setAlwaysOnTop(true);
 		setBounds(100, 100, 380, 237);
