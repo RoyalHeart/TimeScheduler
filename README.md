@@ -14,4 +14,4 @@
   <li><a href='https://github.com/vi3tproa7'> Huy Truong Quang </a></li>
 </ul>
 
-<img src='https://github.com/RoyalHeart/TimeScheduler/blob/main/TimeScheduler_v1_0/lib/TimeSchedulerIcon.png'></img>
+<img src='https://github.com/RoyalHeart/TimeScheduler/blob/main/Tisch/src/main/resources/TimeSchedulerIcon.png'></img>
