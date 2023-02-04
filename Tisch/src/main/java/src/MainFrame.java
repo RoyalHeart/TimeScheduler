@@ -30,7 +30,7 @@ import src.database.Database;
  * @author Huy Truong Quang
  */
 public class MainFrame extends JFrame {
-    ImageIcon icon = new ImageIcon("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
+    ImageIcon icon = new ImageIcon(getClass().getResource("/TimeSchedulerIcon.png"));
     Container panel = new Container();
     SystemTray tray;
     TrayIcon trayIcon;
@@ -68,7 +68,7 @@ public class MainFrame extends JFrame {
 
         if (SystemTray.isSupported()) {
             tray = SystemTray.getSystemTray();
-            Image image = Toolkit.getDefaultToolkit().getImage("TimeScheduler_v1_0/lib/TimeSchedulerIcon.png");
+            Image image = Toolkit.getDefaultToolkit().getImage("/TimeSchedulerIcon.png");
 
             ActionListener exitListener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {

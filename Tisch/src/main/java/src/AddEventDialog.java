@@ -226,7 +226,7 @@ class DateTime extends JPanel {
     DateTime() {
         this.setLayout(new FlowLayout());
         try {
-            icon = new ImageIcon(getClass().getResource("Images/icondatetime.png"));
+            icon = new ImageIcon(getClass().getResource("/Images/icondatetime.png"));
             Image image = icon.getImage();
             Image newing = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
             icon = new ImageIcon(newing);
@@ -358,7 +358,7 @@ class FriendField extends JPanel {
     FriendField() {
         this.setLayout(new FlowLayout());
         try {
-            icon = new ImageIcon(getClass().getResource("Images/friendsicon.jpg"));
+            icon = new ImageIcon(getClass().getResource("/Images/friendsicon.jpg"));
             Image image = icon.getImage();
             Image newing = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
             icon = new ImageIcon(newing);
@@ -481,7 +481,7 @@ class LocationField extends JPanel {
     LocationField() {
         this.setLayout(new FlowLayout());
         try {
-            icon = new ImageIcon(getClass().getResource("Images/locationicon.jpg"));
+            icon = new ImageIcon(getClass().getResource("/Images/locationicon.jpg"));
             Image image = icon.getImage();
             Image newing = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
             icon = new ImageIcon(newing);
@@ -648,7 +648,7 @@ class Description extends JPanel {
     Description() {
         this.setLayout(new FlowLayout());
         try {
-            icon = new ImageIcon(getClass().getResource("Images/descriptionicon.png"));
+            icon = new ImageIcon(getClass().getResource("/Images/descriptionicon.png"));
             Image image = icon.getImage();
             Image newing = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
             icon = new ImageIcon(newing);

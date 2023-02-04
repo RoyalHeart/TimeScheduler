@@ -23,7 +23,7 @@ public class PDF {
     private static Document document;
     static String filePath = "";
     private static String fileName = "WeeklyReport.pdf";
-    private static final String TISCH_IMAGE_STRING_PATH = "Tisch/src/main/resources/TimeSchedulerIcon.png";
+    private static final String TISCH_IMAGE_STRING_PATH = "/TimeSchedulerIcon.png";
 
     /**
      * Create a PDF file with the TISCH logo image and some welcoming words.
@@ -36,8 +36,7 @@ public class PDF {
             System.out.println("Document Opened");
             float width = document.getPageSize().getWidth();
             float height = document.getPageSize().getHeight();
-            Path imagePath = Paths.get(ClassLoader.getSystemResource(TISCH_IMAGE_STRING_PATH).toURI());
-            Image img = Image.getInstance(imagePath.toString());
+            Image img = Image.getInstance(PDF.class.getResource(TISCH_IMAGE_STRING_PATH));
             img.scaleAbsolute(70, 70);
             float imgWidth = img.getScaledWidth();
             float imgHeight = img.getScaledHeight();

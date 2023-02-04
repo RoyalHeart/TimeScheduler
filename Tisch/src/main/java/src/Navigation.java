@@ -1,9 +1,21 @@
 package src;
 
-import java.awt.event.*;
-import javax.swing.*;
-// import java.util.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.InputStream;
+
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  * {@code Navigation} class extends {@link JPanel} is used to navigate between
@@ -12,19 +24,19 @@ import java.awt.*;
  * @author Tam Thai Hoang
  */
 public class Navigation extends JPanel {
-    private ImageIcon homeImageIcon = new ImageIcon("/src/Images/homeIconTransparent.png");
+    private ImageIcon homeImageIcon = new ImageIcon(getClass().getResource("/Images/homeIconTransparent.png"));
     private Image homeImage = homeImageIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
     private Icon homeIcon = new ImageIcon(homeImage);
 
-    private ImageIcon profileImageIcon = new ImageIcon("/src/Images/profileIconTransparent.png");
+    private ImageIcon profileImageIcon = new ImageIcon(getClass().getResource("/Images/profileIconTransparent.png"));
     private Image profileImage = profileImageIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
     private Icon profileIcon = new ImageIcon(profileImage);
 
-    private ImageIcon logoutImageIcon = new ImageIcon("/src/Images/logoutIconTransparent.png");
+    private ImageIcon logoutImageIcon = new ImageIcon(getClass().getResource("/Images/logoutIconTransparent.png"));
     private Image logoutImage = logoutImageIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
     private Icon logoutIcon = new ImageIcon(logoutImage);
 
-    private ImageIcon settingsImageIcon = new ImageIcon("/src/Images/settingsIconTransparent.png");
+    private ImageIcon settingsImageIcon = new ImageIcon(getClass().getResource("/Images/settingsIconTransparent.png"));
     private Image settingsImage = settingsImageIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
     private Icon settingsIcon = new ImageIcon(settingsImage);
     private Dimension size = new Dimension(40, 30);
